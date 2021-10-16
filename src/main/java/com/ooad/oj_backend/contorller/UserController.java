@@ -1,5 +1,7 @@
 package com.ooad.oj_backend.contorller;
+import cn.dev33.satoken.exception.NotRoleException;
 import cn.dev33.satoken.stp.StpUtil;
+import com.ooad.oj_backend.Response;
 import com.ooad.oj_backend.mapper.UserMapper;
 import com.ooad.oj_backend.mybatis.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,16 @@ public class UserController {
 
     @PostMapping ("user")
     @ResponseBody
-    public void addUser(String id,String name,String passWord,String mail) {
+    public ResponseEntity<?> addUser(String id,String name,String passWord,String mail) {
+
+        if(StpUtil.isLogin()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        try {
+            StpUtil.checkRole("0-0");
+        }catch (NotRoleException e){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         User user=new User();
         user.setId(id);
         user.setPassWord(passWord);
@@ -34,6 +45,8 @@ public class UserController {
             user.setMail(mail);
         }
         userMapper.insert(user);
+        Response response=new Response(0,"add user success",null);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
     @RequestMapping(value = "user/{id}",method = RequestMethod.DELETE)
     @ResponseBody
@@ -49,17 +62,25 @@ public class UserController {
         User user=userMapper.getOne(id);
     }
     @RequestMapping(value = "user/all",method = RequestMethod.GET)
-    public List<User> getUsersInformation() {
+    public ResponseEntity<?> getUsersInformation() {
+        if(!StpUtil.isLogin()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        try {
+            StpUtil.checkRole("0-0");
+        }catch (NotRoleException e){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         List<User> users=userMapper.getAll();
-        return users;
+        Response response=new Response(0,"add user success",users);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
-    @RequestMapping(value = "user/all",method = RequestMethod.GET)
+    /*@RequestMapping(value = "user/all",method = RequestMethod.GET)
     public ResponseEntity<?> test() {
         StpUtil.getLoginId();
         ResponseEntity response=new ResponseEntity<>(HttpStatus.FORBIDDEN);
-
         List<User> users=userMapper.getAll();
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-    }
+    }*/
     // 测试登录  ---- http://localhost:8081/api/auth/login?id=1&&password=1
 }

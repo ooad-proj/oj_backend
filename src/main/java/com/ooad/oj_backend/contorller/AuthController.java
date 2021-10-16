@@ -4,18 +4,22 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.ooad.oj_backend.mapper.UserMapper;
 import com.ooad.oj_backend.mybatis.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
+@RequestMapping("/api/")
 public class AuthController {
-    UserMapper userMapper;
+    @Autowired
+    private UserMapper userMapper;
     @ResponseBody
     @PostMapping("auth/login")
-    public SaResult Login(String id, String password) {
+    public SaResult Login(String id, String passWord) {
         User user=userMapper.getOne(id);
-        int i=0;
-        if(user.getId().equals(id) && user.getPassword().equals(password)) {
+        if(user.getId().equals(id) && user.getPassWord().equals(passWord)) {
             StpUtil.login(id);
             return SaResult.ok("登录成功");
         }
