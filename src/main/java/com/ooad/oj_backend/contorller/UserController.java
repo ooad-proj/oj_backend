@@ -1,9 +1,11 @@
-package com.ooad.oj_backend.User;
+package com.ooad.oj_backend.contorller;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.dev33.satoken.util.SaResult;
 import com.ooad.oj_backend.mapper.UserMapper;
 import com.ooad.oj_backend.mybatis.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,5 +53,13 @@ public class UserController {
         List<User> users=userMapper.getAll();
         return users;
     }
+    @RequestMapping(value = "user/all",method = RequestMethod.GET)
+    public ResponseEntity<?> test() {
+        StpUtil.getLoginId();
+        ResponseEntity<>(HttpStatus.FORBIDDEN);
+        List<User> users=userMapper.getAll();
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
+
     // 测试登录  ---- http://localhost:8081/api/auth/login?id=1&&password=1
 }
