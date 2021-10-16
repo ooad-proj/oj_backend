@@ -36,9 +36,9 @@ public class LoginController {
     public void deleteUser(String id) {
         userMapper.delete(id);
     }
-    @RequestMapping(value = "user",method = RequestMethod.PUT)
+    /*@RequestMapping(value = "user",method = RequestMethod.PUT)
     @ResponseBody
-    /*public void updateUser(String id) {
+    public void updateUser(String id) {
         userMapper.update();
     }*/
 
