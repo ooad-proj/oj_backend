@@ -15,7 +15,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/")
-public class LoginController {
+public class UserController {
     @Autowired
     private UserMapper userMapper;
 
@@ -35,12 +35,12 @@ public class LoginController {
     }
     @RequestMapping(value = "user/{id}",method = RequestMethod.DELETE)
     @ResponseBody
-    public void deleteUser(@PathVariable String id,@RequestBody User user) {
-        userMapper.update(user);
+    public void deleteUser(@PathVariable String id) {
+        userMapper.delete(id);
     }
     @RequestMapping(value = "user/{id}",method = RequestMethod.PUT)
-    public void updateUser(@PathVariable String id) {
-        userMapper.delete(id);
+    public void updateUser(@PathVariable String id,@RequestBody User user) {
+        userMapper.update(user);
     }
     @RequestMapping(value = "user/details/{id}",method = RequestMethod.GET)
     public void getUserInformation(@PathVariable String id) {
@@ -52,30 +52,4 @@ public class LoginController {
         return users;
     }
     // 测试登录  ---- http://localhost:8081/api/auth/login?id=1&&password=1
-
-    @ResponseBody
-    @PostMapping("auth/login")
-    public SaResult Login(String id, String password) {
-        User user=userMapper.getOne(id);
-        int i=0;
-        if(user.getId().equals(id) && user.getPassword().equals(password)) {
-            StpUtil.login(id);
-            return SaResult.ok("登录成功");
-        }
-        return SaResult.error("登录失败");
-    }
-
-    // 查询登录状态  ---- http://localhost:8081/acc/isLogin
-    @RequestMapping("isLogin")
-    public SaResult isLogin() {
-        StpUtil.getLoginId();
-        return SaResult.ok("是否登录：" + StpUtil.isLogin());
-    }
-
-    // 测试注销  ---- http://localhost:8081/acc/logout
-    @RequestMapping("logout")
-    public SaResult logout() {
-        StpUtil.logout();
-        return SaResult.ok();
-    }
 }
