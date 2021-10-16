@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class UserService {
@@ -84,9 +85,14 @@ public class UserService {
         response.setContent(user);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
-    public ResponseEntity<?> getUsersInformation() {
+    public ResponseEntity<?> getUsersInformation(int page,int itemsPerPage,int totalAmount) {
         List<User> users=userMapper.getAll();
-        Response response=new Response(0,"",users);
+        int length=users.size();
+        int end=page*itemsPerPage;
+        users=users.subList(end-itemsPerPage,end);
+        HashMap<Integer,List<User>>hashMap=new HashMap<>();
+        hashMap.put(length,users);
+        Response response=new Response(0,"",hashMap);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }

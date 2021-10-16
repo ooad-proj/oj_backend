@@ -34,7 +34,7 @@ public class AuthService {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         try {
-            StpUtil.checkPermission("permission");
+            StpUtil.checkPermission(permission);
         }catch (NotPermissionException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }

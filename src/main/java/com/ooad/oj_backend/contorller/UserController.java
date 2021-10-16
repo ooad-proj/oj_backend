@@ -44,7 +44,7 @@ public class UserController {
        return userService.getUserInformation(id);
     }
     @RequestMapping(value = "user/all",method = RequestMethod.GET)
-    public ResponseEntity<?> getUsersInformation() {
-       return userService.getUsersInformation();
+    public ResponseEntity<?> getUsersInformation(int page,int itemsPerPage,int totalAmount) {
+       return userService.getUsersInformation(page,itemsPerPage,totalAmount);
     }
 }
