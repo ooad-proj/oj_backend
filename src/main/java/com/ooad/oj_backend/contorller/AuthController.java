@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-public class authController {
+public class AuthController {
     UserMapper userMapper;
     @ResponseBody
     @PostMapping("auth/login")

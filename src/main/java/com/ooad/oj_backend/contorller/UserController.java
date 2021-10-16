@@ -23,10 +23,10 @@ public class UserController {
 
     @PostMapping ("user")
     @ResponseBody
-    public void addUser(String id,String name,String password,String mail) {
+    public void addUser(String id,String name,String passWord,String mail) {
         User user=new User();
         user.setId(id);
-        user.setPassword(password);
+        user.setPassWord(passWord);
         if(name!=null){
             user.setName(name);
         }
@@ -56,10 +56,10 @@ public class UserController {
     @RequestMapping(value = "user/all",method = RequestMethod.GET)
     public ResponseEntity<?> test() {
         StpUtil.getLoginId();
-        ResponseEntity<>(HttpStatus.FORBIDDEN);
+        ResponseEntity response=new ResponseEntity<>(HttpStatus.FORBIDDEN);
+
         List<User> users=userMapper.getAll();
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
-
     // 测试登录  ---- http://localhost:8081/api/auth/login?id=1&&password=1
 }
