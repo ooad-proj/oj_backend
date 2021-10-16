@@ -2,6 +2,7 @@ package com.ooad.oj_backend.satoken;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.ooad.oj_backend.mapper.AuthMapper;
 import com.ooad.oj_backend.mybatis.entity.Auth;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +37,23 @@ public class StpInterfaceImpl implements StpInterface {
     public List<String> getRoleList(Object loginId, String loginType) {
         // 本list仅做模拟，实际项目中要根据具体业务逻辑来查询角色
         ArrayList<String>list=new ArrayList<>();
-        List <Auth>authList=authMapper.getOne((String) loginId);
-
+        List<String> permissionList=getPermissionList(loginId,loginType);
+        boolean isUser=true;
+        for (String permission:permissionList){
+            if(permission.equals("1-0")){
+                list.add("admin");
+                isUser=false;
+                break;
+            }
+            if(permission.startsWith("1")){
+                list.add("assistant");
+                isUser=false;
+                break;
+            }
+        }
+        if(isUser){
+            list.add("user");
+        }
         return list;
     }
 

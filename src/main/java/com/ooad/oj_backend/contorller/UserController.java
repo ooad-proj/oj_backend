@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.ooad.oj_backend.Response;
 import com.ooad.oj_backend.mapper.UserMapper;
 import com.ooad.oj_backend.mybatis.entity.User;
+import com.ooad.oj_backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -22,65 +23,28 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserMapper userMapper;
+    private UserService userService;
 
     @PostMapping ("user")
     @ResponseBody
-    public ResponseEntity<?> addUser(String id,String name,String passWord,String mail) {
-
-        if(StpUtil.isLogin()){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        try {
-            StpUtil.checkRole("0-0");
-        }catch (NotRoleException e){
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-        User user=new User();
-        user.setId(id);
-        user.setPassWord(passWord);
-        if(name!=null){
-            user.setName(name);
-        }
-        if(mail!=null){
-            user.setMail(mail);
-        }
-        userMapper.insert(user);
-        Response response=new Response(0,"add user success",null);
-        return new ResponseEntity<>(response,HttpStatus.OK);
+    public ResponseEntity<?> addUser(String id,@RequestParam(value = "name",required = false)String name,String passWord,@RequestParam(value = "name",required = false) String mail) {
+        return userService.addUser(id,name,passWord,mail);
     }
     @RequestMapping(value = "user/{id}",method = RequestMethod.DELETE)
     @ResponseBody
-    public void deleteUser(@PathVariable String id) {
-        userMapper.delete(id);
+    public ResponseEntity<?> deleteUser(@PathVariable String id) {
+        return userService.deleteUser(id);
     }
     @RequestMapping(value = "user/{id}",method = RequestMethod.PUT)
-    public void updateUser(@PathVariable String id,@RequestBody User user) {
-        userMapper.update(user);
+    public ResponseEntity<?> updateUser(@PathVariable String id,@RequestBody User user) {
+        return userService.updateUser(id,user);
     }
     @RequestMapping(value = "user/details/{id}",method = RequestMethod.GET)
-    public void getUserInformation(@PathVariable String id) {
-        User user=userMapper.getOne(id);
+    public ResponseEntity<?> getUserInformation(@PathVariable String id) {
+       return userService.getUserInformation(id);
     }
     @RequestMapping(value = "user/all",method = RequestMethod.GET)
     public ResponseEntity<?> getUsersInformation() {
-        if(!StpUtil.isLogin()){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        try {
-            StpUtil.checkRole("0-0");
-        }catch (NotRoleException e){
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-        List<User> users=userMapper.getAll();
-        Response response=new Response(0,"add user success",users);
-        return new ResponseEntity<>(response,HttpStatus.OK);
+       return userService.getUsersInformation();
     }
-    /*@RequestMapping(value = "user/all",method = RequestMethod.GET)
-    public ResponseEntity<?> test() {
-        StpUtil.getLoginId();
-        ResponseEntity response=new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        List<User> users=userMapper.getAll();
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-    }*/
-    // 测试登录  ---- http://localhost:8081/api/auth/login?id=1&&password=1
 }
