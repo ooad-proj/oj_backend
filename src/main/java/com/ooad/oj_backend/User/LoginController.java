@@ -6,6 +6,8 @@ import com.ooad.oj_backend.mybatis.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 登录测试 
  * @author kong
@@ -17,7 +19,7 @@ public class LoginController {
     @Autowired
     private UserMapper userMapper;
 
-    @RequestMapping(value = "user",method = RequestMethod.POST)
+    @PostMapping ("user")
     @ResponseBody
     public void addUser(String id,String name,String password,String mail) {
         User user=new User();
@@ -31,21 +33,29 @@ public class LoginController {
         }
         userMapper.insert(user);
     }
-    @RequestMapping(value = "user",method = RequestMethod.DELETE)
+    @RequestMapping(value = "user/{id}",method = RequestMethod.DELETE)
     @ResponseBody
-    public void deleteUser(String id) {
+    public void deleteUser(@PathVariable String id,@RequestBody User user) {
+        userMapper.update(user);
+    }
+    @RequestMapping(value = "user/{id}",method = RequestMethod.PUT)
+    public void updateUser(@PathVariable String id) {
         userMapper.delete(id);
     }
-    /*@RequestMapping(value = "user",method = RequestMethod.PUT)
-    @ResponseBody
-    public void updateUser(String id) {
-        userMapper.update();
-    }*/
-
+    @RequestMapping(value = "user/details/{id}",method = RequestMethod.GET)
+    public void getUserInformation(@PathVariable String id) {
+        User user=userMapper.getOne(id);
+    }
+    @RequestMapping(value = "user/all",method = RequestMethod.GET)
+    public List<User> getUsersInformation() {
+        List<User> users=userMapper.getAll();
+        return users;
+    }
     // 测试登录  ---- http://localhost:8081/api/auth/login?id=1&&password=1
-    @RequestMapping(value = "auth/login",method = RequestMethod.POST)
+
     @ResponseBody
-    public SaResult Login(String id,  String password) {
+    @PostMapping("auth/login")
+    public SaResult Login(String id, String password) {
         User user=userMapper.getOne(id);
         int i=0;
         if(user.getId().equals(id) && user.getPassword().equals(password)) {
