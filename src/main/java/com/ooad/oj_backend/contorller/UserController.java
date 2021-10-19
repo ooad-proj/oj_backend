@@ -1,16 +1,13 @@
 package com.ooad.oj_backend.contorller;
-import cn.dev33.satoken.exception.NotRoleException;
-import cn.dev33.satoken.stp.StpUtil;
-import com.ooad.oj_backend.Response;
 import com.ooad.oj_backend.mapper.UserMapper;
 import com.ooad.oj_backend.mybatis.entity.User;
 import com.ooad.oj_backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -22,13 +19,16 @@ import java.util.List;
 @RequestMapping("/api/")
 public class UserController {
     @Autowired
-    private UserMapper userMapper;
     private UserService userService;
 
     @PostMapping ("user")
     @ResponseBody
     public ResponseEntity<?> addUser(String id,@RequestParam(value = "name",required = false)String name,String passWord,@RequestParam(value = "name",required = false) String mail) {
         return userService.addUser(id,name,passWord,mail);
+    }
+    @PostMapping(value = "user/add/batch")
+    public ResponseEntity<?> addBatchUser(MultipartFile multipartFile) {
+        return userService.addBatchUser(multipartFile);
     }
     @RequestMapping(value = "user/{id}",method = RequestMethod.DELETE)
     @ResponseBody

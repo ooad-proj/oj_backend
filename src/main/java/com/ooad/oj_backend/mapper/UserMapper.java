@@ -1,10 +1,13 @@
 package com.ooad.oj_backend.mapper;
 
 import com.ooad.oj_backend.mybatis.entity.User;
+import com.ooad.oj_backend.mybatis.entity.UserView;
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository("UserMapper")
 @Mapper
 public interface UserMapper {
     @Select("       SELECT\n" +
@@ -18,6 +21,12 @@ public interface UserMapper {
             "        where id=#{id}")
     User getOne(String id);
 
+    @Select("        SELECT\n" +
+            "        id, name,mail\n" +
+            "        FROM User\n" +
+            "        order by id limit #{itemsPerPage} offset #{offset}")
+    List<UserView> getAllByPage(int offset,int itemsPerPage);
+
     @Insert("       INSERT INTO\n" +
             "         User\n" +
             "       ( id, name,mail)\n" +
@@ -29,7 +38,7 @@ public interface UserMapper {
             "        User\n" +
             "       SET \n" +
             "       id = #{id}," +
-            "       name = #{time},\n" +
+            "       name = #{name},\n" +
             "       mail = #{mail}\n" +
             "       WHERE \n" +
             "       id = #{id}")

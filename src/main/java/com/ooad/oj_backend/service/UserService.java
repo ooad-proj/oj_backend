@@ -1,28 +1,34 @@
 package com.ooad.oj_backend.service;
 
-import cn.dev33.satoken.exception.NotRoleException;
-import cn.dev33.satoken.stp.StpUtil;
 import com.ooad.oj_backend.Response;
 import com.ooad.oj_backend.mapper.UserMapper;
+import com.ooad.oj_backend.mybatis.entity.Paper;
 import com.ooad.oj_backend.mybatis.entity.User;
+import com.ooad.oj_backend.mybatis.entity.UserView;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
+@Service
 public class UserService {
+    @Autowired
     private UserMapper userMapper;
+    @Autowired
     private AuthService authService;
+
     public ResponseEntity<?> addUser(String id,String name, String passWord, String mail) {
        ResponseEntity responseEntity=authService.checkPermission("1-0");
        if(responseEntity!=null)return responseEntity;
         Response response=new Response();
         User user=userMapper.getOne(id);
-        if(user==null){
+        if(user!=null){
             response.setCode(-1);
             return new ResponseEntity<>(response,HttpStatus.OK);
         }
@@ -86,13 +92,30 @@ public class UserService {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
     public ResponseEntity<?> getUsersInformation(int page,int itemsPerPage,int totalAmount) {
-        List<User> users=userMapper.getAll();
-        int length=users.size();
-        int end=page*itemsPerPage;
-        users=users.subList(end-itemsPerPage,end);
-        HashMap<Integer,List<User>>hashMap=new HashMap<>();
-        hashMap.put(length,users);
-        Response response=new Response(0,"",hashMap);
+        List<UserView> users=userMapper.getAllByPage(page*itemsPerPage,itemsPerPage);
+        Paper<UserView> paper=new Paper<>();
+        paper.setItemsPerPage(itemsPerPage);
+        paper.setPage(page);
+        /*paper.setTotalAmount();
+        paper.setTotalPage();*/
+        paper.setList(users);
+        Response response=new Response(0,"",paper);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+    public ResponseEntity<?> addBatchUser(MultipartFile multipartFile){
+        ResponseEntity responseEntity=authService.checkPermission("1-0");
+        if(responseEntity!=null)return responseEntity;
+        File file = new File("./"+multipartFile.getOriginalFilename());
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            multipartFile.transferTo(file);
+        }catch (IOException e){
+            new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Response response=new Response();
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }

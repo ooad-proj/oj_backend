@@ -10,16 +10,18 @@ import java.io.Serializable;
 @Data
 @Getter
 @Setter
-public class Group implements Serializable {
+public class UserView implements Serializable {
 
-    private int id;
+    private String id;
     private String name;
-    public Group(){
+    private String mail;
+    public UserView(){
         super();
     }
-    public Group(int id,String name){
+    public UserView(String id,String name,String mail){
         super();
         this.id=id;
         this.name=name;
+        this.mail=mail;
     }
 }
