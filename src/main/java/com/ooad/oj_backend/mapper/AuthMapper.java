@@ -21,6 +21,12 @@ public interface AuthMapper {
     List <Auth> getOne(String userId);
 
     @Select("        SELECT\n" +
+            "        userId, classId,privilege\n" +
+            "        FROM auth\n" +
+            "        where userId=#{userId} and groupId=#{groupId}")
+    Auth getAuthById(@Param("userId")String userId,@Param("groupId")int groupId);
+
+    @Select("        SELECT\n" +
             "        classId,privilege\n" +
             "        FROM auth\n" +
             "        where classId=#{classId} and privilege==1")

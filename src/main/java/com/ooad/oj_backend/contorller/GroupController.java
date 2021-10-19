@@ -7,6 +7,9 @@ import com.ooad.oj_backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.websocket.server.PathParam;
 
 @RestController
 @RequestMapping("/api/")
@@ -39,9 +42,11 @@ public class GroupController {
         return groupService.addUserToGroup(groupId,memberId);
     }
 
-//    public ResponseEntity<?> addBatchUserToGroup(){
-//
-//    }
+  @PostMapping(value = "group/{groupId}/member/add/batch")
+    @ResponseBody
+    public ResponseEntity<?> addBatchUserToGroup(@PathParam("groupId")int groupId, MultipartFile file){
+        return groupService.addBatchUserToGroup(groupId,file);
+    }
 
     @RequestMapping(value = "group/{groupId}/member/{memberId}",method = RequestMethod.DELETE)
     @ResponseBody

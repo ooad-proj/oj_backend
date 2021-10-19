@@ -3,6 +3,7 @@ import com.ooad.oj_backend.Response;
 import com.ooad.oj_backend.mapper.AuthMapper;
 import com.ooad.oj_backend.mapper.GroupMapper;
 import com.ooad.oj_backend.mapper.UserMapper;
+import com.ooad.oj_backend.mybatis.entity.AddResult;
 import com.ooad.oj_backend.mybatis.entity.Auth;
 import com.ooad.oj_backend.mybatis.entity.Group;
 import com.ooad.oj_backend.mybatis.entity.User;
@@ -10,7 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -96,26 +103,58 @@ public class GroupService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    //    public ResponseEntity<?> addBatchUserToGroup(String groupId,String userId) {
-//        ResponseEntity responseEntity=authService.checkPermission("1-0");
-//        if(responseEntity!=null)return responseEntity;
-//        Response response=new Response();
-//        Group group=groupMapper.getOne(groupId);
-//        if(group==null){
-//            response.setCode(-1);
-//            return new ResponseEntity<>(response,HttpStatus.OK);
-//        }
-//        User user = userMapper.getOne(userId);
-//        if(user==null){
-//            response.setCode(-2);
-//            return new ResponseEntity<>(response,HttpStatus.OK);
-//        }
-//        Auth auth = new Auth(userId,groupId,0);
-//        authMapper.insert(auth);
-//        response.setCode(0);
-//        response.setMsg("delete success");
-//        return new ResponseEntity<>(response,HttpStatus.OK);
-//    }
+    public ResponseEntity<?> addBatchUserToGroup(int groupId, MultipartFile multipartFile) {
+       ResponseEntity responseEntity=authService.checkPermission("1-0");
+       Response response=new Response();
+       if(responseEntity!=null)
+           return responseEntity;
+       Group group=groupMapper.getOne(groupId);
+       if(group==null){
+           response.setCode(-1);
+           return new ResponseEntity<>(response, HttpStatus.OK);
+       }
+        File file = new File("./"+multipartFile.getOriginalFilename());
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            multipartFile.transferTo(file);
+            String line;
+            int judge=0;
+            BufferedReader reader=new BufferedReader(new FileReader(file));
+            List<AddResult> addResults=new LinkedList<>();
+            while ((line = reader.readLine()) != null) {
+                AddResult addResult=new AddResult();
+                addResult.setUserId(line);
+                User user=userMapper.getOne(line);
+                if(user!=null){
+                    judge=-2;
+                    addResult.setStatus(-1);
+                    addResults.add(addResult);
+                    continue;
+                }
+                Auth auth=authMapper.getAuthById(line,groupId);
+                if(auth!=null){
+                    judge=-2;
+                    addResult.setStatus(-2);
+                    addResults.add(addResult);
+                    continue;
+                }
+                addResult.setStatus(0);
+                Auth auth1=new Auth();
+                auth1.setClassId(groupId);
+                auth1.setPrivilege(0);
+                auth1.setUserId(line);
+                authMapper.insert(auth1);
+                addResults.add(addResult);
+            }
+            response.setContent(addResults);
+            response.setCode(judge);
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        }catch (IOException e){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
     public ResponseEntity<?> deleteUserInGroup(int groupId, String memberId) {
         ResponseEntity responseEntity = authService.checkPermission("1-0");
         if (responseEntity != null) return responseEntity;

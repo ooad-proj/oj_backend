@@ -2,6 +2,7 @@ package com.ooad.oj_backend.service;
 
 import com.ooad.oj_backend.Response;
 import com.ooad.oj_backend.mapper.UserMapper;
+import com.ooad.oj_backend.mybatis.entity.AddResult;
 import com.ooad.oj_backend.mybatis.entity.Paper;
 import com.ooad.oj_backend.mybatis.entity.User;
 import com.ooad.oj_backend.mybatis.entity.UserView;
@@ -11,9 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -112,11 +116,42 @@ public class UserService {
                 file.createNewFile();
             }
             multipartFile.transferTo(file);
+            String line;
+            int judge=0;
+            BufferedReader reader=new BufferedReader(new FileReader(file));
+            List<AddResult> addResults=new LinkedList<>();
+            while ((line = reader.readLine()) != null) {
+                String[] content = line.split(",");
+                AddResult addResult=new AddResult();
+                User temp=userMapper.getOne(content[0]);
+                addResult.setUserId(content[0]);
+                if(temp!=null){
+                    addResult.setStatus(-1);
+                    addResults.add(addResult);
+                    judge=-1;
+                    continue;
+                }
+                if(content.length!=4){
+                    addResult.setStatus(-2);
+                    addResults.add(addResult);
+                    judge=-1;
+                    continue;
+                }
+                User user=new User();
+                user.setId(content[0]);
+                user.setName(content[1]);
+                user.setMail(content[2]);
+                user.setPassWord(content[3]);
+                userMapper.insert(user);
+                addResult.setStatus(0);
+                addResults.add(addResult);
+            }
+            Response response=new Response();
+            response.setContent(addResults);
+            response.setCode(judge);
+            return new ResponseEntity<>(response,HttpStatus.OK);
         }catch (IOException e){
-            new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        Response response=new Response();
-        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }

@@ -27,8 +27,8 @@ public class UserController {
         return userService.addUser(id,name,passWord,mail);
     }
     @PostMapping(value = "user/add/batch")
-    public ResponseEntity<?> addBatchUser(MultipartFile multipartFile) {
-        return userService.addBatchUser(multipartFile);
+    public ResponseEntity<?> addBatchUser(MultipartFile file) {
+        return userService.addBatchUser(file);
     }
     @RequestMapping(value = "user/{id}",method = RequestMethod.DELETE)
     @ResponseBody
