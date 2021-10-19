@@ -91,13 +91,14 @@ public class UserService {
         response.setContent(user);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
-    public ResponseEntity<?> getUsersInformation(int page,int itemsPerPage,int totalAmount) {
-        List<UserView> users=userMapper.getAllByPage(page*itemsPerPage,itemsPerPage);
+    public ResponseEntity<?> getUsersInformation(int page,int itemsPerPage,String search) {
+        List<UserView> users=userMapper.getAllByPage((page-1)*itemsPerPage,itemsPerPage);
+        List<User>users1= userMapper.getAll();
         Paper<UserView> paper=new Paper<>();
         paper.setItemsPerPage(itemsPerPage);
         paper.setPage(page);
-        /*paper.setTotalAmount();
-        paper.setTotalPage();*/
+        paper.setTotalAmount(users1.size());
+        paper.setTotalPage(users1.size()/itemsPerPage);
         paper.setList(users);
         Response response=new Response(0,"",paper);
         return new ResponseEntity<>(response,HttpStatus.OK);

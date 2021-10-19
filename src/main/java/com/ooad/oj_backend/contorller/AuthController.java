@@ -12,7 +12,7 @@ public class AuthController {
     @Autowired
     private AuthService authService;
     @ResponseBody
-    @RequestMapping(value = "auth/login",method = RequestMethod.GET)
+    @PostMapping(value = "auth/login")
     public ResponseEntity<?> Login(String id, String passWord) {
        return authService.Login(id,passWord);
     }
@@ -41,12 +41,12 @@ public class AuthController {
     public ResponseEntity<?> changePassWord(String oldPassWord,String newPassWord) {
         return authService.changePassWord(oldPassWord, newPassWord);
     }
-    /*@RequestMapping(value = "auth/isLogin",method = RequestMethod.PUT)
+    @RequestMapping(value = "auth/isLogin",method = RequestMethod.PUT)
     public Response isLogin() {
         return authService.isLogin();
-    }*/
-    @RequestMapping(value = "auth/isLogin",method = RequestMethod.PUT)
+    }
+    /*@RequestMapping(value = "auth/isLogin",method = RequestMethod.PUT)
     public boolean isLogin() {
         return authService.isLogin();
-    }
+    }*/
 }

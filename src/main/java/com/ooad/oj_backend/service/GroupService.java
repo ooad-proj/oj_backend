@@ -6,7 +6,6 @@ import com.ooad.oj_backend.mapper.UserMapper;
 import com.ooad.oj_backend.mybatis.entity.Auth;
 import com.ooad.oj_backend.mybatis.entity.Group;
 import com.ooad.oj_backend.mybatis.entity.User;
-import com.sun.org.apache.xml.internal.security.utils.SignatureElementProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +15,14 @@ import java.util.List;
 
 @Service
 public class GroupService {
+    @Autowired
     private GroupMapper groupMapper;
+    @Autowired
     private UserMapper userMapper;
+    @Autowired
     private AuthMapper authMapper;
-    private AuthService authService = new AuthService();
+    @Autowired
+    private AuthService authService;
 
     public ResponseEntity<?> addGroup(int id, String name) {
         ResponseEntity responseEntity = authService.checkPermission("1-0");

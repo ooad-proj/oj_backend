@@ -2,9 +2,11 @@ package com.ooad.oj_backend.mapper;
 
 import com.ooad.oj_backend.mybatis.entity.Auth;
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 @Mapper
 public interface AuthMapper {
 //    @Select("       SELECT\n" +

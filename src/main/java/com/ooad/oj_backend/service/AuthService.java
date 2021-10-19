@@ -120,15 +120,15 @@ public class AuthService {
         response.setCode(0);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
-   /* public Response isLogin() {
+    public Response isLogin() {
         Response response=new Response();
         response.setCode(0);
         response.setContent(false);
         if(StpUtil.isLogin())
         response.setContent(true);
         return response;
-    }*/
-   public boolean isLogin() {
+    }
+   /*public boolean isLogin() {
       return StpUtil.isLogin();
-   }
+   }*/
 }

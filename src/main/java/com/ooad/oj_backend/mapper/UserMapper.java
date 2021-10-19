@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository("UserMapper")
+@Repository
 @Mapper
 public interface UserMapper {
     @Select("       SELECT\n" +
@@ -24,8 +24,8 @@ public interface UserMapper {
     @Select("        SELECT\n" +
             "        id, name,mail\n" +
             "        FROM User\n" +
-            "        order by id limit #{itemsPerPage} offset #{offset}")
-    List<UserView> getAllByPage(int offset,int itemsPerPage);
+            "        order by id limit #{itemsPerPage} offset #{offset} ")
+    List<UserView> getAllByPage(@Param("offset")int offset,@Param("itemsPerPage") int itemsPerPage);
 
     @Insert("       INSERT INTO\n" +
             "         User\n" +
