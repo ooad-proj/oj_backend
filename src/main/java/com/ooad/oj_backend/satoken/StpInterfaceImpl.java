@@ -39,7 +39,7 @@ public class StpInterfaceImpl implements StpInterface {
         ArrayList<String>list=new ArrayList<>();
         List<String> permissionList=getPermissionList(loginId,loginType);
         boolean isUser=true;
-        if(permissionList==null){
+        if(permissionList.size()==0){
             list.add("user");
             return list;
         }

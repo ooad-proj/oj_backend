@@ -29,20 +29,32 @@ public interface UserMapper {
 
     @Insert("       INSERT INTO\n" +
             "         User\n" +
-            "       ( id, name,mail)\n" +
+            "       ( id, name,mail,passWord)\n" +
             "       VALUES\n" +
-            "       (#{id}, #{name}, #{mail})")
+            "       (#{id}, #{name}, #{mail},#{password})")
     void insert(User user);
 
     @Update("       UPDATE\n" +
             "        User\n" +
             "       SET \n" +
             "       id = #{id}," +
-            "       name = #{name},\n" +
+            "       name = #{name}," +
+            " password=#{password},\n" +
             "       mail = #{mail}\n" +
             "       WHERE \n" +
             "       id = #{id}")
     void update(User user);
+
+    @Update("       UPDATE\n" +
+            "        User\n" +
+            "       SET \n" +
+            "       id = #{id}," +
+            "       name = #{name}," +
+            " \n" +
+            "       mail = #{mail}\n" +
+            "       WHERE \n" +
+            "       id = #{id}")
+    void updateWithoutPassWord(User user);
 
     @Delete("       DELETE FROM\n" +
             "            User\n" +

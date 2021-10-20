@@ -38,15 +38,15 @@ public class AuthController {
         return authService.getGroupInformation();
     }
     @RequestMapping(value = "auth/password",method = RequestMethod.PUT)
-    public ResponseEntity<?> changePassWord(String oldPassWord,String newPassWord) {
-        return authService.changePassWord(oldPassWord, newPassWord);
-    }
-    @RequestMapping(value = "auth/isLogin",method = RequestMethod.PUT)
-    public Response isLogin() {
-        return authService.isLogin();
+    public ResponseEntity<?> changePassWord(String oldPassword,String newPassword) {
+        return authService.changePassWord(oldPassword, newPassword);
     }
     /*@RequestMapping(value = "auth/isLogin",method = RequestMethod.PUT)
-    public boolean isLogin() {
+    public Response isLogin() {
         return authService.isLogin();
     }*/
+    @RequestMapping(value = "auth/isLogin",method = RequestMethod.GET)
+    public boolean isLogin() {
+        return authService.isLogin();
+    }
 }

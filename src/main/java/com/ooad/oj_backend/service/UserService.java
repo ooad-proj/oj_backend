@@ -1,5 +1,6 @@
 package com.ooad.oj_backend.service;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.ooad.oj_backend.Response;
 import com.ooad.oj_backend.mapper.UserMapper;
 import com.ooad.oj_backend.mybatis.entity.AddResult;
@@ -32,17 +33,21 @@ public class UserService {
        if(responseEntity!=null)return responseEntity;
         Response response=new Response();
         User user=userMapper.getOne(id);
+        if(id.equals("")||passWord.equals("")){
+            response.setCode(-2);
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        }
         if(user!=null){
             response.setCode(-1);
             return new ResponseEntity<>(response,HttpStatus.OK);
         }
-        if(id==null||passWord==null){
-            response.setCode(-2);
+        if(!checkPassWord(passWord)){
+            response.setCode(-3);
             return new ResponseEntity<>(response,HttpStatus.OK);
         }
         User newUser=new User();
         newUser.setId(id);
-        newUser.setPassWord(passWord);
+        newUser.setPassword(passWord);
         if(name==null){
             newUser.setName(id);
         }else newUser.setName(name);
@@ -68,15 +73,20 @@ public class UserService {
         response.setMsg("delete success");
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
-    public ResponseEntity<?> updateUser(String id,User user) {
+    public ResponseEntity<?> updateUser(String id,String name,String password,String mail) {
         ResponseEntity responseEntity=authService.checkPermission("1-0");
         if(responseEntity!=null)return responseEntity;
         Response response=new Response();
         User oldUser=userMapper.getOne(id);
-        if(oldUser==null){
+        if(oldUser==null||!checkPassWord(password)){
             response.setCode(-1);
             return new ResponseEntity<>(response,HttpStatus.OK);
         }
+        User user=new User();
+        user.setId(id);
+        user.setName(name);
+        user.setPassword(password);
+        user.setMail(mail);
         userMapper.update(user);
         response.setCode(0);
         response.setMsg("modify success");
@@ -96,26 +106,63 @@ public class UserService {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
     public ResponseEntity<?> getUsersInformation(int page,int itemsPerPage,String search) {
-        List<UserView> users=userMapper.getAllByPage((page-1)*itemsPerPage,itemsPerPage);
-        List<User>users1= userMapper.getAll();
-        Paper<UserView> paper=new Paper<>();
-        paper.setItemsPerPage(itemsPerPage);
-        paper.setPage(page);
-        paper.setTotalAmount(users1.size());
-        paper.setTotalPage(users1.size()/itemsPerPage);
-        paper.setList(users);
-        Response response=new Response(0,"",paper);
-        return new ResponseEntity<>(response,HttpStatus.OK);
+        if(!StpUtil.isLogin()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        if(search.equals("")) {
+            List<UserView> users = userMapper.getAllByPage((page - 1) * itemsPerPage, itemsPerPage);
+            List<User> users1 = userMapper.getAll();
+            Paper<UserView> paper = new Paper<>();
+            paper.setItemsPerPage(users.size());
+            paper.setPage(page);
+            paper.setTotalAmount(users1.size());
+            paper.setTotalPage((users1.size() / itemsPerPage) + (((users1.size() % itemsPerPage) == 0) ? 0 : 1));
+            paper.setList(users);
+            Response response = new Response(0, "", paper);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }User user=userMapper.getOne(search);
+        Paper<UserView> paper = new Paper<>();
+        if(user!=null) {
+            UserView userView = new UserView();
+            userView.setId(user.getId());
+            userView.setName(user.getName());
+            userView.setMail(user.getMail());
+            List<UserView> users = new LinkedList<>();
+            users.add(userView);
+
+            paper.setItemsPerPage(1);
+            paper.setPage(1);
+            paper.setTotalAmount(1);
+            paper.setTotalPage(1);
+            paper.setList(users);
+        }else {
+            paper.setItemsPerPage(0);
+            paper.setPage(1);
+            paper.setTotalAmount(0);
+            paper.setTotalPage(1);
+            paper.setList(new LinkedList<>());
+        }
+            Response response = new Response(0, "", paper);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
     }
     public ResponseEntity<?> addBatchUser(MultipartFile multipartFile){
         ResponseEntity responseEntity=authService.checkPermission("1-0");
         if(responseEntity!=null)return responseEntity;
-        File file = new File("./"+multipartFile.getOriginalFilename());
+        File file = new File("C:\\Users\\acer\\IdeaProjects\\oj_backend\\"+multipartFile.getOriginalFilename());
         try {
             if (!file.exists()) {
                 file.createNewFile();
             }
-            multipartFile.transferTo(file);
+            try {
+                multipartFile.transferTo(file);//保存文件
+            } catch (IllegalStateException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
             String line;
             int judge=0;
             BufferedReader reader=new BufferedReader(new FileReader(file));
@@ -131,17 +178,26 @@ public class UserService {
                     judge=-1;
                     continue;
                 }
-                if(content.length!=4){
+                if(content[0].equals("")||content[3].equals("")){
                     addResult.setStatus(-2);
+                    addResults.add(addResult);
+                    judge=-1;
+                    continue;
+                }
+                if(!checkPassWord(content[3])){
+                    addResult.setStatus(-3);
                     addResults.add(addResult);
                     judge=-1;
                     continue;
                 }
                 User user=new User();
                 user.setId(content[0]);
-                user.setName(content[1]);
+                if(content[1].equals("")){
+                    user.setName(content[0]);
+                }
+                else user.setName(content[1]);
                 user.setMail(content[2]);
-                user.setPassWord(content[3]);
+                user.setPassword(content[3]);
                 userMapper.insert(user);
                 addResult.setStatus(0);
                 addResults.add(addResult);
@@ -153,5 +209,13 @@ public class UserService {
         }catch (IOException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+    public static boolean checkPassWord(String passWord){
+        int length=passWord.length();
+        if(length<3||length>20){
+            return false;
+        }
+        String regex = "^[0-9a-zA-Z]{1,}$";
+        return passWord.matches(regex);
     }
 }

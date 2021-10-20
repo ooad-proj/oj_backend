@@ -1,6 +1,7 @@
 package com.ooad.oj_backend.mapper;
 
 import com.ooad.oj_backend.mybatis.entity.Auth;
+import com.ooad.oj_backend.mybatis.entity.RoleView;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
@@ -25,6 +26,11 @@ public interface AuthMapper {
             "        FROM auth\n" +
             "        where userId=#{userId} and groupId=#{groupId}")
     Auth getAuthById(@Param("userId")String userId,@Param("groupId")int groupId);
+
+    @Select("SELECT classId as groupId, c.name as groupName,(case (max(privilege)) " +
+            "when 1 then 'assistant' when 0 then 'student' end)as role " +
+            "FROM auth join class c on c.id = auth.classId where userId=#{userId} group by classId")
+    List<RoleView> getAuthListById(String userId);
 
     @Select("        SELECT\n" +
             "        classId,privilege\n" +

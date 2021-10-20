@@ -23,8 +23,8 @@ public class UserController {
 
     @PostMapping ("user")
     @ResponseBody
-    public ResponseEntity<?> addUser(String id,@RequestParam(value = "name",required = false)String name,String passWord,@RequestParam(value = "name",required = false) String mail) {
-        return userService.addUser(id,name,passWord,mail);
+    public ResponseEntity<?> addUser(@RequestParam(value = "id",required = false)String id,@RequestParam(value = "name",required = false)String name,@RequestParam(value = "password",required = false)String password,@RequestParam(value = "name",required = false) String mail) {
+        return userService.addUser(id,name,password,mail);
     }
     @PostMapping(value = "user/add/batch")
     public ResponseEntity<?> addBatchUser(MultipartFile file) {
@@ -36,8 +36,8 @@ public class UserController {
         return userService.deleteUser(id);
     }
     @RequestMapping(value = "user/{id}",method = RequestMethod.PUT)
-    public ResponseEntity<?> updateUser(@PathVariable String id,@RequestBody User user) {
-        return userService.updateUser(id,user);
+    public ResponseEntity<?> updateUser(@PathVariable String id, String name,String password,String mail) {
+        return userService.updateUser(id,name,password,mail);
     }
     @RequestMapping(value = "user/details/{id}",method = RequestMethod.GET)
     public ResponseEntity<?> getUserInformation(@PathVariable String id) {
