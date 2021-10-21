@@ -42,6 +42,18 @@ public interface GroupMapper {
             "       id =#{id}")
     void delete(int id);
 
+    @Select("        SELECT\n" +
+            "       count(*)\n" +
+            "        FROM auth\n" +
+            "        where classId =#{classId}")
+    int getMemberNumber(int classId);
+
+    @Select("        SELECT\n" +
+            "       count(*)\n" +
+            "        FROM auth\n" +
+            "        where classId =#{classId} and privilege =1 ")
+    int getAssistantNumber(int classId);
+
 //    @Delete("       DELETE FROM\n" +
 //            "            class\n" +
 //            "       WHERE \n" +

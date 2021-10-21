@@ -24,8 +24,14 @@ public interface AuthMapper {
     @Select("        SELECT\n" +
             "        userId, classId,privilege\n" +
             "        FROM auth\n" +
-            "        where userId=#{userId} and groupId=#{groupId}")
+            "        where userId=#{userId} and classId=#{groupId}")
     Auth getAuthById(@Param("userId")String userId,@Param("groupId")int groupId);
+
+    @Select("        SELECT\n" +
+            "        userId, classId,privilege\n" +
+            "        FROM auth\n" +
+            "        where userId=#{userId} and classId=#{groupId}")
+    Auth getOneAuth(@Param("userId")String userId, @Param("groupId")int groupId);
 
     @Select("SELECT classId as groupId, c.name as groupName,(case (max(privilege)) " +
             "when 1 then 'assistant' when 0 then 'student' end)as role " +
@@ -33,20 +39,20 @@ public interface AuthMapper {
     List<RoleView> getAuthListById(String userId);
 
     @Select("        SELECT\n" +
-            "        classId,privilege\n" +
+            "        UserId,classId,privilege\n" +
             "        FROM auth\n" +
-            "        where classId=#{classId} and privilege==1")
+            "        where classId=#{classId} and privilege=1")
     List <Auth> getClassAssistant(int classId);
 
     @Select("        SELECT\n" +
-            "        classId,privilege\n" +
+            "        UserId,classId,privilege\n" +
             "        FROM auth\n" +
-            "        where classId=#{classId} and privilege==1 or privilege==0")
+            "        where classId=#{classId} and privilege=1 or privilege=0")
     List <Auth> getClassMembers(int classId);
 
     @Insert("       INSERT INTO\n" +
             "         auth\n" +
-            "       (userId, classId,privilege)\n" +
+            "       (UserId, classId,privilege)\n" +
             "       VALUES\n" +
             "       (#{userId},#{classId},#{privilege})")
     void insert(Auth auth);
@@ -64,6 +70,6 @@ public interface AuthMapper {
     @Delete("       DELETE FROM\n" +
             "            auth\n" +
             "       WHERE \n" +
-            "       id =#{id} and classId=#{classId} and privilege =#{privilege} ")
+            "       UserId =#{UserId} and classId=#{classId} and privilege =#{privilege} ")
     void delete(Auth auth);
 }
