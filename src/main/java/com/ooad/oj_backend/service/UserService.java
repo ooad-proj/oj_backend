@@ -17,7 +17,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -111,12 +110,12 @@ public class UserService {
         }
         if(search.equals("")) {
             List<UserView> users = userMapper.getAllByPage((page - 1) * itemsPerPage, itemsPerPage);
-            List<User> users1 = userMapper.getAll();
+            int count=userMapper.getAll();
             Paper<UserView> paper = new Paper<>();
             paper.setItemsPerPage(users.size());
             paper.setPage(page);
-            paper.setTotalAmount(users1.size());
-            paper.setTotalPage((users1.size() / itemsPerPage) + (((users1.size() % itemsPerPage) == 0) ? 0 : 1));
+            paper.setTotalAmount(count);
+            paper.setTotalPage((count/ itemsPerPage) + (((count % itemsPerPage) == 0) ? 0 : 1));
             paper.setList(users);
             Response response = new Response(0, "", paper);
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -129,7 +128,6 @@ public class UserService {
             userView.setMail(user.getMail());
             List<UserView> users = new LinkedList<>();
             users.add(userView);
-
             paper.setItemsPerPage(1);
             paper.setPage(1);
             paper.setTotalAmount(1);
@@ -144,7 +142,6 @@ public class UserService {
         }
             Response response = new Response(0, "", paper);
         return new ResponseEntity<>(response, HttpStatus.OK);
-
     }
     public ResponseEntity<?> addBatchUser(MultipartFile multipartFile){
         ResponseEntity responseEntity=authService.checkPermission("1-0");

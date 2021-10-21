@@ -15,4 +15,11 @@ public class Paper<T> {
     int totalAmount;
     int totalPage;
     List<T> list;
+    public Paper(){
+    }public Paper(int page,int itemsPerPage,int totalAmount,int totalPage){
+        this.page=page;
+        this.itemsPerPage=itemsPerPage;
+        this.totalAmount=totalAmount;
+        this.totalPage=totalPage;
+    }
 }

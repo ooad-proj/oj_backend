@@ -10,10 +10,8 @@ import java.util.List;
 @Repository
 @Mapper
 public interface UserMapper {
-    @Select("       SELECT\n" +
-            "        id, name,mail\n" +
-            "FROM user order by id")
-    List<User> getAll();
+    @Select("select count(*) from user")
+    int getAll();
 
     @Select("        SELECT\n" +
             "        id, name,password,mail\n" +
