@@ -117,7 +117,7 @@ public class GroupService {
             response.setCode(-1);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
-        File file = new File("C:\\Users\\hp\\Desktop"+multipartFile.getOriginalFilename());
+        File file = new File(Config.path+File.separator+multipartFile.getOriginalFilename());
         try {
             if (!file.exists()) {
                 file.createNewFile();

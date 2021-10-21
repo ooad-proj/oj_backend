@@ -3,10 +3,7 @@ package com.ooad.oj_backend.service;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ooad.oj_backend.Response;
 import com.ooad.oj_backend.mapper.UserMapper;
-import com.ooad.oj_backend.mybatis.entity.AddResult;
-import com.ooad.oj_backend.mybatis.entity.Paper;
-import com.ooad.oj_backend.mybatis.entity.User;
-import com.ooad.oj_backend.mybatis.entity.UserView;
+import com.ooad.oj_backend.mybatis.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -146,7 +143,7 @@ public class UserService {
     public ResponseEntity<?> addBatchUser(MultipartFile multipartFile){
         ResponseEntity responseEntity=authService.checkPermission("1-0");
         if(responseEntity!=null)return responseEntity;
-        File file = new File("C:\\Users\\acer\\IdeaProjects\\oj_backend\\"+multipartFile.getOriginalFilename());
+        File file = new File(Config.path+File.separator+multipartFile.getOriginalFilename());
         try {
             if (!file.exists()) {
                 file.createNewFile();
