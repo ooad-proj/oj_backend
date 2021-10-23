@@ -143,7 +143,8 @@ public class UserService {
         try {
             Path p= Paths.get(Config.path);
             Files.createDirectories(p);
-            File file = new File(Config.path+File.separator+multipartFile.getOriginalFilename());
+            Files.createDirectories(p.resolve((String) StpUtil.getLoginId()));
+            File file = new File(Config.path+File.separator+(String) StpUtil.getLoginId()+File.separator+multipartFile.getOriginalFilename());
             if (!file.exists()) {
                 file.createNewFile();
             }
@@ -198,6 +199,10 @@ public class UserService {
             Response response=new Response();
             response.setContent(addResults);
             response.setCode(judge);
+            file.delete();
+            File file1=new File(String.valueOf(p.resolve((String) StpUtil.getLoginId())));
+            file1.delete();
+            reader.close();
             return new ResponseEntity<>(response,HttpStatus.OK);
         }catch (IOException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
