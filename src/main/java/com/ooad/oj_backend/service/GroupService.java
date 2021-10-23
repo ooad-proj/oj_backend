@@ -412,7 +412,7 @@ public class GroupService {
                     if (tem.charAt(0) == '0') {
                         continue;
                     } else {
-                        int classId = Integer.parseInt(String.valueOf(tem.charAt(2)));
+                        int classId = Integer.parseInt(tem.substring(2));
                         classes.add(classId);
                     }
                 }
