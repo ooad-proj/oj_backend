@@ -34,7 +34,7 @@ public interface GroupMapper {
             "        id, name\n" +
             "        FROM class\n" +
             "        where name like '%${search}%' and id!=0 limit #{itemsPerPage} offset #{offset}")
-    List<Group>  searchClass(@Param("search") String search,@Param("offset")int offset,@Param("itemsPerPage") int itemsPerPage);
+    List<Group> searchClass(@Param("search") String search,@Param("offset")int offset,@Param("itemsPerPage") int itemsPerPage);
 
     @Select("        SELECT\n" +
             "       count(*)\n" +

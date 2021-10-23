@@ -90,4 +90,10 @@ public interface AuthMapper {
             "       WHERE \n" +
             "       UserId =#{UserId} and classId=#{classId} and privilege =#{privilege} ")
     void delete(Auth auth);
+
+    @Delete("       DELETE FROM\n" +
+            "            auth\n" +
+            "       WHERE \n" +
+            "       UserId =#{UserId}")
+    void deletePeople(String UserId);
 }

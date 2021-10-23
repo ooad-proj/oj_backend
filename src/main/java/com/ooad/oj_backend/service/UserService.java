@@ -65,12 +65,18 @@ public class UserService {
     public ResponseEntity<?> deleteUser(String id) {
         ResponseEntity responseEntity=authService.checkPermission("1-0");
         if(responseEntity!=null)return responseEntity;
+
         Response response=new Response();
+        if(StpUtil.getLoginId().equals(id)){
+            response.setCode(-100);
+            return new ResponseEntity<>(response,HttpStatus.OK);
+        }
         User user=userMapper.getOne(id);
         if(user==null){
             response.setCode(-1);
             return new ResponseEntity<>(response,HttpStatus.OK);
         }
+        authMapper.deletePeople(id);
         userMapper.delete(id);
         response.setCode(0);
         response.setMsg("delete success");
