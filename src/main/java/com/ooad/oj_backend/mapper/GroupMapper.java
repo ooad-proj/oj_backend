@@ -13,6 +13,10 @@ public interface GroupMapper {
             "        id, name\n" +
             "FROM class order by id limit #{itemsPerPage} offset #{offset}")
     List<Group> getAll(@Param("offset")int offset,@Param("itemsPerPage") int itemsPerPage);
+    @Select("       SELECT\n" +
+            "        count(*)\n" +
+            "FROM class order by id ")
+    int getAllNumber();
 
     @Select("        SELECT\n" +
             "        id, name\n" +
@@ -31,6 +35,12 @@ public interface GroupMapper {
             "        FROM class\n" +
             "        where name like '%${search}%' limit #{itemsPerPage} offset #{offset}")
     List<Group>  searchClass(@Param("search") String search,@Param("offset")int offset,@Param("itemsPerPage") int itemsPerPage);
+
+    @Select("        SELECT\n" +
+            "       count(*)\n" +
+            "        FROM class\n" +
+            "        where name like '%${search}%' ")
+    int  searchClassNumber(@Param("search") String search);
 
     @Insert("       INSERT INTO\n" +
             "         class\n" +

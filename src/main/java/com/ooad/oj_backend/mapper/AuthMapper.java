@@ -35,6 +35,12 @@ public interface AuthMapper {
             "        where userId like '%${userId}%' and classId=#{groupId} limit #{itemsPerPage} offset #{offset}")
     List<Auth> getOneAuth(@Param("userId")String userId, @Param("groupId")int groupId,@Param("offset")int offset,@Param("itemsPerPage") int itemsPerPage);
 
+    @Select("        SELECT\n" +
+            "        count(*)\n" +
+            "        FROM auth\n" +
+            "        where userId like '%${userId}%' and classId=#{groupId} ")
+    int getNumber(@Param("userId")String userId, @Param("groupId")int groupId);
+
     @Select("SELECT classId as groupId, c.name as groupName,(case (max(privilege)) " +
             "when 1 then 'assistant' when 0 then 'student' end)as role " +
             "FROM auth join class c on c.id = auth.classId where userId=#{userId} group by classId")
@@ -51,6 +57,12 @@ public interface AuthMapper {
             "        FROM auth\n" +
             "        where classId=#{classId} and privilege=0 limit #{itemsPerPage} offset #{offset}")
     List <Auth> getClassMembers(@Param("classId")int classId,@Param("offset")int offset,@Param("itemsPerPage")int itemsPerPage);
+
+    @Select("        SELECT\n" +
+            "        count(*)\n" +
+            "        FROM auth\n" +
+            "        where classId=#{classId} and privilege=0 ")
+    int getClassNumber(@Param("classId")int classId);
 
     @Insert("       INSERT INTO\n" +
             "         auth\n" +

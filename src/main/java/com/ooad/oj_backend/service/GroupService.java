@@ -298,9 +298,9 @@ public class GroupService {
 
 
     public ResponseEntity<?> getUsersInGroup(int groupId, int page,int itemsPerPage,String search) {
-
-        ResponseEntity responseEntity2 = authService.checkPermission("0-"+groupId);
-        if (responseEntity2 != null ){
+        ResponseEntity responseEntity = authService.checkPermission("0-"+groupId);
+        ResponseEntity responseEntity2 = authService.checkPermission("1-"+groupId);
+        if (responseEntity2 != null && responseEntity!=null){
             ResponseEntity responseEntity1 = authService.checkPermission("1-0");
             if (responseEntity1 != null ){
                 return responseEntity2;
@@ -315,7 +315,7 @@ public class GroupService {
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
             List<Auth> auths = authMapper.getClassMembers(groupId,(page - 1) * itemsPerPage, itemsPerPage);
-
+            int length=authMapper.getClassNumber(groupId);
            /* if (auths.size() == 0) {
                 response.setCode(-1);
                 return new ResponseEntity<>(response, HttpStatus.OK);
@@ -336,14 +336,15 @@ public class GroupService {
             Paper paper = new Paper();
             paper.setPage(page);
             paper.setItemsPerPage(itemsPerPage);
-            paper.setTotalAmount(totalAmount);
-            paper.setTotalPage((resList.size() / itemsPerPage) + (((resList.size() % itemsPerPage) == 0) ? 0 : 1));
+            paper.setTotalAmount(length);
+            paper.setTotalPage((length/ itemsPerPage) + (((length% itemsPerPage) == 0) ? 0 : 1));
             paper.setList(resList);
             response.setContent(paper);
             response.setCode(0);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }else {
             Response response = new Response();
+            int total=authMapper.getNumber(search,groupId);
             List<Auth> auths = authMapper.getOneAuth(search, groupId,page,itemsPerPage);
             if (auths == null) {
                 Paper paper = new Paper();
@@ -355,13 +356,10 @@ public class GroupService {
                 response.setContent(paper);
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
-
-            int totalAmount = 0;
             ArrayList<ContentItem> resList = new ArrayList<>();
             for (Auth auth : auths) {
                 User user = userMapper.getOne(auth.getUserId());
                 if (auth.getPrivilege() == 0) {
-                    totalAmount++;
                     ContentItem tem = new ContentItem();
                     tem.id = auth.getUserId();
                     tem.name = user.getName();
@@ -371,9 +369,9 @@ public class GroupService {
             }
             Paper paper = new Paper();
             paper.setPage(page);
-            paper.setTotalPage((totalAmount / itemsPerPage) + (((totalAmount % itemsPerPage) == 0) ? 0 : 1));
+            paper.setTotalPage((total / itemsPerPage) + (((total % itemsPerPage) == 0) ? 0 : 1));
             paper.setItemsPerPage(itemsPerPage);
-            paper.setTotalAmount(totalAmount);
+            paper.setTotalAmount(total);
             paper.setList(resList);
             response.setContent(paper);
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -400,8 +398,10 @@ public class GroupService {
         List<GroupListItem> groupListItems = new ArrayList<>();
 
         ArrayList<Integer> classes = new ArrayList<>();
+        int length=0;
         if(role.equals("teacher")){
             List<Group> groups = groupMapper.getAll(page,itemsPerPage);
+            length=groupMapper.getAllNumber();
             for(int i =0 ; i<groups.size();i++){
                 classes.add(groups.get(i).getId());
             }
@@ -421,6 +421,7 @@ public class GroupService {
         if (!search.equals("")) {
             ArrayList<Integer>searchList=new ArrayList<>();
             List<Group> groups=groupMapper.searchClass(search,page,itemsPerPage);
+            length=groupMapper.searchClassNumber(search);
                 for(Integer c:classes){
                     for(Group group:groups){
                         int id=group.getId();
@@ -448,9 +449,9 @@ public class GroupService {
 
         Paper paper = new Paper();
         paper.setList(groupListItems);
-        paper.setTotalAmount(groupListItems.size());
+        paper.setTotalAmount(length);
         paper.setItemsPerPage(itemsPerPage);
-        paper.setTotalPage((groupListItems.size() / itemsPerPage) + (((groupListItems.size() % itemsPerPage) == 0) ? 0 : 1));
+        paper.setTotalPage((length / itemsPerPage) + (((length % itemsPerPage) == 0) ? 0 : 1));
         paper.setPage(page);
         Response response = new Response();
         response.setContent(paper);
