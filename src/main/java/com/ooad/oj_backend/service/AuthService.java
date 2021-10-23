@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -153,7 +154,9 @@ public class AuthService {
         response.setContent(true);
         return response;
     }*/
-   public boolean isLogin() {
-      return StpUtil.isLogin();
+   public HashMap<String,Boolean> isLogin() {
+       HashMap<String,Boolean>isLogin=new HashMap<>();
+       isLogin.put("isLogin",StpUtil.isLogin());
+      return isLogin;
    }
 }

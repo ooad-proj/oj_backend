@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+
 @RestController
 @RequestMapping("/api/")
 public class AuthController {
@@ -46,7 +48,7 @@ public class AuthController {
         return authService.isLogin();
     }*/
     @RequestMapping(value = "auth/isLogin",method = RequestMethod.GET)
-    public boolean isLogin() {
+    public HashMap<String, Boolean> isLogin() {
         return authService.isLogin();
     }
 }
