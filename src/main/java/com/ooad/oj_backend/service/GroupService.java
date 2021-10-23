@@ -213,9 +213,19 @@ public class GroupService {
             response.setCode(-1);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
+        Auth auth1=authMapper.getAuthById(assistantId,groupId);
+        if(auth1.getPrivilege()==1){
+            response.setCode(-2);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
         User user = userMapper.getOne(assistantId);
         if (user == null) {
-            response.setCode(-2);
+            response.setCode(-3);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        Auth auth2=authMapper.getTeacher(assistantId);
+        if(auth2!=null){
+            response.setCode(-4);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         Auth auth = new Auth();
@@ -273,7 +283,7 @@ public class GroupService {
         List<Auth> auths = authMapper.getClassAssistant(groupId);
 
         if(auths.size()==0){
-            response.setCode(-1);
+            response.setCode(0);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         ArrayList<ContentItem> res = new ArrayList<>();
