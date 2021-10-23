@@ -288,6 +288,9 @@ public class GroupService {
 
         if(auths.size()==0){
             response.setCode(0);
+            HashMap<String,Object>hashMap=new HashMap<>();
+            hashMap.put("totalAmount",0);
+            hashMap.put("list",new ArrayList<>());
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         ArrayList<ContentItem> res = new ArrayList<>();
