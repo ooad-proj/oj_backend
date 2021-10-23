@@ -45,7 +45,7 @@ public class StpInterfaceImpl implements StpInterface {
         }
         for (String permission:permissionList){
             if(permission.equals("1-0")){
-                list.add("admin");
+                list.add("teacher");
                 isUser=false;
                 break;
             }
