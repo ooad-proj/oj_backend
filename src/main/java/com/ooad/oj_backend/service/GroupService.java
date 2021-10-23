@@ -214,13 +214,15 @@ public class GroupService {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         Auth auth1=authMapper.getAuthById(assistantId,groupId);
-        if(auth1.getPrivilege()==1){
-            response.setCode(-2);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
-        if(auth1.getPrivilege()==0){
-            response.setCode(-5);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+        if(auth1!=null) {
+            if (auth1.getPrivilege() == 1) {
+                response.setCode(-2);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }
+            if (auth1.getPrivilege() == 0) {
+                response.setCode(-5);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }
         }
         User user = userMapper.getOne(assistantId);
         if (user == null) {
@@ -291,6 +293,7 @@ public class GroupService {
             HashMap<String,Object>hashMap=new HashMap<>();
             hashMap.put("totalAmount",0);
             hashMap.put("list",new ArrayList<>());
+            response.setContent(hashMap);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         ArrayList<ContentItem> res = new ArrayList<>();
