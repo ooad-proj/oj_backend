@@ -11,11 +11,11 @@ import java.util.List;
 public interface GroupMapper {
     @Select("       SELECT\n" +
             "        id, name\n" +
-            "FROM class order by id limit #{itemsPerPage} offset #{offset}")
+            "FROM class where id!=0 order by id limit #{itemsPerPage} offset #{offset}")
     List<Group> getAll(@Param("offset")int offset,@Param("itemsPerPage") int itemsPerPage);
     @Select("       SELECT\n" +
             "        count(*)\n" +
-            "FROM class order by id ")
+            "FROM class where id!=0 order by id ")
     int getAllNumber();
 
     @Select("        SELECT\n" +
@@ -33,13 +33,13 @@ public interface GroupMapper {
     @Select("        SELECT\n" +
             "        id, name\n" +
             "        FROM class\n" +
-            "        where name like '%${search}%' limit #{itemsPerPage} offset #{offset}")
+            "        where name like '%${search}%' and id!=0 limit #{itemsPerPage} offset #{offset}")
     List<Group>  searchClass(@Param("search") String search,@Param("offset")int offset,@Param("itemsPerPage") int itemsPerPage);
 
     @Select("        SELECT\n" +
             "       count(*)\n" +
             "        FROM class\n" +
-            "        where name like '%${search}%' ")
+            "        where name and id!=0 like '%${search}%' ")
     int  searchClassNumber(@Param("search") String search);
 
     @Insert("       INSERT INTO\n" +
@@ -61,7 +61,7 @@ public interface GroupMapper {
     @Delete("       DELETE FROM\n" +
             "            class\n" +
             "       WHERE \n" +
-            "       id =#{id}")
+            "       id =#{id} and id!=0")
     void delete(int id);
 
     @Select("        SELECT\n" +
