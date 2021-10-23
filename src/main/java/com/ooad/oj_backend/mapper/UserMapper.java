@@ -20,6 +20,8 @@ public interface UserMapper {
             "        where id=#{id}")
     User getOne(String id);
 
+
+
     @Select("        SELECT\n" +
             "        id, name,mail\n" +
             "        FROM User\n" +

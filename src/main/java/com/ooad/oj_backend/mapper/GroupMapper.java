@@ -11,8 +11,8 @@ import java.util.List;
 public interface GroupMapper {
     @Select("       SELECT\n" +
             "        id, name\n" +
-            "FROM class order by id")
-    List<Group> getAll();
+            "FROM class order by id limit #{itemsPerPage} offset #{offset}")
+    List<Group> getAll(@Param("offset")int offset,@Param("itemsPerPage") int itemsPerPage);
 
     @Select("        SELECT\n" +
             "        id, name\n" +
@@ -29,8 +29,8 @@ public interface GroupMapper {
     @Select("        SELECT\n" +
             "        id, name\n" +
             "        FROM class\n" +
-            "        where name like '%${search}%'")
-    List<Group>  searchClass(String search);
+            "        where name like '%${search}%' limit #{itemsPerPage} offset #{offset}")
+    List<Group>  searchClass(@Param("search") String search,@Param("offset")int offset,@Param("itemsPerPage") int itemsPerPage);
 
     @Insert("       INSERT INTO\n" +
             "         class\n" +
