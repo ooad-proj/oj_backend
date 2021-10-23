@@ -67,7 +67,7 @@ public interface GroupMapper {
     @Select("        SELECT\n" +
             "       count(*)\n" +
             "        FROM auth\n" +
-            "        where classId =#{classId}")
+            "        where classId =#{classId}  and privilege =0")
     int getMemberNumber(int classId);
 
 
