@@ -20,6 +20,18 @@ public interface GroupMapper {
             "        where id=#{id}")
     Group getOne(int id);
 
+    @Select("        SELECT\n" +
+            "        id, name\n" +
+            "        FROM class\n" +
+            "        where name=#{name}")
+    Group getOneByName(String name);
+
+    @Select("        SELECT\n" +
+            "        id, name\n" +
+            "        FROM class\n" +
+            "        where name like '%${search}%'")
+    List<Group>  searchClass(String search);
+
     @Insert("       INSERT INTO\n" +
             "         class\n" +
             "       (name)\n" +
@@ -47,6 +59,7 @@ public interface GroupMapper {
             "        FROM auth\n" +
             "        where classId =#{classId}")
     int getMemberNumber(int classId);
+
 
     @Select("        SELECT\n" +
             "       count(*)\n" +

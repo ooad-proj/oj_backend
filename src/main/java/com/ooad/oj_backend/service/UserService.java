@@ -119,20 +119,14 @@ public class UserService {
             paper.setList(users);
             Response response = new Response(0, "", paper);
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }User user=userMapper.getOne(search);
+        }List<UserView> userList=userMapper.Search(search);
         Paper<UserView> paper = new Paper<>();
-        if(user!=null) {
-            UserView userView = new UserView();
-            userView.setId(user.getId());
-            userView.setName(user.getName());
-            userView.setMail(user.getMail());
-            List<UserView> users = new LinkedList<>();
-            users.add(userView);
+        if(userList!=null) {
             paper.setItemsPerPage(1);
             paper.setPage(1);
             paper.setTotalAmount(1);
             paper.setTotalPage(1);
-            paper.setList(users);
+            paper.setList(userList);
         }else {
             paper.setItemsPerPage(0);
             paper.setPage(1);

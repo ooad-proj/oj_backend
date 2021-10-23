@@ -17,14 +17,14 @@ public class GroupController {
 
     @PostMapping("group/{name}")
     @ResponseBody
-    public ResponseEntity<?> addGroup(int id, @RequestParam(value = "name", required = false) String name) {
-        return groupService.addGroup(id, name);
+    public ResponseEntity<?> addGroup( @RequestParam(value = "name", required = false) String name) {
+        return groupService.addGroup(name);
     }
 
     @RequestMapping(value = "group/{groupId}", method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseEntity<?> updateGroup(@PathVariable int id, @RequestParam(value = "newName", required = false) String newName) {
-        return groupService.addGroup(id, newName);
+    public ResponseEntity<?> updateGroup(@PathVariable int groupId, @RequestParam(value = "newName", required = false) String newName) {
+        return groupService.updateGroup(groupId, newName);
     }
 
     @RequestMapping(value = "group/{groupId}", method = RequestMethod.DELETE)

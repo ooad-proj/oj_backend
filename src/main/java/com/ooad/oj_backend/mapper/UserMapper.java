@@ -23,6 +23,11 @@ public interface UserMapper {
     @Select("        SELECT\n" +
             "        id, name,mail\n" +
             "        FROM User\n" +
+            "        where id like '%${id}%';")
+    List<UserView> Search(String id);
+    @Select("        SELECT\n" +
+            "        id, name,mail\n" +
+            "        FROM User\n" +
             "        order by id limit #{itemsPerPage} offset #{offset} ")
     List<UserView> getAllByPage(@Param("offset")int offset,@Param("itemsPerPage") int itemsPerPage);
 

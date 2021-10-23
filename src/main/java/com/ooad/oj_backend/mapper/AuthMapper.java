@@ -21,6 +21,8 @@ public interface AuthMapper {
             "        where userId=#{userId}")
     List <Auth> getOne(String userId);
 
+
+
     @Select("        SELECT\n" +
             "        userId, classId,privilege\n" +
             "        FROM auth\n" +
@@ -47,7 +49,7 @@ public interface AuthMapper {
     @Select("        SELECT\n" +
             "        UserId,classId,privilege\n" +
             "        FROM auth\n" +
-            "        where classId=#{classId} and privilege=1 or privilege=0")
+            "        where classId like '%${classId}%' and privilege=1 or privilege=0")
     List <Auth> getClassMembers(int classId);
 
     @Insert("       INSERT INTO\n" +

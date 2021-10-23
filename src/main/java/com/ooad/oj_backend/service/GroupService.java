@@ -32,27 +32,24 @@ public class GroupService {
     @Autowired
     private AuthService authService;
 
-    public ResponseEntity<?> addGroup(int id, String name) {
+    public ResponseEntity<?> addGroup(String name) {
         ResponseEntity responseEntity = authService.checkPermission("1-0");
         if (responseEntity != null) return responseEntity;
         Response response = new Response();
-        Group group = groupMapper.getOne(id);
+        Group group = groupMapper.getOneByName(name);
         if (group != null) {
             response.setCode(-1);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         Group newGroup = new Group();
-        newGroup.setId(id);
-        if (name == null) {
-            newGroup.setName(String.valueOf(id));
-        } else newGroup.setName(name);
+        newGroup.setName(name);
         groupMapper.insert(newGroup);
         response.setCode(0);
         response.setMsg("add group success");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> updateGroup(int id, String name, Group group) {
+    public ResponseEntity<?> updateGroup(int id, String name) {
         ResponseEntity responseEntity = authService.checkPermission("1-0");
         if (responseEntity != null) return responseEntity;
         Response response = new Response();
@@ -375,9 +372,7 @@ public class GroupService {
                 classes.add(groups.get(i).getId());
             }
         }else {
-            if (!search.equals("")) {
-                classes.add(Integer.parseInt(search));
-            }else {
+
                 for (int i = 0; i < per.size(); i++) {
                     String tem = (String) per.get(i);
                     if (tem.charAt(0) == '0') {
@@ -387,10 +382,23 @@ public class GroupService {
                         classes.add(classId);
                     }
                 }
-            }
+
         }
+        if (!search.equals("")) {
+            ArrayList<Integer>searchList=new ArrayList<>();
+            List<Group> groups=groupMapper.searchClass(search);
+                for(Integer c:classes){
+                boolean flag = false;
+                    for(Group group:groups){
+                        int id=group.getId();
+                        if(c==id){
+                           searchList.add(c);
+                           break;
+                        }
+                    }
+                }classes=searchList;
 
-
+        }
         if (classes.size() != 0) {
             for (int i = 0; i < classes.size(); i++) {
                 GroupListItem tem = new GroupListItem();
