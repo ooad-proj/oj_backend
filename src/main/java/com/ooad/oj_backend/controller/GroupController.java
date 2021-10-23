@@ -52,9 +52,9 @@ public class GroupController {
         return groupService.deleteUserInGroup(groupId,memberId);
     }
 
-    @RequestMapping(value = "group/{groupId}/assistant/{assistantId}", method = RequestMethod.PUT)
+    @PostMapping(value = "group/{groupId}/assistant/{assistantId}")
     @ResponseBody
-    public ResponseEntity<?> addAssistantToGroup(@PathVariable int groupId,@PathVariable  String assistantId) {
+    public ResponseEntity<?> addAssistantToGroup(@PathVariable("groupId") int groupId,@PathVariable  String assistantId) {
         return groupService.addAssistantToGroup(groupId,assistantId);
     }
 
