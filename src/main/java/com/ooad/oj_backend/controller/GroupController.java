@@ -17,7 +17,7 @@ public class GroupController {
 
     @PostMapping("group/{name}")
     @ResponseBody
-    public ResponseEntity<?> addGroup( @RequestParam(value = "name", required = false) String name) {
+    public ResponseEntity<?> addGroup( @PathVariable(value = "name", required = false) String name) {
         return groupService.addGroup(name);
     }
 
@@ -48,7 +48,7 @@ public class GroupController {
 
     @RequestMapping(value = "group/{groupId}/member/{memberId}",method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<?> deleteUserInGroup(@PathVariable int groupId, @PathVariable String memberId) {
+    public ResponseEntity<?> deleteUserInGroup(@PathVariable("groupId") int groupId, @PathVariable("memberId") String memberId) {
         return groupService.deleteUserInGroup(groupId,memberId);
     }
 
@@ -60,7 +60,7 @@ public class GroupController {
 
     @RequestMapping(value = "group/{groupId}/assistant/{assistantId}",method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<?> deleteAssistantInGroup(@PathVariable int groupId, @PathVariable String assistantId) {
+    public ResponseEntity<?> deleteAssistantInGroup(@PathVariable("groupId") int groupId, @PathVariable("assistantId") String assistantId) {
         return groupService.deleteAssistantInGroup(groupId,assistantId);
     }
 

@@ -43,7 +43,7 @@ public interface GroupMapper {
             "        class\n" +
             "       SET \n" +
             "       id = #{id}," +
-            "       name = #{name},\n" +
+            "       name = #{name}\n" +
             "       WHERE \n" +
             "       id = #{id}")
     void update(Group group);
