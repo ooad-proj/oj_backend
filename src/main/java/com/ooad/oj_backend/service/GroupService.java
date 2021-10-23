@@ -253,10 +253,9 @@ public class GroupService {
     }
 
     public ResponseEntity<?> getAssistantInGroup(int groupId) {
-
-
+        ResponseEntity responseEntity = authService.checkPermission("1-"+groupId);
         ResponseEntity responseEntity2 = authService.checkPermission("0-"+groupId);
-        if (responseEntity2 != null ){
+        if (responseEntity2 != null &&responseEntity!=null){
             ResponseEntity responseEntity1 = authService.checkPermission("1-0");
             if (responseEntity1 != null ){
                 return responseEntity2;
