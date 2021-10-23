@@ -1,8 +1,8 @@
 package com.ooad.oj_backend.mybatis.entity;
 
-public  class contentItem{
+public  class ContentItem {
     public String id;
     public String name;
     public String mail;
-    public contentItem(){}
+    public ContentItem(){}
 }

@@ -1,15 +1,11 @@
-package com.ooad.oj_backend.contorller;
+package com.ooad.oj_backend.controller;
 
 import com.ooad.oj_backend.mapper.GroupMapper;
-import com.ooad.oj_backend.mapper.UserMapper;
 import com.ooad.oj_backend.service.GroupService;
-import com.ooad.oj_backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.websocket.server.PathParam;
 
 @RestController
 @RequestMapping("/api/")
@@ -84,5 +80,10 @@ public class GroupController {
     @ResponseBody
     public ResponseEntity<?> getAllGroup( int page,int itemsPerPage,String search) {
         return groupService.getAllGroup( page, itemsPerPage, search);
+    }
+    @RequestMapping(value = "group/{groupId}",method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> getOneGroup(@PathVariable int groupId) {
+        return groupService.getOneGroup(groupId);
     }
 }

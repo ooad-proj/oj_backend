@@ -1,14 +1,9 @@
-package com.ooad.oj_backend.contorller;
-import com.ooad.oj_backend.mapper.UserMapper;
-import com.ooad.oj_backend.mybatis.entity.User;
+package com.ooad.oj_backend.controller;
 import com.ooad.oj_backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * 登录测试 

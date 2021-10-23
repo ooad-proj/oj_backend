@@ -1,4 +1,4 @@
-package com.ooad.oj_backend.contorller;
+package com.ooad.oj_backend.controller;
 
 import com.ooad.oj_backend.Response;
 import com.ooad.oj_backend.service.AuthService;

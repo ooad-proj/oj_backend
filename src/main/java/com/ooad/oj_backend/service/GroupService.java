@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.BufferedReader;
@@ -257,12 +258,12 @@ public class GroupService {
             response.setCode(-1);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
-        ArrayList<contentItem> res = new ArrayList<>();
+        ArrayList<ContentItem> res = new ArrayList<>();
 //        List<contentItem> res = new ArrayList<>();
-        HashMap<Integer,List<contentItem>> hashMap=new HashMap<>();
+        HashMap<Integer,List<ContentItem>> hashMap=new HashMap<>();
         int totalAmount = auths.size();
         for(int i =0 ;i<auths.size();i++){
-            contentItem tem = new contentItem();
+            ContentItem tem = new ContentItem();
             tem.id = auths.get(i).getUserId();
             User user = userMapper.getOne(auths.get(i).getUserId());
             tem.name = user.getName();
@@ -301,11 +302,11 @@ public class GroupService {
                 response.setCode(-1);
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
-            ArrayList<contentItem> resList = new ArrayList<>();
+            ArrayList<ContentItem> resList = new ArrayList<>();
 
             int totalAmount = auths.size();
             for (int i = 0; i < auths.size(); i++) {
-                contentItem tem = new contentItem();
+                ContentItem tem = new ContentItem();
                 tem.id = auths.get(i).getUserId();
                 User user = userMapper.getOne(auths.get(i).getUserId());
 
@@ -365,7 +366,7 @@ public class GroupService {
         if (!(role.equals("assistant") || role.equals("admin"))) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        List<groupListItem> groupListItems = new ArrayList<>();
+        List<GroupListItem> groupListItems = new ArrayList<>();
 
         ArrayList<Integer> classes = new ArrayList<>();
         if(role.equals("admin")){
@@ -392,7 +393,7 @@ public class GroupService {
 
         if (classes.size() != 0) {
             for (int i = 0; i < classes.size(); i++) {
-                groupListItem tem = new groupListItem();
+                GroupListItem tem = new GroupListItem();
                 Group group = groupMapper.getOne(classes.get(i));
                 if(group ==null){
                     break;
@@ -414,6 +415,24 @@ public class GroupService {
         Response response = new Response();
         response.setContent(paper);
         return new ResponseEntity<>(response, HttpStatus.OK);
-
+    }
+    public ResponseEntity<?> getOneGroup(@PathVariable int groupId) {
+        if (!StpUtil.isLogin()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        Response response=new Response();
+        GroupListItem tem = new GroupListItem();
+        Group group = groupMapper.getOne(groupId);
+        if(group ==null){
+            response.setCode(-1);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        tem.groupId = group.getId();
+        tem.groupName = group.getName();
+        tem.memberNum = groupMapper.getMemberNumber(groupId);
+        tem.assistantNum = groupMapper.getAssistantNumber(groupId);
+      response.setCode(0);
+        response.setContent(tem);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

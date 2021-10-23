@@ -14,6 +14,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -143,8 +146,10 @@ public class UserService {
     public ResponseEntity<?> addBatchUser(MultipartFile multipartFile){
         ResponseEntity responseEntity=authService.checkPermission("1-0");
         if(responseEntity!=null)return responseEntity;
-        File file = new File(Config.path+File.separator+multipartFile.getOriginalFilename());
         try {
+            Path p= Paths.get(Config.path);
+            Files.createDirectories(p);
+            File file = new File(Config.path+File.separator+multipartFile.getOriginalFilename());
             if (!file.exists()) {
                 file.createNewFile();
             }
