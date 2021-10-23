@@ -278,7 +278,7 @@ public class GroupService {
         }
         ArrayList<ContentItem> res = new ArrayList<>();
 //        List<contentItem> res = new ArrayList<>();
-        HashMap<Integer,List<ContentItem>> hashMap=new HashMap<>();
+        HashMap<String,Object> hashMap=new HashMap<>();
         int totalAmount = auths.size();
         for(int i =0 ;i<auths.size();i++){
             ContentItem tem = new ContentItem();
@@ -288,7 +288,8 @@ public class GroupService {
             tem.mail = user.getMail();
             res.add(tem);
         }
-        hashMap.put(totalAmount,res);
+        hashMap.put("totalAmount",totalAmount);
+        hashMap.put("list",res);
         response.setContent(hashMap);
 //        response.setContent("totalAmount = " + res.size());
         response.setCode(0);
