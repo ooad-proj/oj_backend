@@ -18,7 +18,7 @@ public class UserController {
 
     @PostMapping ("user")
     @ResponseBody
-    public ResponseEntity<?> addUser(@RequestParam(value = "id",required = false)String id,@RequestParam(value = "name",required = false)String name,@RequestParam(value = "password",required = false)String password,@RequestParam(value = "name",required = false) String mail) {
+    public ResponseEntity<?> addUser(@RequestParam(value = "id",required = false)String id,@RequestParam(value = "name",required = false)String name,@RequestParam(value = "password",required = false)String password,@RequestParam(value = "mail",required = false) String mail) {
         return userService.addUser(id,name,password,mail);
     }
     @PostMapping(value = "user/add/batch")
