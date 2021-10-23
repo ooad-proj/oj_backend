@@ -345,7 +345,7 @@ public class GroupService {
         }else {
             Response response = new Response();
             int total=authMapper.getNumber(search,groupId);
-            List<Auth> auths = authMapper.getOneAuth(search, groupId,page,itemsPerPage);
+            List<Auth> auths = authMapper.getOneAuth(search, groupId,(page - 1) * itemsPerPage,itemsPerPage);
             if (auths == null) {
                 Paper paper = new Paper();
                 paper.setItemsPerPage(0);
@@ -400,7 +400,7 @@ public class GroupService {
         ArrayList<Integer> classes = new ArrayList<>();
         int length=0;
         if(role.equals("teacher")){
-            List<Group> groups = groupMapper.getAll(page,itemsPerPage);
+            List<Group> groups = groupMapper.getAll((page - 1) * itemsPerPage,itemsPerPage);
             length=groupMapper.getAllNumber();
             for(int i =0 ; i<groups.size();i++){
                 classes.add(groups.get(i).getId());
@@ -420,7 +420,7 @@ public class GroupService {
         }
         if (!search.equals("")) {
             ArrayList<Integer>searchList=new ArrayList<>();
-            List<Group> groups=groupMapper.searchClass(search,page,itemsPerPage);
+            List<Group> groups=groupMapper.searchClass(search,(page - 1) * itemsPerPage,itemsPerPage);
             length=groupMapper.searchClassNumber(search);
                 for(Integer c:classes){
                     for(Group group:groups){
