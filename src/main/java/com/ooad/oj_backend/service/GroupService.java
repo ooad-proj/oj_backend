@@ -218,6 +218,10 @@ public class GroupService {
             response.setCode(-2);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
+        if(auth1.getPrivilege()==0){
+            response.setCode(-5);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
         User user = userMapper.getOne(assistantId);
         if (user == null) {
             response.setCode(-3);
