@@ -15,6 +15,8 @@ public class UserView implements Serializable {
     private String id;
     private String name;
     private String mail;
+    private boolean isEditable=false;
+    private boolean isDeletable=false;
     public UserView(){
         super();
     }

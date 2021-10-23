@@ -2,6 +2,7 @@ package com.ooad.oj_backend.service;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.ooad.oj_backend.Response;
+import com.ooad.oj_backend.mapper.AuthMapper;
 import com.ooad.oj_backend.mapper.UserMapper;
 import com.ooad.oj_backend.mybatis.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.management.relation.Role;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -26,6 +28,8 @@ public class UserService {
     private UserMapper userMapper;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private AuthMapper authMapper;
 
     public ResponseEntity<?> addUser(String id,String name, String passWord, String mail) {
        ResponseEntity responseEntity=authService.checkPermission("1-0");
@@ -111,6 +115,15 @@ public class UserService {
         if(search.equals("")) {
             List<UserView> users = userMapper.getAllByPage((page - 1) * itemsPerPage, itemsPerPage);
             int count=userMapper.getAll();
+            if(StpUtil.getRoleList().get(0).equals("teacher")) {
+                for (UserView userView : users) {
+                    userView.setEditable(true);
+                   Auth auth=authMapper.getTeacher(userView.getId());
+                   if(auth==null){
+                       userView.setDeletable(true);
+                   }
+                }
+            }
             Paper<UserView> paper = new Paper<>();
             paper.setItemsPerPage(users.size());
             paper.setPage(page);
@@ -120,6 +133,15 @@ public class UserService {
             Response response = new Response(0, "", paper);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }List<UserView> userList=userMapper.Search(search);
+        if(StpUtil.getRoleList().get(0).equals("teacher")) {
+            for (UserView userView : userList) {
+                userView.setEditable(true);
+                Auth auth=authMapper.getTeacher(userView.getId());
+                if(auth==null){
+                    userView.setDeletable(true);
+                }
+            }
+        }
         Paper<UserView> paper = new Paper<>();
         if(userList!=null) {
             paper.setItemsPerPage(1);
