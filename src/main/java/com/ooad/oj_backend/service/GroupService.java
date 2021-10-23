@@ -363,13 +363,13 @@ public class GroupService {
         }
         List per = StpUtil.getPermissionList();
         String role = StpUtil.getRoleList().get(0);
-        if (!(role.equals("assistant") || role.equals("admin"))) {
+        if (!(role.equals("assistant") || role.equals("teacher"))) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         List<GroupListItem> groupListItems = new ArrayList<>();
 
         ArrayList<Integer> classes = new ArrayList<>();
-        if(role.equals("admin")){
+        if(role.equals("teacher")){
             List<Group> groups = groupMapper.getAll();
             for(int i =0 ; i<groups.size();i++){
                 classes.add(groups.get(i).getId());

@@ -119,7 +119,7 @@ public class AuthService {
         Response response=new Response();
         response.setCode(0);
         List<RoleView>auth;
-        if(StpUtil.getRoleList().get(0).equals("admin")){
+        if(StpUtil.getRoleList().get(0).equals("teacher")){
             auth=new LinkedList<>();
         }
         else auth =authMapper.getAuthListById((String) StpUtil.getLoginId());
