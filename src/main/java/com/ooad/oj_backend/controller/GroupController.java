@@ -33,11 +33,11 @@ public class GroupController {
         return groupService.deleteGroup(id);
     }
 
-    @RequestMapping(value = "group/{groupId}/member/{memberId}", method = RequestMethod.PUT)
+    @PostMapping(value = "group/{groupId}/member/{memberId}")
     @ResponseBody
     public ResponseEntity<?> addUserToGroup(@PathVariable int groupId ,@PathVariable String memberId) {
 
-        return         groupService.addUserToGroup(groupId,memberId);
+        return groupService.addUserToGroup(groupId,memberId);
     }
 
     @PostMapping(value = "group/{groupId}/member/add/batch")

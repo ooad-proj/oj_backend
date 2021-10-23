@@ -298,10 +298,10 @@ public class GroupService {
             }
             List<Auth> auths = authMapper.getClassMembers(groupId);
 
-            if (auths.size() == 0) {
+           /* if (auths.size() == 0) {
                 response.setCode(-1);
                 return new ResponseEntity<>(response, HttpStatus.OK);
-            }
+            }*/
             ArrayList<ContentItem> resList = new ArrayList<>();
 
             int totalAmount = auths.size();
