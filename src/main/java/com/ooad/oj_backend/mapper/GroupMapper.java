@@ -64,6 +64,12 @@ public interface GroupMapper {
             "       id =#{id} and id!=0")
     void delete(int id);
 
+    @Delete("       DELETE FROM\n" +
+            "            auth\n" +
+            "       WHERE \n" +
+            "       classId=#{id}")
+    void deleteAuth(int id);
+
     @Select("        SELECT\n" +
             "       count(*)\n" +
             "        FROM auth\n" +

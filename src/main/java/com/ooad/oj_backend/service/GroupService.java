@@ -77,6 +77,7 @@ public class GroupService {
             response.setCode(-1);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
+        groupMapper.deleteAuth(id);
         groupMapper.delete(id);
         response.setCode(0);
         response.setMsg("delete success");
