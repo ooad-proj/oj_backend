@@ -16,6 +16,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -94,7 +97,11 @@ public class GroupService {
             response.setCode(-2);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
-
+        Auth test=authMapper.getAuthById(userId,groupId);
+        if(test!=null){
+            response.setCode(-3);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
         Auth auth = new Auth();
         auth.setUserId(userId);
         auth.setClassId(groupId);
@@ -115,8 +122,11 @@ public class GroupService {
             response.setCode(-1);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
-        File file = new File(Config.path+File.separator+multipartFile.getOriginalFilename());
         try {
+            Path p= Paths.get(Config.path);
+            Files.createDirectories(p);
+            Files.createDirectories(p.resolve((String) StpUtil.getLoginId()));
+            File file = new File(Config.path+File.separator+(String) StpUtil.getLoginId()+File.separator+multipartFile.getOriginalFilename());
             if (!file.exists()) {
                 file.createNewFile();
             }
@@ -142,6 +152,13 @@ public class GroupService {
                     addResults.add(addResult);
                     continue;
                 }
+                Auth test=authMapper.getAuthById(line,groupId);
+                if(test!=null){
+                    judge=-2;
+                    addResult.setStatus(-3);
+                    addResults.add(addResult);
+                    continue;
+                }
                 addResult.setStatus(0);
                 Auth auth1=new Auth();
                 auth1.setClassId(groupId);
@@ -152,6 +169,10 @@ public class GroupService {
             }
             response.setContent(addResults);
             response.setCode(judge);
+            file.delete();
+            File file1=new File(String.valueOf(p.resolve((String) StpUtil.getLoginId())));
+            file1.delete();
+            reader.close();
             return new ResponseEntity<>(response,HttpStatus.OK);
         }catch (IOException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
