@@ -73,14 +73,14 @@ public interface GroupMapper {
     @Select("        SELECT\n" +
             "       count(*)\n" +
             "        FROM auth\n" +
-            "        where classId =#{classId}  and privilege =0")
+            "        where classId =#{classId}  and privilege = 0")
     int getMemberNumber(int classId);
 
 
     @Select("        SELECT\n" +
             "       count(*)\n" +
             "        FROM auth\n" +
-            "        where classId =#{classId} and privilege =1 ")
+            "        where classId =#{classId} and privilege = 1 ")
     int getAssistantNumber(int classId);
 
 //    @Delete("       DELETE FROM\n" +

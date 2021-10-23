@@ -29,8 +29,8 @@ public class GroupController {
 
     @RequestMapping(value = "group/{groupId}", method = RequestMethod.DELETE)
     @ResponseBody
-    public ResponseEntity<?> deleteGroup(@PathVariable int id) {
-        return groupService.deleteGroup(id);
+    public ResponseEntity<?> deleteGroup(@PathVariable int groupId) {
+        return groupService.deleteGroup(groupId);
     }
 
     @PostMapping(value = "group/{groupId}/member/{memberId}")
