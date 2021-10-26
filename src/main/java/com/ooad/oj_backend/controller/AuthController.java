@@ -15,8 +15,8 @@ public class AuthController {
     private AuthService authService;
     @ResponseBody
     @PostMapping(value = "auth/login")
-    public ResponseEntity<?> Login(String id, String passWord) {
-       return authService.Login(id,passWord);
+    public ResponseEntity<?> Login(String id, String password) {
+       return authService.Login(id,password);
     }
     @ResponseBody
     @PostMapping("auth/logout")
