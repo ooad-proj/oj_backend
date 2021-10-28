@@ -118,7 +118,7 @@ public class UserService {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        if(search.equals("")) {
+        /*if(search.equals("")) {
             List<UserView> users = userMapper.getAllByPage((page - 1) * itemsPerPage, itemsPerPage);
             int count=userMapper.getAll();
             if(StpUtil.getRoleList().get(0).equals("teacher")) {
@@ -138,7 +138,7 @@ public class UserService {
             paper.setList(users);
             Response response = new Response(0, "", paper);
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }List<UserView> userList=userMapper.Search(search,(page - 1) * itemsPerPage, itemsPerPage);
+        }*/List<UserView> userList=userMapper.SearchList(search,(page - 1) * itemsPerPage, itemsPerPage);
         int total=userMapper.Search(search);
         if(StpUtil.getRoleList().get(0).equals("teacher")) {
             for (UserView userView : userList) {

@@ -26,7 +26,7 @@ public interface UserMapper {
             "        id, name,mail\n" +
             "        FROM User\n" +
             "        where id like '%${id}%' limit #{itemsPerPage} offset #{offset} ;")
-    List<UserView> Search(@Param("id") String id,@Param("offset")int offset,@Param("itemsPerPage") int itemsPerPage);
+    List<UserView> SearchList(@Param("id") String id,@Param("offset")int offset,@Param("itemsPerPage") int itemsPerPage);
 
     @Select("        SELECT\n" +
             "        count(*)\n" +

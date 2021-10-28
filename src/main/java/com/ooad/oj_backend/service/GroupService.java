@@ -327,44 +327,12 @@ public class GroupService {
                 return responseEntity2;
             }
         }
-
-        if(search.equals("")) {
             Response response = new Response();
             Group group = groupMapper.getOne(groupId);
             if (group == null) {
                 response.setCode(-1);
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
-            List<Auth> auths = authMapper.getClassMembers(groupId,(page - 1) * itemsPerPage, itemsPerPage);
-            int length=authMapper.getClassNumber(groupId);
-           /* if (auths.size() == 0) {
-                response.setCode(-1);
-                return new ResponseEntity<>(response, HttpStatus.OK);
-            }*/
-            ArrayList<ContentItem> resList = new ArrayList<>();
-
-            int totalAmount = auths.size();
-            for (int i = 0; i < auths.size(); i++) {
-                ContentItem tem = new ContentItem();
-                tem.id = auths.get(i).getUserId();
-                if(auths.get(i).getPrivilege()==0) {
-                    User user = userMapper.getOne(auths.get(i).getUserId());
-                    tem.name = user.getName();
-                    tem.mail = user.getMail();
-                    resList.add(tem);
-                }
-            }
-            Paper paper = new Paper();
-            paper.setPage(page);
-            paper.setItemsPerPage(itemsPerPage);
-            paper.setTotalAmount(length);
-            paper.setTotalPage((length/ itemsPerPage) + (((length% itemsPerPage) == 0) ? 0 : 1));
-            paper.setList(resList);
-            response.setContent(paper);
-            response.setCode(0);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }else {
-            Response response = new Response();
             int total=authMapper.getNumber(search,groupId);
             List<Auth> auths = authMapper.getOneAuth(search, groupId,(page - 1) * itemsPerPage,itemsPerPage);
             if (auths == null) {
@@ -397,17 +365,8 @@ public class GroupService {
             response.setContent(paper);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
-    }
 
     public ResponseEntity<?> getAllGroup( int page,int itemsPerPage,String search) {
-
-//        ResponseEntity responseEntity2 = authService.checkPermission("0-"+groupId);
-//        if (responseEntity2 != null ){
-//            ResponseEntity responseEntity1 = authService.checkPermission("1-0");
-//            if (responseEntity1 != null ){
-//                return responseEntity2;
-//            }
-//        }
         if (!StpUtil.isLogin()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -417,7 +376,6 @@ public class GroupService {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         List<GroupListItem> groupListItems = new ArrayList<>();
-
         ArrayList<Integer> classes = new ArrayList<>();
         int length=0;
         if(role.equals("teacher")){
