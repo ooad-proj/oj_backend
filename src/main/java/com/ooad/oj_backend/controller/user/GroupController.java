@@ -1,7 +1,7 @@
-package com.ooad.oj_backend.controller;
+package com.ooad.oj_backend.controller.user;
 
-import com.ooad.oj_backend.mapper.GroupMapper;
-import com.ooad.oj_backend.service.GroupService;
+import com.ooad.oj_backend.mapper.user.GroupMapper;
+import com.ooad.oj_backend.service.user.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -1,9 +1,9 @@
-package com.ooad.oj_backend.service;
+package com.ooad.oj_backend.service.user;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.ooad.oj_backend.Response;
-import com.ooad.oj_backend.mapper.AuthMapper;
-import com.ooad.oj_backend.mapper.UserMapper;
+import com.ooad.oj_backend.mapper.user.AuthMapper;
+import com.ooad.oj_backend.mapper.user.UserMapper;
 import com.ooad.oj_backend.mybatis.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.management.relation.Role;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;

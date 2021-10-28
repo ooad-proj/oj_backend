@@ -1,4 +1,4 @@
-package com.ooad.oj_backend.mapper;
+package com.ooad.oj_backend.mapper.contest;
 
 import com.ooad.oj_backend.mybatis.entity.Group;
 import org.apache.ibatis.annotations.*;
@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 @Mapper
-public interface GroupMapper {
+public interface ContestMapper {
     @Select("       SELECT\n" +
             "        id, name\n" +
             "FROM class where id!=0 order by id limit #{itemsPerPage} offset #{offset}")

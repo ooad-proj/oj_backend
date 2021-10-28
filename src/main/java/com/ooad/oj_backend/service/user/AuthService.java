@@ -1,11 +1,10 @@
-package com.ooad.oj_backend.service;
+package com.ooad.oj_backend.service.user;
 
 import cn.dev33.satoken.exception.NotPermissionException;
-import cn.dev33.satoken.exception.NotRoleException;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ooad.oj_backend.Response;
-import com.ooad.oj_backend.mapper.AuthMapper;
-import com.ooad.oj_backend.mapper.UserMapper;
+import com.ooad.oj_backend.mapper.user.AuthMapper;
+import com.ooad.oj_backend.mapper.user.UserMapper;
 import com.ooad.oj_backend.mybatis.entity.RoleView;
 import com.ooad.oj_backend.mybatis.entity.User;
 import com.ooad.oj_backend.mybatis.entity.UserView;

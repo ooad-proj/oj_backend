@@ -1,9 +1,9 @@
-package com.ooad.oj_backend.service;
+package com.ooad.oj_backend.service.user;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ooad.oj_backend.Response;
-import com.ooad.oj_backend.mapper.AuthMapper;
-import com.ooad.oj_backend.mapper.GroupMapper;
-import com.ooad.oj_backend.mapper.UserMapper;
+import com.ooad.oj_backend.mapper.user.AuthMapper;
+import com.ooad.oj_backend.mapper.user.GroupMapper;
+import com.ooad.oj_backend.mapper.user.UserMapper;
 import com.ooad.oj_backend.mybatis.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
