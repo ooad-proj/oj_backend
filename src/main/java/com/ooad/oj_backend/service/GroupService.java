@@ -437,7 +437,6 @@ public class GroupService {
                         classes.add(classId);
                     }
                 }
-            length=classes.size();
 
         }
         if (!search.equals("")) {
