@@ -327,7 +327,6 @@ public class GroupService {
                 return responseEntity2;
             }
         }
-
         if(search.equals("")) {
             Response response = new Response();
             Group group = groupMapper.getOne(groupId);
@@ -337,13 +336,7 @@ public class GroupService {
             }
             List<Auth> auths = authMapper.getClassMembers(groupId,(page - 1) * itemsPerPage, itemsPerPage);
             int length=authMapper.getClassNumber(groupId);
-           /* if (auths.size() == 0) {
-                response.setCode(-1);
-                return new ResponseEntity<>(response, HttpStatus.OK);
-            }*/
             ArrayList<ContentItem> resList = new ArrayList<>();
-
-            int totalAmount = auths.size();
             for (int i = 0; i < auths.size(); i++) {
                 ContentItem tem = new ContentItem();
                 tem.id = auths.get(i).getUserId();
@@ -400,14 +393,6 @@ public class GroupService {
     }
 
     public ResponseEntity<?> getAllGroup( int page,int itemsPerPage,String search) {
-
-//        ResponseEntity responseEntity2 = authService.checkPermission("0-"+groupId);
-//        if (responseEntity2 != null ){
-//            ResponseEntity responseEntity1 = authService.checkPermission("1-0");
-//            if (responseEntity1 != null ){
-//                return responseEntity2;
-//            }
-//        }
         if (!StpUtil.isLogin()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -417,7 +402,6 @@ public class GroupService {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         List<GroupListItem> groupListItems = new ArrayList<>();
-
         ArrayList<Integer> classes = new ArrayList<>();
         int length=0;
         if(role.equals("teacher")){
@@ -438,7 +422,6 @@ public class GroupService {
                     }
                 }
             length=classes.size();
-
         }
         if (!search.equals("")) {
             ArrayList<Integer>searchList=new ArrayList<>();
@@ -468,7 +451,6 @@ public class GroupService {
                 groupListItems.add(tem);
             }
         }
-
         Paper paper = new Paper();
         paper.setList(groupListItems);
         paper.setTotalAmount(length);

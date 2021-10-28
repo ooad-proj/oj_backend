@@ -118,27 +118,8 @@ public class UserService {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        if(search.equals("")) {
-            List<UserView> users = userMapper.getAllByPage((page - 1) * itemsPerPage, itemsPerPage);
-            int count=userMapper.getAll();
-            if(StpUtil.getRoleList().get(0).equals("teacher")) {
-                for (UserView userView : users) {
-                    userView.setEditable(true);
-                   Auth auth=authMapper.getTeacher(userView.getId());
-                   if(auth==null){
-                       userView.setDeletable(true);
-                   }
-                }
-            }
-            Paper<UserView> paper = new Paper<>();
-            paper.setItemsPerPage(users.size());
-            paper.setPage(page);
-            paper.setTotalAmount(count);
-            paper.setTotalPage((count/ itemsPerPage) + (((count % itemsPerPage) == 0) ? 0 : 1));
-            paper.setList(users);
-            Response response = new Response(0, "", paper);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }List<UserView> userList=userMapper.Search(search);
+        List<UserView> userList=userMapper.Search(search,(page - 1) * itemsPerPage, itemsPerPage);
+        int total=userMapper.SearchNumber(search);
         if(StpUtil.getRoleList().get(0).equals("teacher")) {
             for (UserView userView : userList) {
                 userView.setEditable(true);
@@ -150,10 +131,10 @@ public class UserService {
         }
         Paper<UserView> paper = new Paper<>();
         if(userList!=null) {
-            paper.setItemsPerPage(1);
-            paper.setPage(1);
-            paper.setTotalAmount(1);
-            paper.setTotalPage(1);
+            paper.setItemsPerPage(userList.size());
+            paper.setPage(page);
+            paper.setTotalAmount(total);
+            paper.setTotalPage((total/ itemsPerPage) + (((total % itemsPerPage) == 0) ? 0 : 1));
             paper.setList(userList);
         }else {
             paper.setItemsPerPage(0);
