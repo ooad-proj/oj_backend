@@ -11,8 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/")
 public class GroupController {
     @Autowired
-    private GroupMapper groupMapper;
-    @Autowired
     private GroupService groupService;
 
     @PostMapping("group/{name}")
@@ -82,7 +80,6 @@ public class GroupController {
         return groupService.getAllGroup( page, itemsPerPage, search);
     }
     @RequestMapping(value = "group/{groupId}",method = RequestMethod.GET)
-    @ResponseBody
     public ResponseEntity<?> getOneGroup(@PathVariable int groupId) {
         return groupService.getOneGroup(groupId);
     }
