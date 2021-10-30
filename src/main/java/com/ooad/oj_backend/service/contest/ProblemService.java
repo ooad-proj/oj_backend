@@ -80,7 +80,6 @@ public class ProblemService {
         if(!role.equals("teacher")&&!role.equals("assistant")){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        String temp="and language='"+language+"'";
         Response response=new Response();
         response.setCode(0);
         int problem=problemMapper.searchProblem(problemId);
@@ -88,16 +87,11 @@ public class ProblemService {
             response.setCode(-1);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
-        List<Answer> answer=problemMapper.getAnswer(problemId,temp);
-        if(answer.size()!=0){
-            response.setCode(-2);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
         problemMapper.addAnswer(problemId,language,code);
         response.setMsg("add success");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    public ResponseEntity<?> updateAnswer(int problemId,String language,String code) {
+    public ResponseEntity<?> updateAnswer(int answerId,String language,String code) {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -107,18 +101,12 @@ public class ProblemService {
         }
         Response response=new Response();
         response.setCode(0);
-        int problem=problemMapper.searchProblem(problemId);
-        if(problem==0){
+        Answer answer=problemMapper.getAnswerById(answerId);
+        if(answer==null){
             response.setCode(-1);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
-        String temp="and language='"+language+"'";
-        List<Answer> answer=problemMapper.getAnswer(problemId,temp);
-        if(answer.size()==0){
-            response.setCode(-2);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
-        problemMapper.updateAnswer(problemId,language,code);
+        problemMapper.updateAnswer(answerId,language,code);
         response.setMsg("update success");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -137,11 +125,11 @@ public class ProblemService {
             response.setCode(-1);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
-        List<Answer> answer=problemMapper.getAnswer(problemId,"");
+        List<Answer> answer=problemMapper.getAnswerByProblem(problemId);
         response.setContent(answer);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    public ResponseEntity<?> deleteAnswer(int problemId) {
+    public ResponseEntity<?> deleteAnswer(int answerId) {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -151,12 +139,12 @@ public class ProblemService {
         }
         Response response=new Response();
         response.setCode(0);
-        int problem=problemMapper.searchProblem(problemId);
-        if(problem==0){
+        Answer answer=problemMapper.getAnswerById(answerId);
+        if(answer==null){
             response.setCode(-1);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
-        problemMapper.deleteAnswer(problemId);
+        problemMapper.deleteAnswer(answerId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

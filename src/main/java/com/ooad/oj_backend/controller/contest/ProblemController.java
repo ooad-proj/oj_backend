@@ -42,16 +42,16 @@ public class ProblemController {
     public ResponseEntity<?> addAnswer(@PathVariable int problemId,String answer,String language) {
         return problemService.addAnswer(problemId,language,answer);
     }
-    @RequestMapping(value = "standardAnswer/{problemId}",method=RequestMethod.PUT)
-    public ResponseEntity<?> updateAnswer(@PathVariable int problemId,String answer,String language) {
-        return problemService.updateAnswer(problemId,answer,language);
+    @RequestMapping(value = "standardAnswer/{answerId}",method=RequestMethod.PUT)
+    public ResponseEntity<?> updateAnswer(@PathVariable int answerId,String answer,String language) {
+        return problemService.updateAnswer(answerId,language,answer);
     }
     @RequestMapping(value = "standardAnswer/{problemId}",method=RequestMethod.GET)
     public ResponseEntity<?> getAnswer(@PathVariable int problemId) {
         return problemService.getAnswer(problemId);
     }
-    @RequestMapping(value = "standardAnswer/{problemId}",method=RequestMethod.DELETE)
-    public ResponseEntity<?> deleteAnswer(@PathVariable int problemId) {
-        return problemService.deleteAnswer(problemId);
+    @RequestMapping(value = "standardAnswer/{answerId}",method=RequestMethod.DELETE)
+    public ResponseEntity<?> deleteAnswer(@PathVariable int answerId) {
+        return problemService.deleteAnswer(answerId);
     }
 }

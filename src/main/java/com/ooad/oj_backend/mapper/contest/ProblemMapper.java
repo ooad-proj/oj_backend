@@ -24,7 +24,7 @@ public interface ProblemMapper {
     int getProblemNumber(@Param("search") String search,@Param("userId") String userId);
 
     @Insert("       INSERT INTO\n" +
-            "         answer\n" +
+            "         answer(problemId,language,code)\n" +
             "       VALUES\n" +
             "       (#{problemId},#{language},#{code})")
     void addAnswer(@Param("problemId") int problemId,@Param("language") String language,@Param("code") String code);
@@ -32,18 +32,20 @@ public interface ProblemMapper {
     @Select("Select count(*) from problem where problemId=#{problemId}")
     int searchProblem(int problemId);
 
-    @Select("Select * from answer where problemId=#{problemId} ${language}")
-    List<Answer> getAnswer(@Param("problemId") int problemId, @Param("language") String language);
+    @Select("Select * from answer where problemId=#{problemId}")
+    List<Answer> getAnswerByProblem(int problemId);
 
+    @Select("Select * from answer where answerId=#{answerId}")
+    Answer getAnswerById(int answerId);
     @Update("       UPDATE\n" +
             "        answer SET \n" +
             "       code=#{code}," +
-            " language=#{language} where problemId=#{problemId}")
-    void updateAnswer(@Param("problemId") int problemId, @Param("language") String language,@Param("code")String code);
+            " language=#{language} where answerId=#{answerId}")
+    void updateAnswer(@Param("answerId") int answerId, @Param("language") String language,@Param("code")String code);
 
     @Delete("       DELETE FROM\n" +
             "            answer\n" +
             "       WHERE \n" +
-            "       problemId =#{problemId}")
-    void deleteAnswer(int problemId);
+            "       answerId =#{answerId}")
+    void deleteAnswer(int answerId);
 }
