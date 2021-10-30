@@ -1,6 +1,7 @@
 package com.ooad.oj_backend.service.user;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ooad.oj_backend.Response;
+import com.ooad.oj_backend.mapper.contest.ContestMapper;
 import com.ooad.oj_backend.mapper.user.AuthMapper;
 import com.ooad.oj_backend.mapper.user.GroupMapper;
 import com.ooad.oj_backend.mapper.user.UserMapper;
@@ -34,6 +35,8 @@ public class GroupService {
     private AuthMapper authMapper;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private ContestMapper contestMapper;
 
     public ResponseEntity<?> addGroup(String name) {
         ResponseEntity responseEntity = authService.checkPermission("1-0");
@@ -456,4 +459,48 @@ public class GroupService {
         response.setContent(tem);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    public ResponseEntity<?> getContestInGroup(int groupId , int page,int itemsPerPage,String search) {
+        if (!StpUtil.isLogin()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        Response response=new Response();
+        List<Contest>  contests = contestMapper.getContestInGroup(groupId,(page - 1) * itemsPerPage,itemsPerPage);
+        int total = contestMapper.getContestInGroupNum(groupId);
+        List<ContestListItem> contestListItems = new ArrayList<>();
+        if(contests==null) {
+            Paper paper = new Paper();
+            paper.setItemsPerPage(0);
+            paper.setPage(1);
+            paper.setTotalAmount(0);
+            paper.setTotalPage(1);
+            paper.setList(new ArrayList());
+            response.setContent(paper);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }else {
+            for(Contest c :contests){
+                ContestListItem item = new ContestListItem();
+                item.contestId = c.getId();
+                item.description =c.getDescription();
+                item.endTime = c.getEndTime();
+                item.startTime = c.getStartTime();
+                item.title = c.getTitle();
+                //TODO:get my score and total score
+                item.myScore =-1;
+                item.totalScore = -1;
+
+                contestListItems.add(item);
+            }
+            Paper paper = new Paper();
+            paper.setPage(page);
+            paper.setTotalPage((total / itemsPerPage) + (((total % itemsPerPage) == 0) ? 0 : 1));
+            paper.setItemsPerPage(itemsPerPage);
+            paper.setTotalAmount(total);
+            paper.setList(contestListItems);
+            response.setContent(paper);
+            response.setCode(0);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+
+    }
+
 }

@@ -1,9 +1,6 @@
 package com.ooad.oj_backend.mapper.contest;
 
-import com.ooad.oj_backend.mybatis.entity.Answer;
-import com.ooad.oj_backend.mybatis.entity.CreatorAndGroup;
-import com.ooad.oj_backend.mybatis.entity.Problem;
-import com.ooad.oj_backend.mybatis.entity.ProblemView;
+import com.ooad.oj_backend.mybatis.entity.*;
 import lombok.Setter;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
@@ -34,6 +31,49 @@ public interface ProblemMapper {
             "join User on problem.creatorId = User.id join contest c on c.id = problem.contestId " +
             "join class c2 on c2.id = c.classId where problem.problemId=#{problemId}")
     CreatorAndGroup getCreatorAndGroup(int problemId);
+    @Insert("insert into problem values (null,#{shownId},#{title},#{contestId},#{description},#{inputFormat},#{outputFormat}" +
+            ",#{tips},#{timeLimit},#{spaceLimit},#{testCaseId},#{allowedLanguage},#{creatorId});")
+    @Options(useGeneratedKeys = true, keyProperty = "problemId", keyColumn="problemId")
+    int addProblem(@Param("contestId") int contestId,@Param("shownId") int shownId, @Param("title")String title,
+                    @Param("description")String description,@Param("inputFormat") String inputFormat,@Param("outputFormat") String outputFormat,
+                    @Param("tips")String tips,@Param("timeLimit")String timeLimit,@Param("spaceLimit")String spaceLimit,
+                    @Param("allowedLanguage")String allowedLanguage,@Param("testCaseId")String testCaseId);
+    @Insert("inset into samples values(#{problemId},#{input},#{output});" )
+    void addScoreRule(@Param("problemId")int problemId, @Param("totalScore")int totalScore,
+                      @Param("allowPartial")boolean allowPartial,@Param("punishRule")String punishRule);
+
+    @Insert("inset into samples values(#{problemId},#{input},#{output});" )
+    void addSample(@Param("problemId")int problemId,@Param("input")String input, @Param("output")String output);
+
+    @Update("update problem set shownId=#{shownId},title=#{title},description=#{description},inputFormat=#{inputFormat}," +
+            "outputFormat=#{outputFormat},tips=#{tips},timeLimit=#{timeLimit},spaceLimit=#{spaceLimit}," +
+            "testCaseId=#{testCaseId},allowedLanguage=#{allowedLanguage},creatorId=#{creatorId}\n" +
+            "where problemId=#{problemId};" +
+            "update scoreRule set totalScore=#{totalScore},allowPartial=#{allowPartial},punishRule=#{punishRule} " +
+            "where problemId=#{problemId};")
+    void updateProblem(@Param("problemId") int problemId,@Param("shownId") int shownId, @Param("title")String title,
+                   @Param("totalScore")int totalScore, @Param("allowPartial")boolean allowPartial,@Param("punishRule")String punishRule
+            ,@Param("description")String description,@Param("inputFormat") String inputFormat,@Param("outputFormat") String outputFormat,
+                   @Param("tips")String tips,@Param("timeLimit")String timeLimit,@Param("spaceLimit")String spaceLimit,
+                   @Param("allowedLanguage")String allowedLanguage,@Param("testCaseId")String testCaseId);
+
+    @Insert("inset into submitTemplate values(#{problemId},#{language},#{code})" )
+    void addSubmitTemplate(@Param("problemId")int problemId,@Param("language")String language,@Param("code")String code);
+
+    @Select("select contestId from problem where problemId=#{problemId}")
+    int getContestId(int problemId);
+    @Delete("       DELETE FROM samples WHERE problemId =#{problemId};" +
+            " DELETE FROM scoreRule WHERE problemId =#{problemId};" +
+            " DELETE FROM submitTemplate WHERE problemId =#{problemId};" +
+            " DELETE FROM problem WHERE problemId =#{problemId};")
+    void deleteProblem(int problemId);
+
+    @Delete("       DELETE FROM samples WHERE problemId =#{problemId};")
+    void deleteSamples(int problemId);
+
+    @Delete("       DELETE FROM submitTemplate WHERE problemId =#{problemId};")
+    void deleteSubmitTemplates(int problemId);
+
     @Insert("       INSERT INTO\n" +
             "         answer(problemId,language,code)\n" +
             "       VALUES\n" +

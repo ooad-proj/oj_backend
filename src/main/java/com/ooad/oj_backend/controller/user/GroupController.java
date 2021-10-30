@@ -83,4 +83,8 @@ public class GroupController {
     public ResponseEntity<?> getOneGroup(@PathVariable int groupId) {
         return groupService.getOneGroup(groupId);
     }
+    @RequestMapping(value = "group/{groupId}/contest",method = RequestMethod.GET)
+    public ResponseEntity<?> getContestInGroup(@PathVariable int groupId , int page,int itemsPerPage,String search) {
+        return groupService.getContestInGroup(groupId,page,itemsPerPage,search);
+    }
 }

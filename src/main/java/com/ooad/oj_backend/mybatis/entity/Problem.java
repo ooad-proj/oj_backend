@@ -28,4 +28,7 @@ public class Problem implements Serializable {
     private boolean allowPartial;
     private String input;
     private String output;
+    private Samples samples;
+    private SubmitTemplate submitTemplate;
+    private ScoreRule scoreRule;
 }
