@@ -1,17 +1,15 @@
 package com.ooad.oj_backend.service.contest;
 
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.json.JSON;
 import com.ooad.oj_backend.Response;
 import com.ooad.oj_backend.mapper.contest.ProblemMapper;
-import com.ooad.oj_backend.mybatis.entity.Answer;
-import com.ooad.oj_backend.mybatis.entity.Paper;
-import com.ooad.oj_backend.mybatis.entity.Problem;
-import com.ooad.oj_backend.mybatis.entity.ProblemView;
+import com.ooad.oj_backend.mybatis.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -58,6 +56,33 @@ public class ProblemService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     public ResponseEntity<?> getDetailedProblem(int problemId) {
+        if(!StpUtil.isLogin()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        HashMap<String,Object>hashMap=new HashMap<>();
+        Problem problem=problemMapper.getDetailedProblem(problemId);
+        CreatorAndGroup creatorAndGroup=problemMapper.getCreatorAndGroup(problemId);
+        Samples samples=new Samples();
+        ScoreRule scoreRule=new ScoreRule();
+        scoreRule.setPunishRule(problem.getPunishRule());
+        scoreRule.setAllowPartial(problem.isAllowPartial());
+        scoreRule.setTotalScore(problem.getTotalScore());
+        samples.setInput(problem.getInput());
+        samples.setOutput(problem.getOutput());
+        
+        String language=problem.getAllowedLanguage();
+        hashMap.put("shownId",problem.getShownId());
+        hashMap.put("title",problem.getTitle());
+        hashMap.put("description",problem.getDescription());
+        hashMap.put("inputFormat",problem.getInputFormat());
+        hashMap.put("outputFormat",problem.getOutputFormat());
+        hashMap.put("samples",samples);
+        hashMap.put("tips",problem.getTips());
+        hashMap.put("timeLimit",problem.getTimeLimit());
+        hashMap.put("spaceLimit",problem.getSpaceLimit());
+        hashMap.put("allowedLanguage",s);
+
+        System.out.println(problem);
         return null;
     }
     public ResponseEntity<?> addProblem(int contestId) {

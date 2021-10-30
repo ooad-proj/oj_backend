@@ -3,6 +3,7 @@ package com.ooad.oj_backend.mybatis.entity;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 
@@ -22,6 +23,9 @@ public class Problem implements Serializable {
     private long spaceLimit;
     private String testCaseId;
     private String allowedLanguage;
-    private ScoreRule scoreRule;
-    private Samples samples;
+    private int totalScore;
+    private String punishRule;
+    private boolean allowPartial;
+    private String input;
+    private String output;
 }

@@ -27,6 +27,9 @@ public class ContestService {
     private AuthService authService;
 
     public ResponseEntity<?> getContestInformation(int contestId) {
+        if(!StpUtil.isLogin()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         Response response=new Response();
         if(StpUtil.isLogin()){
             response.setCode(-2);
@@ -45,7 +48,9 @@ public class ContestService {
     }
 
     public ResponseEntity<?> getManagingContests(int page, int itemsPerPage,String search) {
-
+        if(!StpUtil.isLogin()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         ResponseEntity responseEntity1 = authService.checkPermission("1-0");
         Response response = new Response();
         int total;
@@ -85,6 +90,9 @@ public class ContestService {
 
 
     public ResponseEntity<?> addContest(int groupId , String title, String description, long startTime, long endTime) {
+        if(!StpUtil.isLogin()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         ResponseEntity responseEntity1 = authService.checkPermission("1-0");
         if(responseEntity1 != null){
             ResponseEntity responseEntity2 = authService.checkPermission("1-" + groupId);
@@ -109,6 +117,9 @@ public class ContestService {
     }
 
     public ResponseEntity<?> modifyContest(int contestId, String title, String description, long startTime, long endTime) {
+        if(!StpUtil.isLogin()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         ResponseEntity responseEntity1 = authService.checkPermission("1-0");
         if (responseEntity1 != null) {
             Boolean flag = false;
@@ -135,6 +146,9 @@ public class ContestService {
     }
 
     public ResponseEntity<?> deleteContest(int contestId) {
+        if(!StpUtil.isLogin()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         ResponseEntity responseEntity1 = authService.checkPermission("1-0");
         if (responseEntity1 != null) {
             Boolean flag = false;
