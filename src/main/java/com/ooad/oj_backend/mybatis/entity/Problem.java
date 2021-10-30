@@ -22,6 +22,6 @@ public class Problem implements Serializable {
     private long spaceLimit;
     private String testCaseId;
     private String allowedLanguage;
-    //private ScoreRule scoreRule;
-    //private Samples samples;
+    private ScoreRule scoreRule;
+    private Samples samples;
 }

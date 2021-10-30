@@ -23,6 +23,9 @@ public interface ProblemMapper {
             "join auth a on a.classId=class.id where p.title like '%${search}%' ${userId}")
     int getProblemNumber(@Param("search") String search,@Param("userId") String userId);
 
+    @Select("")
+    Problem getDetailedProblem(@Param("problemId") String problemId);
+
     @Insert("       INSERT INTO\n" +
             "         answer(problemId,language,code)\n" +
             "       VALUES\n" +
