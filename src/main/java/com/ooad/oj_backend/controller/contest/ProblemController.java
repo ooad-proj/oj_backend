@@ -43,8 +43,8 @@ public class ProblemController {
         return problemService.addAnswer(problemId,answer,language);
     }
     @RequestMapping(value = "standardAnswer/{problemId}",method=RequestMethod.PUT)
-    public ResponseEntity<?> updateAnswer(@PathVariable int problemId) {
-        return problemService.updateAnswer(problemId);
+    public ResponseEntity<?> updateAnswer(@PathVariable int problemId,String answer,String language) {
+        return problemService.updateAnswer(problemId,answer,language);
     }
     @RequestMapping(value = "standardAnswer/{problemId}",method=RequestMethod.GET)
     public ResponseEntity<?> getAnswer(@PathVariable int problemId) {

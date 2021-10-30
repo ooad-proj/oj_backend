@@ -1,5 +1,6 @@
 package com.ooad.oj_backend.mapper.contest;
 
+import com.ooad.oj_backend.mybatis.entity.Answer;
 import com.ooad.oj_backend.mybatis.entity.Problem;
 import com.ooad.oj_backend.mybatis.entity.ProblemView;
 import org.apache.ibatis.annotations.*;
@@ -23,9 +24,26 @@ public interface ProblemMapper {
     int getProblemNumber(@Param("search") String search,@Param("userId") String userId);
 
     @Insert("       INSERT INTO\n" +
-            "         class\n" +
-            "       (name)\n" +
+            "         answer\n" +
             "       VALUES\n" +
-            "       (#{name})")
-    void insert();
+            "       (#{problemId},#{language},#{code})")
+    void addAnswer(@Param("problemId") int problemId,@Param("language") String language,@Param("code") String code);
+
+    @Select("Select count(*) from problem where problemId=#{problemId}")
+    int searchProblem(int problemId);
+
+    @Select("Select * from answer where problemId=#{problemId} ${language}")
+    List<Answer> getAnswer(@Param("problemId") int problemId, @Param("language") String language);
+
+    @Update("       UPDATE\n" +
+            "        answer SET \n" +
+            "       code=#{code}," +
+            " language=#{language} where problemId=#{problemId}")
+    void updateAnswer(@Param("problemId") int problemId, @Param("language") String language,@Param("code")String code);
+
+    @Delete("       DELETE FROM\n" +
+            "            answer\n" +
+            "       WHERE \n" +
+            "       problemId =#{problemId}")
+    void deleteAnswer(int problemId);
 }

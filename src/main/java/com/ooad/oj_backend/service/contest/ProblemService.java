@@ -3,6 +3,7 @@ package com.ooad.oj_backend.service.contest;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ooad.oj_backend.Response;
 import com.ooad.oj_backend.mapper.contest.ProblemMapper;
+import com.ooad.oj_backend.mybatis.entity.Answer;
 import com.ooad.oj_backend.mybatis.entity.Paper;
 import com.ooad.oj_backend.mybatis.entity.Problem;
 import com.ooad.oj_backend.mybatis.entity.ProblemView;
@@ -72,15 +73,84 @@ public class ProblemService {
         return null;
     }
     public ResponseEntity<?> addAnswer(int problemId,String language,String code) {
-        return null;
+        if(!StpUtil.isLogin()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        String role=StpUtil.getRoleList().get(0);
+        if(!role.equals("teacher")&&!role.equals("assistant")){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        String temp="and language="+language;
+        Response response=new Response();
+        response.setCode(0);
+        int problem=problemMapper.searchProblem(problemId);
+        if(problem==0){
+            response.setCode(-1);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        List<Answer> answer=problemMapper.getAnswer(problemId,temp);
+        if(answer!=null){
+            response.setCode(-2);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        problemMapper.addAnswer(problemId,language,code);
+        response.setMsg("add success");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    public ResponseEntity<?> updateAnswer(int problemId) {
-        return null;
+    public ResponseEntity<?> updateAnswer(int problemId,String language,String code) {
+        if(!StpUtil.isLogin()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        String role=StpUtil.getRoleList().get(0);
+        if(!role.equals("teacher")&&!role.equals("assistant")) {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        Response response=new Response();
+        response.setCode(0);
+        int problem=problemMapper.searchProblem(problemId);
+        if(problem==0){
+            response.setCode(-1);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        problemMapper.updateAnswer(problemId,language,code);
+        response.setMsg("update success");
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     public ResponseEntity<?> getAnswer(int problemId) {
-        return null;
+        if(!StpUtil.isLogin()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        String role=StpUtil.getRoleList().get(0);
+        if(!role.equals("teacher")&&!role.equals("assistant")){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        Response response=new Response();
+        response.setCode(0);
+        int problem=problemMapper.searchProblem(problemId);
+        if(problem==0){
+            response.setCode(-1);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        List<Answer> answer=problemMapper.getAnswer(problemId,"");
+        response.setContent(answer);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     public ResponseEntity<?> deleteAnswer(int problemId) {
-        return null;
+        if(!StpUtil.isLogin()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        String role=StpUtil.getRoleList().get(0);
+        if(!role.equals("teacher")&&!role.equals("assistant")){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        Response response=new Response();
+        response.setCode(0);
+        int problem=problemMapper.searchProblem(problemId);
+        if(problem==0){
+            response.setCode(-1);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        problemMapper.deleteAnswer(problemId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
