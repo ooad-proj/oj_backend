@@ -73,6 +73,10 @@ public class ProblemService {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+        int check=problemMapper.checkProblemPrivilege("p.problemId="+problemId,(String) StpUtil.getLoginId());
+        if(check==0){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         Response response=new Response();
         HashMap<String,Object>hashMap=new HashMap<>();
         Problem problem=problemMapper.getDetailedProblem(problemId);
@@ -113,6 +117,10 @@ public class ProblemService {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+        int check=problemMapper.checkProblemPrivilege("p.contestId="+contestId,(String) StpUtil.getLoginId());
+        if(check==0){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         Response response=new Response();
         int problemId=problemMapper.addProblem(contestId,shownId,title
                 ,description,inputFormat,
@@ -130,6 +138,10 @@ public class ProblemService {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+        int check=problemMapper.checkProblemPrivilege("p.problemId="+problemId,(String) StpUtil.getLoginId());
+        if(check==0){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         Response response=new Response();
         int number=problemMapper.searchProblem(problemId);
         if(number==0){
@@ -146,6 +158,10 @@ public class ProblemService {
                                            String allowedLanguage,String testCaseId) {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        int check=problemMapper.checkProblemPrivilege("p.problemId="+problemId,(String) StpUtil.getLoginId());
+        if(check==0){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         Response response=new Response();
         int contestId=problemMapper.getContestId(problemId);
@@ -240,6 +256,10 @@ public class ProblemService {
         if(!role.equals("teacher")&&!role.equals("assistant")){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+        int check=problemMapper.checkProblemPrivilege("p.problemId="+problemId,(String) StpUtil.getLoginId());
+        if(check==0){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         Response response=new Response();
         response.setCode(0);
         int problem=problemMapper.searchProblem(problemId);
@@ -259,6 +279,10 @@ public class ProblemService {
         if(!role.equals("teacher")&&!role.equals("assistant")) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
+        int check=problemMapper.checkAnswerPrivilege("answerId="+answerId,(String) StpUtil.getLoginId());
+        if(check==0){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         Response response=new Response();
         response.setCode(0);
         Answer answer=problemMapper.getAnswerById(answerId);
@@ -273,6 +297,10 @@ public class ProblemService {
     public ResponseEntity<?> getAnswer(int problemId) {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        int check=problemMapper.checkProblemPrivilege("p.problemId="+problemId,(String) StpUtil.getLoginId());
+        if(check==0){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         String role=StpUtil.getRoleList().get(0);
         if(!role.equals("teacher")&&!role.equals("assistant")){
@@ -293,8 +321,13 @@ public class ProblemService {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+
         String role=StpUtil.getRoleList().get(0);
         if(!role.equals("teacher")&&!role.equals("assistant")){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        int check=problemMapper.checkAnswerPrivilege("answerId="+answerId,(String) StpUtil.getLoginId());
+        if(check==0){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         Response response=new Response();

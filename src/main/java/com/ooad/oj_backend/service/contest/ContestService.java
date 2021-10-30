@@ -3,6 +3,7 @@ package com.ooad.oj_backend.service.contest;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ooad.oj_backend.Response;
 import com.ooad.oj_backend.mapper.contest.ContestMapper;
+import com.ooad.oj_backend.mapper.contest.ProblemMapper;
 import com.ooad.oj_backend.mapper.user.AuthMapper;
 import com.ooad.oj_backend.mapper.user.UserMapper;
 import com.ooad.oj_backend.mybatis.entity.Contest;
@@ -24,6 +25,8 @@ public class ContestService {
     @Autowired
     private UserMapper userMapper;
     @Autowired
+    private ProblemMapper problemMapper;
+    @Autowired
     private AuthService authService;
 
     public ResponseEntity<?> getContestInformation(int contestId) {
@@ -36,14 +39,13 @@ public class ContestService {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         Contest contest = contestMapper.getOneContest(contestId);
-        List<Problem> problems = new ArrayList<>();
-        //================================= 查problem
-
+        List<Problem> problems = problemMapper.getContestProblem(contestId);
+        //TODO: get myScore and score
+        Map<String,Object> map = new HashMap<>();
+        map.put("contest",contest);
+        map.put("problems",problems);
+        response.setContent(map);
         response.setCode(0);
-//        Map<String,Object> map= new HashMap<String, Object>();
-//        map.put("contest",contest);
-//        map.put("problemList",problems);
-        response.setContent(contest);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 

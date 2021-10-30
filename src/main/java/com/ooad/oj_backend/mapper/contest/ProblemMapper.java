@@ -23,6 +23,24 @@ public interface ProblemMapper {
             "join auth a on a.classId=class.id where p.title like '%${search}%' ${userId}")
     int getProblemNumber(@Param("search") String search,@Param("userId") String userId);
 
+    @Select("        SELECT\n" +
+            "        count(*)\n" +
+            "        FROM problem p join contest on contest.id=p.contestId " +
+            "join class on class.id=contest.classId " +
+            "join auth a on a.classId=class.id where ${check},userId=#{userId} and privilege=1 or contest.id=0")
+    int checkProblemPrivilege(@Param("check")String check,@Param("userId")String userId);
+
+    @Select("        SELECT\n" +
+            "        count(*)\n" +
+            "        FROM problem p join contest on contest.id=p.contestId " +
+            "join class on class.id=contest.classId " +
+            "join auth a on a.classId=class.id join answer a2 on p.problemId = a2.problemId where ${check},userId=#{userId} and privilege=1 or contest.id=0")
+    int checkAnswerPrivilege(@Param("check")String check,@Param("userId")String userId);
+
+    @Select("        SELECT\n" +
+            "        problemId,shownId,title\n" +
+            "        FROM problem where contestId =#{contestId} ")
+    List<Problem> getContestProblem(int contestId);
     @Select("select shownId,title,description,inputFormat,outputFormat,input,output,tips,timeLimit,spaceLimit,allowedLanguage,testCaseId,totalScore,punishRule,allowPartial from problem " +
             "join samples s on problem.problemId = s.problemId join scoreRule sR on s.problemId = sR.problemId where problem.problemId=#{problemId};")
     Problem getDetailedProblem(int problemId);
