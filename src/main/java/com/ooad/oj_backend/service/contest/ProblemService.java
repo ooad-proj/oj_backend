@@ -26,7 +26,7 @@ public class ProblemService {
         Response response=new Response();
         String userId="";
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
-            userId="and userId='"+ StpUtil.getLoginId()+"'";
+            userId="and (userId='"+ StpUtil.getLoginId()+"' or contest.id=0) ";
         }
         List<ProblemView>problemViews=problemMapper.getProblem(search,userId,(page - 1) * itemsPerPage,itemsPerPage);
         int count=problemMapper.getProblemNumber(search,userId);
@@ -47,7 +47,7 @@ public class ProblemService {
         Response response=new Response();
         String userId="";
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
-            userId="and userId='"+ StpUtil.getLoginId()+"' and privilege=1";
+            userId="and (userId='"+ StpUtil.getLoginId()+"' and privilege=1 or contest.id=0)";
         }
         List<ProblemView>problemViews=problemMapper.getProblem(search,userId,(page - 1) * itemsPerPage,itemsPerPage);
         int count=problemMapper.getProblemNumber(search,userId);
