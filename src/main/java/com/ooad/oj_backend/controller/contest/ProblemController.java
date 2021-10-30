@@ -38,9 +38,9 @@ public class ProblemController {
     public ResponseEntity<?> addTestCase() {
         return problemService.addTestCase();
     }
-    @PostMapping(value = "{problemId}/standardAnswer")
+    @PostMapping(value = "standardAnswer/{problemId}")
     public ResponseEntity<?> addAnswer(@PathVariable int problemId,String answer,String language) {
-        return problemService.addAnswer(problemId,answer,language);
+        return problemService.addAnswer(problemId,language,answer);
     }
     @RequestMapping(value = "standardAnswer/{problemId}",method=RequestMethod.PUT)
     public ResponseEntity<?> updateAnswer(@PathVariable int problemId,String answer,String language) {

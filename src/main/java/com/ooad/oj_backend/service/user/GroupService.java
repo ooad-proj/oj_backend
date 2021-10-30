@@ -335,7 +335,7 @@ public class GroupService {
             }
             int total=authMapper.getNumber(search,groupId);
             List<Auth> auths = authMapper.getOneAuth(search, groupId,(page - 1) * itemsPerPage,itemsPerPage);
-            if (auths == null) {
+            if (auths.size()==0) {
                 Paper paper = new Paper();
                 paper.setItemsPerPage(0);
                 paper.setPage(1);

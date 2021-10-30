@@ -26,7 +26,7 @@ public class ProblemService {
         Response response=new Response();
         String userId="";
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
-            userId="and userId="+ StpUtil.getLoginId();
+            userId="and userId='"+ StpUtil.getLoginId()+"'";
         }
         List<ProblemView>problemViews=problemMapper.getProblem(search,userId,(page - 1) * itemsPerPage,itemsPerPage);
         int count=problemMapper.getProblemNumber(search,userId);
@@ -47,7 +47,7 @@ public class ProblemService {
         Response response=new Response();
         String userId="";
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
-            userId="and userId="+ StpUtil.getLoginId()+" and privilege=1";
+            userId="and userId='"+ StpUtil.getLoginId()+"' and privilege=1";
         }
         List<ProblemView>problemViews=problemMapper.getProblem(search,userId,(page - 1) * itemsPerPage,itemsPerPage);
         int count=problemMapper.getProblemNumber(search,userId);
@@ -80,7 +80,7 @@ public class ProblemService {
         if(!role.equals("teacher")&&!role.equals("assistant")){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        String temp="and language="+language;
+        String temp="and language='"+language+"'";
         Response response=new Response();
         response.setCode(0);
         int problem=problemMapper.searchProblem(problemId);
@@ -89,7 +89,7 @@ public class ProblemService {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         List<Answer> answer=problemMapper.getAnswer(problemId,temp);
-        if(answer!=null){
+        if(answer.size()!=0){
             response.setCode(-2);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
@@ -110,6 +110,12 @@ public class ProblemService {
         int problem=problemMapper.searchProblem(problemId);
         if(problem==0){
             response.setCode(-1);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        String temp="and language='"+language+"'";
+        List<Answer> answer=problemMapper.getAnswer(problemId,temp);
+        if(answer.size()==0){
+            response.setCode(-2);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         problemMapper.updateAnswer(problemId,language,code);
