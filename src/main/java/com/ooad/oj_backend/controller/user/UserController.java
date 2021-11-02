@@ -1,5 +1,5 @@
-package com.ooad.oj_backend.controller;
-import com.ooad.oj_backend.service.UserService;
+package com.ooad.oj_backend.controller.user;
+import com.ooad.oj_backend.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

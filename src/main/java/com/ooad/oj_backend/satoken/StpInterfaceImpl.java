@@ -2,8 +2,7 @@ package com.ooad.oj_backend.satoken;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.dev33.satoken.stp.StpUtil;
-import com.ooad.oj_backend.mapper.AuthMapper;
+import com.ooad.oj_backend.mapper.user.AuthMapper;
 import com.ooad.oj_backend.mybatis.entity.Auth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

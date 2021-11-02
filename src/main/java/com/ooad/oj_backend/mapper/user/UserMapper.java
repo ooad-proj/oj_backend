@@ -1,4 +1,4 @@
-package com.ooad.oj_backend.mapper;
+package com.ooad.oj_backend.mapper.user;
 
 import com.ooad.oj_backend.mybatis.entity.User;
 import com.ooad.oj_backend.mybatis.entity.UserView;

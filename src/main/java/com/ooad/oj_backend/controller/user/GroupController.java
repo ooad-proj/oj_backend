@@ -1,7 +1,7 @@
-package com.ooad.oj_backend.controller;
+package com.ooad.oj_backend.controller.user;
 
-import com.ooad.oj_backend.mapper.GroupMapper;
-import com.ooad.oj_backend.service.GroupService;
+import com.ooad.oj_backend.mapper.user.GroupMapper;
+import com.ooad.oj_backend.service.user.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,8 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/api/")
 public class GroupController {
-    @Autowired
-    private GroupMapper groupMapper;
     @Autowired
     private GroupService groupService;
 
@@ -82,8 +80,11 @@ public class GroupController {
         return groupService.getAllGroup( page, itemsPerPage, search);
     }
     @RequestMapping(value = "group/{groupId}",method = RequestMethod.GET)
-    @ResponseBody
     public ResponseEntity<?> getOneGroup(@PathVariable int groupId) {
         return groupService.getOneGroup(groupId);
+    }
+    @RequestMapping(value = "group/{groupId}/contest",method = RequestMethod.GET)
+    public ResponseEntity<?> getContestInGroup(@PathVariable int groupId , int page,int itemsPerPage,String search) {
+        return groupService.getContestInGroup(groupId,page,itemsPerPage,search);
     }
 }
