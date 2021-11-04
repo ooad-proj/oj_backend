@@ -252,8 +252,17 @@ public class ProblemService {
         }
         if(problemMapper.getProblemPrivilege(userId,problemId)==0){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        };
+        }
         Response response=new Response();
+        if(problemMapper.searchProblem(problemId)==0){
+            response.setCode(-1);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        if(!check(problem)){
+            response.setCode(-2);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+
         int contestId=problemMapper.getContestId(problemId);
         String[]language=problem.getAllowedLanguage();
         String allowed=Convert.toStr(language);
