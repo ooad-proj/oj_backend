@@ -40,11 +40,14 @@ public class ProblemService {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         Response response=new Response();
+        List<ProblemView>problemViews;
         String userId="";
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
             userId="and (userId='"+ StpUtil.getLoginId()+"' or contest.id=0) ";
+            problemViews=problemMapper.getProblem(search,userId,(page - 1) * itemsPerPage,itemsPerPage,"join auth a on a.classId=class.id");
+        }else {
+            problemViews = problemMapper.getProblem(search, userId, (page - 1) * itemsPerPage, itemsPerPage, "");
         }
-        List<ProblemView>problemViews=problemMapper.getProblem(search,userId,(page - 1) * itemsPerPage,itemsPerPage);
         int count=problemMapper.getProblemNumber(search,userId);
         Paper paper=new Paper<ProblemView>(page,problemViews.size(),count,(count / itemsPerPage) + (((count % itemsPerPage) == 0) ? 0 : 1));
         paper.setList(problemViews);
@@ -62,11 +65,13 @@ public class ProblemService {
         }
         Response response=new Response();
         String userId="";
+        List<ProblemView>problemViews;
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
             userId="and (userId='"+ StpUtil.getLoginId()+"' and privilege=1 or contest.id=0)";
+            problemViews=problemMapper.getProblem(search,userId,(page - 1) * itemsPerPage,itemsPerPage,"join auth a on a.classId=class.id");
+        }else {
+            problemViews = problemMapper.getProblem(search, userId, (page - 1) * itemsPerPage, itemsPerPage, "");
         }
-
-        List<ProblemView>problemViews=problemMapper.getProblem(search,userId,(page - 1) * itemsPerPage,itemsPerPage);
         int count=problemMapper.getProblemNumber(search,userId);
         Paper paper=new Paper<ProblemView>(page,problemViews.size(),count,(count / itemsPerPage) + (((count % itemsPerPage) == 0) ? 0 : 1));
         paper.setList(problemViews);
