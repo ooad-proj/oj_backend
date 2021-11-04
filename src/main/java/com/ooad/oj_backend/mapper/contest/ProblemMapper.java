@@ -71,14 +71,14 @@ public interface ProblemMapper {
     @Insert("insert into samples values(null,#{problemId},#{input},#{output});" )
     void addSample(@Param("problemId")int problemId,@Param("input")String input, @Param("output")String output);
 
-    @Update("update problem set shownId=#{shownId},title=#{title},description=#{description},inputFormat=#{inputFormat}," +
-            "outputFormat=#{outputFormat},tips=#{tips},timeLimit=#{timeLimit},spaceLimit=#{spaceLimit}," +
-            "testCaseId=#{testCaseId},allowedLanguage=#{allowedLanguage},creatorId=#{creatorId}\n" +
+    @Update("update problem set shownId=#{p.shownId},title=#{p.title},description=#{p.description},inputFormat=#{p.inputFormat}," +
+            "outputFormat=#{p.outputFormat},tips=#{p.tips},timeLimit=#{p.timeLimit},spaceLimit=#{p.spaceLimit}," +
+            "testCaseId=#{p.testCaseId},allowedLanguage=#{p.allowedLanguage},creatorId=#{p.creatorId}\n" +
             "where problemId=#{problemId};")
     void updateProblem(@Param("problemId") int problemId,@Param("p")Problem problem);
-    @Update("update scoreRule set totalScore=#{totalScore},allowPartial=#{allowPartial},punishRule=#{punishRule} " +
+    @Update("update scoreRule set totalScore=#{SR.totalScore},allowPartial=#{SR.allowPartial},punishRule=#{SR.punishRule} " +
             "where problemId=#{problemId};")
-    void updateScoreRule(@Param("problemId") int problemId,@Param("ScoreRule")ScoreRule scoreRule);
+    void updateScoreRule(@Param("problemId") int problemId,@Param("SR")ScoreRule scoreRule);
 
     @Insert("insert into submitTemplate values(null,#{problemId},#{language},#{code})" )
     void addSubmitTemplate(@Param("problemId")int problemId,@Param("language")String language,@Param("code")String code);
