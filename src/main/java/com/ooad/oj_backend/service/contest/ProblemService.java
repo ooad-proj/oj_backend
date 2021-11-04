@@ -124,7 +124,7 @@ public class ProblemService {
         hashMap.put("scoreRule",scoreRule);
         hashMap.put("creatorId",creatorAndGroup.getCreatorId());
         hashMap.put("creatorName",creatorAndGroup.getCreatorName());
-        hashMap.put("contestId",creatorAndGroup.getCreatorId());
+        hashMap.put("contestId",creatorAndGroup.getContestId());
         hashMap.put("contestTitle",creatorAndGroup.getContestTitle());
         hashMap.put("groupId",creatorAndGroup.getGroupId());
         hashMap.put("groupName",creatorAndGroup.getGroupName());
