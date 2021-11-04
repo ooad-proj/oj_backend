@@ -106,7 +106,7 @@ public class ProblemService {
         scoreRule.setPunishRule(problem.getPunishRule());
         scoreRule.setAllowPartial(problem.isAllowPartial());
         scoreRule.setTotalScore(problem.getTotalScore());
-        JSONArray jsonObject = JSONUtil.parseArray(problem.getAllowedLanguage());
+        JSONArray jsonObject = JSONUtil.parseArray(problem.getAllowedLanguage1());
         String[] language=new String[jsonObject.size()];
         for(int i=0;i<jsonObject.size();++i){
             language[i]=String.valueOf(jsonObject.get(i));
@@ -241,7 +241,7 @@ public class ProblemService {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-      /*  int check=problemMapper.checkProblemPrivilege("p.problemId="+problemId,(String) StpUtil.getLoginId());
+      /* int check=problemMapper.checkProblemPrivilege("p.problemId="+problemId,(String) StpUtil.getLoginId());
         if(check==0){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }*/

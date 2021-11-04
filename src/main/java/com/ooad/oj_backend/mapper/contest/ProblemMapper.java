@@ -52,7 +52,7 @@ public interface ProblemMapper {
             "        problemId,shownId,title\n" +
             "        FROM problem where contestId =#{contestId} ")
     List<Problem> getContestProblem(int contestId);
-    @Select("select shownId,title,description,inputFormat,outputFormat,tips,timeLimit,spaceLimit,allowedLanguage,testCaseId,totalScore,punishRule,allowPartial from problem " +
+    @Select("select shownId,title,description,inputFormat,outputFormat,tips,timeLimit,spaceLimit,allowedLanguage as allowedLanguage1,testCaseId,totalScore,punishRule,allowPartial from problem " +
             "join scoreRule sR on problem.problemId = sR.problemId where problem.problemId=#{problemId};")
     Problem getDetailedProblem(int problemId);
 
