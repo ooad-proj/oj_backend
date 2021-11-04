@@ -121,7 +121,7 @@ public class ProblemService {
         hashMap.put("spaceLimit",problem.getSpaceLimit());
         hashMap.put("allowedLanguage",language);
         hashMap.put("testCaseId",problem.getTestCaseId());
-        hashMap.put("ScoreRule",scoreRule);
+        hashMap.put("scoreRule",scoreRule);
         hashMap.put("creatorId",creatorAndGroup.getCreatorId());
         hashMap.put("creatorName",creatorAndGroup.getCreatorName());
         hashMap.put("groupId",creatorAndGroup.getGroupId());
@@ -162,6 +162,17 @@ public class ProblemService {
         if(check==0){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }*/
+        String role=StpUtil.getRoleList().get(0);
+        if(!role.equals("teacher")&&!role.equals("assistant")){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+        String userId="";
+        if(!StpUtil.getRoleList().get(0).equals("teacher")){
+            userId="and (userId='"+ StpUtil.getLoginId()+"' and privilege=1 or contest.id=0)";
+        }
+        if(problemMapper.getContestPrivilege(userId,contestId)==0){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        };
        Response response=new Response();
         if(!check(problem)){
             response.setCode(-1);
