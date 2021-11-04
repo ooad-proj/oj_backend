@@ -21,6 +21,12 @@ public interface ProblemMapper {
             "        count(*)\n" +
             "        FROM problem p join contest on contest.id=p.contestId " +
             "join class on class.id=contest.classId " +
+            "join auth a on a.classId=class.id where p.problemId=#{problemId} ${userId}")
+    int getProblemPrivilege(@Param("userId") String userId,@Param("problem")int problemId);
+    @Select("        SELECT\n" +
+            "        count(*)\n" +
+            "        FROM problem p join contest on contest.id=p.contestId " +
+            "join class on class.id=contest.classId " +
             "join auth a on a.classId=class.id where p.title like '%${search}%' ${userId}")
     int getProblemNumber(@Param("search") String search,@Param("userId") String userId);
 
@@ -28,7 +34,7 @@ public interface ProblemMapper {
             "        count(*)\n" +
             "        FROM problem p join contest on contest.id=p.contestId " +
             "join class on class.id=contest.classId " +
-            "join auth a on a.classId=class.id where ${check} and (userId=#{userId} and privilege=1 or contest.id=0)")
+            "join auth a on a.classId=class.id where ${check} and (userId=#{userId} and and privilege=1 or contest.id=0)")
     int checkProblemPrivilege(@Param("check")String check,@Param("userId")String userId);
 
     @Select("        SELECT\n" +

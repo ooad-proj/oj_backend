@@ -29,4 +29,5 @@ public class Problem implements Serializable {
     private Samples[] samples;
     private SubmitTemplate[]submitTemplates;
     private ScoreRule scoreRule;
+
 }
