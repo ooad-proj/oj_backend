@@ -24,11 +24,8 @@ public interface ProblemMapper {
             "join auth a on a.classId=class.id where p.problemId=#{problemId} ${userId}")
     int getProblemPrivilege(@Param("userId") String userId,@Param("problemId")int problemId);
 
-    @Select("        SELECT\n" +
-            "        count(*)\n" +
-            "        FROM problem p join contest on contest.id=p.contestId " +
-            "join class on class.id=contest.classId " +
-            "join auth a on a.classId=class.id where contest.id=#{contestId} ${userId}")
+    @Select("SELECT count(*) from contest join class on class.id=contest.classId\n" +
+            "    join auth a on a.classId=class.id where contest.id=#{contestId}; ${userId}")
     int getContestPrivilege(@Param("userId") String userId,@Param("contestId")int contestId);
     @Select("        SELECT\n" +
             "        count(*)\n" +
@@ -68,7 +65,7 @@ public interface ProblemMapper {
             "join User on problem.creatorId = User.id join contest c on c.id = problem.contestId " +
             "join class c2 on c2.id = c.classId where problem.problemId=#{problemId}")
     CreatorAndGroup getCreatorAndGroup(int problemId);
-    @Insert("insert into problem values (null,#{p.shownId},#{title},#{contestId},#{p.description},#{p.inputFormat},#{p.outputFormat}" +
+    @Insert("insert into problem values (null,#{p.shownId},#{p.title},#{contestId},#{p.description},#{p.inputFormat},#{p.outputFormat}" +
             ",#{p.tips},#{p.timeLimit},#{p.spaceLimit},#{p.testCaseId},#{allowedLanguage},#{creatorId});")
     @Options(useGeneratedKeys = true, keyProperty = "p.problemId", keyColumn="problemId")
    /* @Insert("insert into problem values (null,#{shownId},#{title},#{contestId},#{description},#{inputFormat},#{outputFormat}" +

@@ -174,7 +174,7 @@ public class ProblemService {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
        Response response=new Response();
-        if(!check(problem)){
+        if(check(problem)){
             response.setCode(-1);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
@@ -258,7 +258,7 @@ public class ProblemService {
             response.setCode(-1);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
-        if(!check(problem)){
+        if(check(problem)){
             response.setCode(-2);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }

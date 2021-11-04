@@ -8,5 +8,4 @@ public class OjBackendApplication {
     public static void main(String[] args) {
         SpringApplication.run(OjBackendApplication.class, args);
     }
-
 }
