@@ -22,7 +22,7 @@ public interface ProblemMapper {
             "        FROM problem p join contest on contest.id=p.contestId " +
             "join class on class.id=contest.classId " +
             "join auth a on a.classId=class.id where p.problemId=#{problemId} ${userId}")
-    int getProblemPrivilege(@Param("userId") String userId,@Param("problem")int problemId);
+    int getProblemPrivilege(@Param("userId") String userId,@Param("problemId")int problemId);
     @Select("        SELECT\n" +
             "        count(*)\n" +
             "        FROM problem p join contest on contest.id=p.contestId " +
