@@ -92,10 +92,11 @@ public class ProblemService {
         String userId="";
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
             userId="and (userId='"+ StpUtil.getLoginId()+"' and privilege=1 or contest.id=0)";
+            if(problemMapper.getProblemPrivilege(userId,problemId)==0){
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            };
         }
-        if(problemMapper.getProblemPrivilege(userId,problemId)==0){
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        };
+
 
         HashMap<String,Object>hashMap=new HashMap<>();
         Problem problem=problemMapper.getDetailedProblem(problemId);
@@ -172,9 +173,9 @@ public class ProblemService {
         String userId="";
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
             userId="and (userId='"+ StpUtil.getLoginId()+"' and privilege=1 or contest.id=0)";
-        }
-        if(problemMapper.getContestPrivilege(userId,contestId)==0){
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            if(problemMapper.getContestPrivilege(userId,contestId)==0){
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
         }
        Response response=new Response();
         if(check(problem)){
@@ -220,10 +221,10 @@ public class ProblemService {
         String userId="";
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
             userId="and (userId='"+ StpUtil.getLoginId()+"' and privilege=1 or contest.id=0)";
+            if(problemMapper.getProblemPrivilege(userId,problemId)==0){
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            };
         }
-        if(problemMapper.getProblemPrivilege(userId,problemId)==0){
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        };
         Response response=new Response();
         int number=problemMapper.searchProblem(problemId);
         if(number==0){
@@ -252,10 +253,11 @@ public class ProblemService {
         String userId="";
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
             userId="and (userId='"+ StpUtil.getLoginId()+"' and privilege=1 or contest.id=0)";
+            if(problemMapper.getProblemPrivilege(userId,problemId)==0){
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
         }
-        if(problemMapper.getProblemPrivilege(userId,problemId)==0){
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+
         Response response=new Response();
         if(problemMapper.searchProblem(problemId)==0){
             response.setCode(-1);
