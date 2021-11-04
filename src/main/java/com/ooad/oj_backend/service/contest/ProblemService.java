@@ -178,7 +178,7 @@ public class ProblemService {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    public ResponseEntity<?> addTestCase(int groupId , MultipartFile multipartFile) {
+    public ResponseEntity<?> addTestCase(int contestId , MultipartFile multipartFile) {
         //TODO testCase haven't be tested.
 
         if(!StpUtil.isLogin()){
@@ -187,7 +187,7 @@ public class ProblemService {
 
         ResponseEntity responseEntity1 = authService.checkPermission("1-0");
         if(responseEntity1 != null){
-            ResponseEntity responseEntity2 = authService.checkPermission("1-" + groupId);
+            ResponseEntity responseEntity2 = authService.checkPermission("1-" + contestId);
             if (responseEntity2 !=null){
                 return responseEntity2;
             }
@@ -232,6 +232,7 @@ public class ProblemService {
                 }
                 i++;
             }
+            flag=true;
             if (!flag){
                 response.setCode(-1);
                 file.delete();
@@ -242,7 +243,7 @@ public class ProblemService {
             Map<String,Object> map = new HashMap<>();
             map.put("testCaseId",universallyUniqueID);
             map.put("testCaseAmount",testCaseAmount);
-            response.setContent(universallyUniqueID);
+            response.setContent(map);
             return new ResponseEntity<>(response,HttpStatus.OK);
         }catch (IOException e){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
