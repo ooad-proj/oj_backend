@@ -12,4 +12,6 @@ public class CreatorAndGroup implements Serializable {
     private String creatorName;
     private int groupId;
     private String groupName;
+    private String contestTitle;
+    private int contestId;
 }

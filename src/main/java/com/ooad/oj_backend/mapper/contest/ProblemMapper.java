@@ -61,7 +61,7 @@ public interface ProblemMapper {
     @Select("select language,code from submitTemplate where problemId=#{problemId}")
     SubmitTemplate[] getSubmitTemplate(int problemId);
 
-    @Select("select problem.creatorId,User.name as creatorName,c2.id as groupId,c2.name as groupName from problem " +
+    @Select("select problem.creatorId,User.name as creatorName,c.id as contestId,c.name as contestTitle,c2.id as groupId,groupName from problem " +
             "join User on problem.creatorId = User.id join contest c on c.id = problem.contestId " +
             "join class c2 on c2.id = c.classId where problem.problemId=#{problemId}")
     CreatorAndGroup getCreatorAndGroup(int problemId);

@@ -124,6 +124,8 @@ public class ProblemService {
         hashMap.put("scoreRule",scoreRule);
         hashMap.put("creatorId",creatorAndGroup.getCreatorId());
         hashMap.put("creatorName",creatorAndGroup.getCreatorName());
+        hashMap.put("contestId",creatorAndGroup.getCreatorId());
+        hashMap.put("contestTitle",creatorAndGroup.getContestTitle());
         hashMap.put("groupId",creatorAndGroup.getGroupId());
         hashMap.put("groupName",creatorAndGroup.getGroupName());
         hashMap.put("submitTemplate",submitTemplates);
@@ -262,8 +264,6 @@ public class ProblemService {
             response.setCode(-2);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
-
-        int contestId=problemMapper.getContestId(problemId);
         String[]language=problem.getAllowedLanguage();
         String allowed=Convert.toStr(language);
         problemMapper.updateProblem(problemId,problem,allowed);
