@@ -23,12 +23,10 @@ public class Problem implements Serializable {
     private long spaceLimit;
     private String testCaseId;
     private String allowedLanguage;
-    private int totalScore;
-    private String punishRule;
-    private boolean allowPartial;
-    private String input;
-    private String output;
-    //private Samples samples;
-    //private SubmitTemplate submitTemplate;
-    //private ScoreRule scoreRule;
+    private int totalScore=100;
+    private String punishRule="";
+    private boolean allowPartial=false;
+    private Samples[] samples;
+    private SubmitTemplate[]submitTemplates;
+    private ScoreRule scoreRule;
 }

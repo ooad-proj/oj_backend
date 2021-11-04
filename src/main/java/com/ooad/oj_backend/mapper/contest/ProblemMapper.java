@@ -2,6 +2,7 @@ package com.ooad.oj_backend.mapper.contest;
 
 import com.ooad.oj_backend.mybatis.entity.*;
 import lombok.Setter;
+
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -27,7 +28,7 @@ public interface ProblemMapper {
             "        count(*)\n" +
             "        FROM problem p join contest on contest.id=p.contestId " +
             "join class on class.id=contest.classId " +
-            "join auth a on a.classId=class.id where ${check},userId=#{userId} and privilege=1 or contest.id=0")
+            "join auth a on a.classId=class.id where ${check} and (userId=#{userId} and privilege=1 or contest.id=0)")
     int checkProblemPrivilege(@Param("check")String check,@Param("userId")String userId);
 
     @Select("        SELECT\n" +
@@ -41,55 +42,56 @@ public interface ProblemMapper {
             "        problemId,shownId,title\n" +
             "        FROM problem where contestId =#{contestId} ")
     List<Problem> getContestProblem(int contestId);
-    @Select("select shownId,title,description,inputFormat,outputFormat,input,output,tips,timeLimit,spaceLimit,allowedLanguage,testCaseId,totalScore,punishRule,allowPartial from problem " +
-            "join samples s on problem.problemId = s.problemId join scoreRule sR on s.problemId = sR.problemId where problem.problemId=#{problemId};")
+    @Select("select shownId,title,description,inputFormat,outputFormat,tips,timeLimit,spaceLimit,allowedLanguage,testCaseId,totalScore,punishRule,allowPartial from problem " +
+            "join scoreRule sR on problem.problemId = sR.problemId where problem.problemId=#{problemId};")
     Problem getDetailedProblem(int problemId);
 
-    @Select("select problem.creatorId,User.name,c2.id as groupId,c2.name as groupName from problem " +
+    @Select("select input,output from samples s where s.problemId=#{problem}")
+    Samples[] getSamples(int problemId);
+    @Select("select language,code from submitTemplate where problemId=#{problemId}")
+    SubmitTemplate[] getSubmitTemplate(int problemId);
+
+    @Select("select problem.creatorId,User.name as creatorName,c2.id as groupId,c2.name as groupName from problem " +
             "join User on problem.creatorId = User.id join contest c on c.id = problem.contestId " +
             "join class c2 on c2.id = c.classId where problem.problemId=#{problemId}")
     CreatorAndGroup getCreatorAndGroup(int problemId);
-    @Insert("insert into problem values (null,#{shownId},#{title},#{contestId},#{description},#{inputFormat},#{outputFormat}" +
-            ",#{tips},#{timeLimit},#{spaceLimit},#{testCaseId},#{allowedLanguage},#{creatorId});")
-    @Options(useGeneratedKeys = true, keyProperty = "problemId", keyColumn="problemId")
-    int addProblem(@Param("contestId") int contestId,@Param("shownId") int shownId, @Param("title")String title,
+    @Insert("insert into problem values (null,#{p.shownId},#{p.title},#{contestId},#{p.description},#{p.inputFormat},#{p.outputFormat}" +
+            ",#{p.tips},#{p.timeLimit},#{p.spaceLimit},#{p.testCaseId},#{p.allowedLanguage},#{creatorId});")
+    @Options(useGeneratedKeys = true, keyProperty = "p.problemId", keyColumn="problemId")
+   /* int addProblem(@Param("contestId") int contestId,@Param("shownId") int shownId, @Param("title")String title,
                     @Param("description")String description,@Param("inputFormat") String inputFormat,@Param("outputFormat") String outputFormat,
                     @Param("tips")String tips,@Param("timeLimit")String timeLimit,@Param("spaceLimit")String spaceLimit,
-                    @Param("allowedLanguage")String allowedLanguage,@Param("testCaseId")String testCaseId);
-    @Insert("inset into samples values(#{problemId},#{input},#{output});" )
-    void addScoreRule(@Param("problemId")int problemId, @Param("totalScore")int totalScore,
-                      @Param("allowPartial")boolean allowPartial,@Param("punishRule")String punishRule);
+                    @Param("allowedLanguage")String allowedLanguage,@Param("testCaseId")String testCaseId);*/
+   int addProblem(@Param("contestId")int contestId,@Param("p") Problem problem,@Param("creatorId")String creatorId);
+    @Insert("insert into scoreRule values(#{problemId},#{SR.totalScore},#{SR.allowPartial},#{SR.punishRule});" )
+    /*void addScoreRule(@Param("problemId")int problemId, @Param("totalScore")int totalScore,
+                      @Param("allowPartial")boolean allowPartial,@Param("punishRule")String punishRule);*/
+    void addScoreRule(@Param("problemId")int problemId,@Param("SR") ScoreRule scoreRule);
 
-    @Insert("inset into samples values(#{problemId},#{input},#{output});" )
+    @Insert("insert into samples values(null,#{problemId},#{input},#{output});" )
     void addSample(@Param("problemId")int problemId,@Param("input")String input, @Param("output")String output);
 
     @Update("update problem set shownId=#{shownId},title=#{title},description=#{description},inputFormat=#{inputFormat}," +
             "outputFormat=#{outputFormat},tips=#{tips},timeLimit=#{timeLimit},spaceLimit=#{spaceLimit}," +
             "testCaseId=#{testCaseId},allowedLanguage=#{allowedLanguage},creatorId=#{creatorId}\n" +
-            "where problemId=#{problemId};" +
-            "update scoreRule set totalScore=#{totalScore},allowPartial=#{allowPartial},punishRule=#{punishRule} " +
             "where problemId=#{problemId};")
-    void updateProblem(@Param("problemId") int problemId,@Param("shownId") int shownId, @Param("title")String title,
-                   @Param("totalScore")int totalScore, @Param("allowPartial")boolean allowPartial,@Param("punishRule")String punishRule
-            ,@Param("description")String description,@Param("inputFormat") String inputFormat,@Param("outputFormat") String outputFormat,
-                   @Param("tips")String tips,@Param("timeLimit")String timeLimit,@Param("spaceLimit")String spaceLimit,
-                   @Param("allowedLanguage")String allowedLanguage,@Param("testCaseId")String testCaseId);
+    void updateProblem(@Param("problemId") int problemId,@Param("p")Problem problem);
+    @Update("update scoreRule set totalScore=#{totalScore},allowPartial=#{allowPartial},punishRule=#{punishRule} " +
+            "where problemId=#{problemId};")
+    void updateScoreRule(@Param("problemId") int problemId,@Param("totalScore")int totalScore, @Param("allowPartial")boolean allowPartial,@Param("punishRule")String punishRule);
 
-    @Insert("inset into submitTemplate values(#{problemId},#{language},#{code})" )
+    @Insert("insert into submitTemplate values(null,#{problemId},#{language},#{code})" )
     void addSubmitTemplate(@Param("problemId")int problemId,@Param("language")String language,@Param("code")String code);
 
     @Select("select contestId from problem where problemId=#{problemId}")
     int getContestId(int problemId);
-    @Delete("       DELETE FROM samples WHERE problemId =#{problemId};" +
-            " DELETE FROM scoreRule WHERE problemId =#{problemId};" +
-            " DELETE FROM submitTemplate WHERE problemId =#{problemId};" +
-            " DELETE FROM problem WHERE problemId =#{problemId};")
+    @Delete(" DELETE FROM problem WHERE problemId =#{problemId};")
     void deleteProblem(int problemId);
-
-    @Delete("       DELETE FROM samples WHERE problemId =#{problemId};")
-    void deleteSamples(int problemId);
-
-    @Delete("       DELETE FROM submitTemplate WHERE problemId =#{problemId};")
+    @Delete("DELETE FROM samples WHERE problemId =#{problemId}")
+    void deleteSample(int problemId);
+    @Delete("DELETE FROM scoreRule WHERE problemId =#{problemId}")
+    void deleteScoreRule(int problemId);
+    @Delete("DELETE FROM submitTemplate WHERE problemId =#{problemId};")
     void deleteSubmitTemplates(int problemId);
 
     @Insert("       INSERT INTO\n" +

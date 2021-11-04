@@ -28,24 +28,23 @@ public class ProblemController {
         return problemService.getDetailedProblem(problemId);
     }
     @PostMapping(value = "contest/{contestId}")
-    public ResponseEntity<?> addProblem(@PathVariable int contestId, int shownId, String title, ScoreRule scoreRule,
-                                        Samples[] samples, String description, String inputFormat, String outputFormat,
-                                        SubmitTemplate[] submitTemplate,String tips,String timeLimit,String spaceLimit,
+   /* public ResponseEntity<?> addProblem(@PathVariable int contestId, int shownId, String title, ScoreRule scoreRule,
+                                        @RequestParam(value = "samples[]") Samples[] samples, String description, String inputFormat, String outputFormat,
+                                        @RequestParam(value = "submitTemplate[]")SubmitTemplate[] submitTemplate,String tips,String timeLimit,String spaceLimit,
                                         String allowedLanguage,String testCaseId) {
         return problemService.addProblem(contestId,shownId,title,scoreRule,samples,description,inputFormat,
                 outputFormat,submitTemplate,tips,timeLimit,spaceLimit,allowedLanguage,testCaseId);
+    }*/
+    public ResponseEntity<?> addProblem(@PathVariable int contestId,@RequestBody Problem problem) {
+        return problemService.addProblem(contestId,problem);
     }
     @RequestMapping(value = "{problemId}",method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteProblem(@PathVariable int problemId) {
         return problemService.deleteProblem(problemId);
     }
     @RequestMapping(value = "{problemId}",method = RequestMethod.PUT)
-    public ResponseEntity<?> updateProblem(@PathVariable int problemId, int shownId, String title, ScoreRule scoreRule,
-                                           Samples[] samples, String description, String inputFormat, String outputFormat,
-                                           SubmitTemplate[] submitTemplate,String tips,String timeLimit,String spaceLimit,
-                                           String allowedLanguage,String testCaseId) {
-        return problemService.updateProblem(problemId,shownId,title,scoreRule,samples,description,inputFormat,
-                outputFormat,submitTemplate,tips,timeLimit,spaceLimit,allowedLanguage,testCaseId);
+    public ResponseEntity<?> updateProblem(@PathVariable int problemId,@RequestBody Problem problem) {
+        return problemService.updateProblem(problemId,problem);
     }
     @PostMapping(value = "testCase/{contestId}")
     public ResponseEntity<?> addTestCase(@PathVariable int contestId, MultipartFile file) {

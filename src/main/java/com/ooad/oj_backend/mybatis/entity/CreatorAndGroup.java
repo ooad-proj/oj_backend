@@ -8,8 +8,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class CreatorAndGroup implements Serializable {
-    private int classId;
-    private String className;
-    private String groupId;
+    private int creatorId;
+    private String creatorName;
+    private int groupId;
     private String groupName;
 }

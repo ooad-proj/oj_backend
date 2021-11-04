@@ -2,6 +2,7 @@ package com.ooad.oj_backend.service.contest;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.json.JSON;
+import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.ooad.oj_backend.Response;
@@ -73,23 +74,30 @@ public class ProblemService {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+        Response response=new Response();
+        response.setCode(0);
+        int checkProblem=problemMapper.searchProblem(problemId);
+        if(checkProblem==0){
+            return new ResponseEntity<>(response,HttpStatus.FORBIDDEN);
+        }
         int check=problemMapper.checkProblemPrivilege("p.problemId="+problemId,(String) StpUtil.getLoginId());
         if(check==0){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
-        Response response=new Response();
         HashMap<String,Object>hashMap=new HashMap<>();
         Problem problem=problemMapper.getDetailedProblem(problemId);
         CreatorAndGroup creatorAndGroup=problemMapper.getCreatorAndGroup(problemId);
-        Samples samples=new Samples();
+        SubmitTemplate[] submitTemplates=problemMapper.getSubmitTemplate(problemId);
+        Samples[] samples=problemMapper.getSamples(problemId);
         ScoreRule scoreRule=new ScoreRule();
         scoreRule.setPunishRule(problem.getPunishRule());
         scoreRule.setAllowPartial(problem.isAllowPartial());
         scoreRule.setTotalScore(problem.getTotalScore());
-        samples.setInput(problem.getInput());
-        samples.setOutput(problem.getOutput());
-        JSONObject jsonObject = JSONUtil.parseObj(problem.getAllowedLanguage());
-        String[] language= (String[]) jsonObject.get("allowedLanguage");
+        JSONArray jsonObject = JSONUtil.parseArray(problem.getAllowedLanguage());
+        String[] language=new String[jsonObject.size()];
+        for(int i=0;i<jsonObject.size();++i){
+            language[i]=(String) jsonObject.get(i);
+        }
         hashMap.put("shownId",problem.getShownId());
         hashMap.put("title",problem.getTitle());
         hashMap.put("description",problem.getDescription());
@@ -100,17 +108,17 @@ public class ProblemService {
         hashMap.put("timeLimit",problem.getTimeLimit());
         hashMap.put("spaceLimit",problem.getSpaceLimit());
         hashMap.put("allowedLanguage",language);
-        hashMap.put("testCaseId",problem.getContestId());
+        hashMap.put("testCaseId",problem.getTestCaseId());
         hashMap.put("ScoreRule",scoreRule);
-        hashMap.put("creatorId",creatorAndGroup.getClassId());
-        hashMap.put("creatorName",creatorAndGroup.getClassName());
+        hashMap.put("creatorId",creatorAndGroup.getCreatorId());
+        hashMap.put("creatorName",creatorAndGroup.getCreatorName());
         hashMap.put("groupId",creatorAndGroup.getGroupId());
         hashMap.put("groupName",creatorAndGroup.getGroupName());
-        response.setCode(0);
+        hashMap.put("submitTemplate",submitTemplates);
         response.setContent(hashMap);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    public ResponseEntity<?> addProblem(int contestId, int shownId, String title, ScoreRule scoreRule,
+   /* public ResponseEntity<?> addProblem(int contestId, int shownId, String title, ScoreRule scoreRule,
                                         Samples[] samples, String description, String inputFormat, String outputFormat,
                                         SubmitTemplate[] submitTemplate,String tips,String timeLimit,String spaceLimit,
                                         String allowedLanguage,String testCaseId) {
@@ -133,42 +141,65 @@ public class ProblemService {
             problemMapper.addSubmitTemplate(problemId,submitTemplate1.getLanguage(),submitTemplate1.getCode());
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }*/
+    public ResponseEntity<?> addProblem(int contestId, Problem problem){
+        if(!StpUtil.isLogin()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        /*int check=problemMapper.checkProblemPrivilege("p.contestId="+contestId,(String) StpUtil.getLoginId());
+        if(check==0){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }*/
+        Response response=new Response();
+        problemMapper.addProblem(contestId,problem,(String) StpUtil.getLoginId());
+        int problemId=problem.getProblemId();
+        problemMapper.addScoreRule(problemId,problem.getScoreRule());
+        Samples[] samples=problem.getSamples();
+        SubmitTemplate[]submitTemplate=problem.getSubmitTemplates();
+        for(Samples sample:samples){
+            problemMapper.addSample(problemId,sample.getInput(),sample.getOutput());
+        }
+        for(SubmitTemplate submitTemplate1:submitTemplate){
+            problemMapper.addSubmitTemplate(problemId,submitTemplate1.getLanguage(),submitTemplate1.getCode());
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     public ResponseEntity<?> deleteProblem(int problemId) {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        int check=problemMapper.checkProblemPrivilege("p.problemId="+problemId,(String) StpUtil.getLoginId());
+       /* int check=problemMapper.checkProblemPrivilege("p.problemId="+problemId,(String) StpUtil.getLoginId());
         if(check==0){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+        }*/
         Response response=new Response();
         int number=problemMapper.searchProblem(problemId);
         if(number==0){
             response.setCode(-1);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
+        problemMapper.deleteSample(problemId);
+        problemMapper.deleteSubmitTemplates(problemId);
+        problemMapper.deleteScoreRule(problemId);
         problemMapper.deleteProblem(problemId);
         response.setCode(0);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    public ResponseEntity<?> updateProblem(int problemId, int shownId, String title, ScoreRule scoreRule,
-                                           Samples[] samples, String description, String inputFormat, String outputFormat,
-                                           SubmitTemplate[] submitTemplate,String tips,String timeLimit,String spaceLimit,
-                                           String allowedLanguage,String testCaseId) {
+    public ResponseEntity<?> updateProblem(int problemId, Problem problem) {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        int check=problemMapper.checkProblemPrivilege("p.problemId="+problemId,(String) StpUtil.getLoginId());
+      /*  int check=problemMapper.checkProblemPrivilege("p.problemId="+problemId,(String) StpUtil.getLoginId());
         if(check==0){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+        }*/
         Response response=new Response();
         int contestId=problemMapper.getContestId(problemId);
-        problemMapper.updateProblem(contestId,shownId,title,scoreRule.getTotalScore(),scoreRule.isAllowPartial(),scoreRule.getPunishRule()
-                ,description,inputFormat,
-                outputFormat,tips,timeLimit,spaceLimit,allowedLanguage,testCaseId);
-        problemMapper.deleteSamples(problemId);
+      /*  problemMapper.updateProblem(contestId,problem);
+        problemMapper.updateScoreRule(problemId,problem.getScoreRule());*/
+        problemMapper.deleteSample(problemId);
+        Samples[] samples=problem.getSamples();
+        SubmitTemplate[]submitTemplate=problem.getSubmitTemplates();
         for(Samples sample:samples){
             problemMapper.addSample(problemId,sample.getInput(),sample.getOutput());
         }
