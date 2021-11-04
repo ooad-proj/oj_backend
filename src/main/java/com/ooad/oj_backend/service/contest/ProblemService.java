@@ -172,7 +172,7 @@ public class ProblemService {
         }
         if(problemMapper.getContestPrivilege(userId,contestId)==0){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        };
+        }
        Response response=new Response();
         if(!check(problem)){
             response.setCode(-1);
@@ -255,7 +255,9 @@ public class ProblemService {
         };
         Response response=new Response();
         int contestId=problemMapper.getContestId(problemId);
-        problemMapper.updateProblem(contestId,problem);
+        String[]language=problem.getAllowedLanguage();
+        String allowed=Convert.toStr(language);
+        problemMapper.updateProblem(contestId,problem,allowed);
         problemMapper.updateScoreRule(problemId,problem.getScoreRule());
         problemMapper.deleteSample(problemId);
         Samples[] samples=problem.getSamples();
