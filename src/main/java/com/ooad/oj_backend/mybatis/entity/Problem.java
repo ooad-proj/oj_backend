@@ -27,7 +27,7 @@ public class Problem implements Serializable {
     private String punishRule="";
     private boolean allowPartial=false;
     private Samples[] samples;
-    private SubmitTemplate[]submitTemplates;
+    private SubmitTemplate[]submitTemplate;
     private ScoreRule scoreRule;
     private String creatorId;
 }

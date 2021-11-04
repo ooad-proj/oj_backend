@@ -194,7 +194,7 @@ public class ProblemService {
                 problemMapper.addSample(problemId,sample.getInput(),sample.getOutput());
             }
         }
-        SubmitTemplate[]submitTemplate=problem.getSubmitTemplates();
+        SubmitTemplate[]submitTemplate=problem.getSubmitTemplate();
         if(submitTemplate!=null) {
             for (SubmitTemplate submitTemplate1 : submitTemplate) {
                 problemMapper.addSubmitTemplate(problemId, submitTemplate1.getLanguage(), submitTemplate1.getCode());
@@ -269,7 +269,7 @@ public class ProblemService {
         problemMapper.updateProblem(contestId,problem,allowed);
         problemMapper.updateScoreRule(problemId,problem.getScoreRule());
         Samples[] samples=problem.getSamples();
-        SubmitTemplate[]submitTemplate=problem.getSubmitTemplates();
+        SubmitTemplate[]submitTemplate=problem.getSubmitTemplate();
         if(samples!=null) {
             problemMapper.deleteSample(problemId);
             for (Samples sample : samples) {
