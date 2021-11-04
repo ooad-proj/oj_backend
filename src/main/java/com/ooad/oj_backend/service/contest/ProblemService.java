@@ -268,15 +268,19 @@ public class ProblemService {
         String allowed=Convert.toStr(language);
         problemMapper.updateProblem(contestId,problem,allowed);
         problemMapper.updateScoreRule(problemId,problem.getScoreRule());
-        problemMapper.deleteSample(problemId);
         Samples[] samples=problem.getSamples();
         SubmitTemplate[]submitTemplate=problem.getSubmitTemplates();
-        for(Samples sample:samples){
-            problemMapper.addSample(problemId,sample.getInput(),sample.getOutput());
+        if(samples!=null) {
+            problemMapper.deleteSample(problemId);
+            for (Samples sample : samples) {
+                problemMapper.addSample(problemId, sample.getInput(), sample.getOutput());
+            }
         }
-        problemMapper.deleteSubmitTemplates(problemId);
-        for(SubmitTemplate submitTemplate1:submitTemplate){
-            problemMapper.addSubmitTemplate(problemId,submitTemplate1.getLanguage(),submitTemplate1.getCode());
+        if(submitTemplate!=null) {
+            problemMapper.deleteSubmitTemplates(problemId);
+            for (SubmitTemplate submitTemplate1 : submitTemplate) {
+                problemMapper.addSubmitTemplate(problemId, submitTemplate1.getLanguage(), submitTemplate1.getCode());
+            }
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
