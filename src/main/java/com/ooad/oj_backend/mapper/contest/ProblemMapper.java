@@ -78,7 +78,7 @@ public interface ProblemMapper {
     void updateProblem(@Param("problemId") int problemId,@Param("p")Problem problem);
     @Update("update scoreRule set totalScore=#{totalScore},allowPartial=#{allowPartial},punishRule=#{punishRule} " +
             "where problemId=#{problemId};")
-    void updateScoreRule(@Param("problemId") int problemId,@Param("totalScore")int totalScore, @Param("allowPartial")boolean allowPartial,@Param("punishRule")String punishRule);
+    void updateScoreRule(@Param("problemId") int problemId,@Param("ScoreRule")ScoreRule scoreRule);
 
     @Insert("insert into submitTemplate values(null,#{problemId},#{language},#{code})" )
     void addSubmitTemplate(@Param("problemId")int problemId,@Param("language")String language,@Param("code")String code);

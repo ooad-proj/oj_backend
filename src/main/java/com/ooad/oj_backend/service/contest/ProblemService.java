@@ -195,8 +195,8 @@ public class ProblemService {
         }*/
         Response response=new Response();
         int contestId=problemMapper.getContestId(problemId);
-      /*  problemMapper.updateProblem(contestId,problem);
-        problemMapper.updateScoreRule(problemId,problem.getScoreRule());*/
+        problemMapper.updateProblem(contestId,problem);
+        problemMapper.updateScoreRule(problemId,problem.getScoreRule());
         problemMapper.deleteSample(problemId);
         Samples[] samples=problem.getSamples();
         SubmitTemplate[]submitTemplate=problem.getSubmitTemplates();
