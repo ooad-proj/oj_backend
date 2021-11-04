@@ -11,7 +11,6 @@ import com.ooad.oj_backend.mapper.contest.ContestMapper;
 import com.ooad.oj_backend.mapper.contest.ProblemMapper;
 import com.ooad.oj_backend.mybatis.entity.*;
 import com.ooad.oj_backend.service.user.AuthService;
-import org.apache.ibatis.javassist.tools.rmi.Sample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
