@@ -118,7 +118,7 @@ public class ProblemService {
         response.setContent(hashMap);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-   /* public ResponseEntity<?> addProblem(int contestId, int shownId, String title, ScoreRule scoreRule,
+    public ResponseEntity<?> addProblem(int contestId, int shownId, String title, ScoreRule scoreRule,
                                         Samples[] samples, String description, String inputFormat, String outputFormat,
                                         SubmitTemplate[] submitTemplate,String tips,String timeLimit,String spaceLimit,
                                         String allowedLanguage,String testCaseId) {
@@ -141,15 +141,15 @@ public class ProblemService {
             problemMapper.addSubmitTemplate(problemId,submitTemplate1.getLanguage(),submitTemplate1.getCode());
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }*/
-    public ResponseEntity<?> addProblem(int contestId, Problem problem){
+    }
+   /* public ResponseEntity<?> addProblem(int contestId, Problem problem){
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        /*int check=problemMapper.checkProblemPrivilege("p.contestId="+contestId,(String) StpUtil.getLoginId());
+        *//*int check=problemMapper.checkProblemPrivilege("p.contestId="+contestId,(String) StpUtil.getLoginId());
         if(check==0){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }*/
+        }*//*
         Response response=new Response();
         problemMapper.addProblem(contestId,problem,(String) StpUtil.getLoginId());
         int problemId=problem.getProblemId();
@@ -163,7 +163,7 @@ public class ProblemService {
             problemMapper.addSubmitTemplate(problemId,submitTemplate1.getLanguage(),submitTemplate1.getCode());
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+    }*/
     public ResponseEntity<?> deleteProblem(int problemId) {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
