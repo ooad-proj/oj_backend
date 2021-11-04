@@ -55,22 +55,22 @@ public interface ProblemMapper {
             "join User on problem.creatorId = User.id join contest c on c.id = problem.contestId " +
             "join class c2 on c2.id = c.classId where problem.problemId=#{problemId}")
     CreatorAndGroup getCreatorAndGroup(int problemId);
-    /*@Insert("insert into problem values (null,#{p.shownId},#{title},#{contestId},#{p.description},#{p.inputFormat},#{p.outputFormat}" +
-            ",#{p.tips},#{p.timeLimit},#{p.spaceLimit},#{p.testCaseId},#{p.allowedLanguage},#{creatorId});")
-    @Options(useGeneratedKeys = true, keyProperty = "p.problemId", keyColumn="problemId")*/
-    @Insert("insert into problem values (null,#{shownId},#{title},#{contestId},#{description},#{inputFormat},#{outputFormat}" +
-            ",#{tips},#{timeLimit},#{spaceLimit},#{testCaseId},#{allowedLanguage},#{creatorId});")
+    @Insert("insert into problem values (null,#{p.shownId},#{title},#{contestId},#{p.description},#{p.inputFormat},#{p.outputFormat}" +
+            ",#{p.tips},#{p.timeLimit},#{p.spaceLimit},#{p.testCaseId},#{allowedLanguage},#{creatorId});")
     @Options(useGeneratedKeys = true, keyProperty = "p.problemId", keyColumn="problemId")
-    int addProblem(@Param("contestId") int contestId,@Param("shownId") int shownId, @Param("title")String title,
+   /* @Insert("insert into problem values (null,#{shownId},#{title},#{contestId},#{description},#{inputFormat},#{outputFormat}" +
+            ",#{tips},#{timeLimit},#{spaceLimit},#{testCaseId},#{allowedLanguage},#{creatorId});")*/
+   /* @Options(useGeneratedKeys = true, keyProperty = "p.problemId", keyColumn="problemId")*/
+   /* int addProblem(@Param("contestId") int contestId,@Param("shownId") int shownId, @Param("title")String title,
                     @Param("description")String description,@Param("inputFormat") String inputFormat,@Param("outputFormat") String outputFormat,
                     @Param("tips")String tips,@Param("timeLimit")String timeLimit,@Param("spaceLimit")String spaceLimit,
-                    @Param("allowedLanguage")String allowedLanguage,@Param("testCaseId")String testCaseId);
- /*  int addProblem(@Param("contestId")int contestId,@Param("p") Problem problem,@Param("creatorId")String creatorId);*/
-/*    @Insert("insert into scoreRule values(#{problemId},#{SR.totalScore},#{SR.allowPartial},#{SR.punishRule});" )*/
-    @Insert("insert into scoreRule values(#{problemId},#{totalScore},#{allowPartial},#{punishRule});" )
-    void addScoreRule(@Param("problemId")int problemId, @Param("totalScore")int totalScore,
-                      @Param("allowPartial")boolean allowPartial,@Param("punishRule")String punishRule);
-   /* void addScoreRule(@Param("problemId")int problemId,@Param("SR") ScoreRule scoreRule);*/
+                    @Param("allowedLanguage")String allowedLanguage,@Param("testCaseId")String testCaseId);*/
+   int addProblem(@Param("contestId")int contestId,@Param("p") Problem problem,@Param("creatorId")String creatorId,@Param("allowedLanguage")String allowedLanguage);
+    @Insert("insert into scoreRule values(#{problemId},#{SR.totalScore},#{SR.allowPartial},#{SR.punishRule});" )
+/*    @Insert("insert into scoreRule values(#{problemId},#{totalScore},#{allowPartial},#{punishRule});" )*/
+   /* void addScoreRule(@Param("problemId")int problemId, @Param("totalScore")int totalScore,
+                      @Param("allowPartial")boolean allowPartial,@Param("punishRule")String punishRule);*/
+    void addScoreRule(@Param("problemId")int problemId,@Param("SR") ScoreRule scoreRule);
 
     @Insert("insert into samples values(null,#{problemId},#{input},#{output});" )
     void addSample(@Param("problemId")int problemId,@Param("input")String input, @Param("output")String output);

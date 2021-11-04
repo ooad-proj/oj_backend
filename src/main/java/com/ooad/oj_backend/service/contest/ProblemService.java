@@ -1,6 +1,7 @@
 package com.ooad.oj_backend.service.contest;
 
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.convert.Convert;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
@@ -118,7 +119,7 @@ public class ProblemService {
         response.setContent(hashMap);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    public ResponseEntity<?> addProblem(int contestId, int shownId, String title, ScoreRule scoreRule,
+    /*public ResponseEntity<?> addProblem(int contestId, int shownId, String title, ScoreRule scoreRule,
                                         Samples[] samples, String description, String inputFormat, String outputFormat,
                                         SubmitTemplate[] submitTemplate,String tips,String timeLimit,String spaceLimit,
                                         String allowedLanguage,String testCaseId) {
@@ -141,17 +142,19 @@ public class ProblemService {
             problemMapper.addSubmitTemplate(problemId,submitTemplate1.getLanguage(),submitTemplate1.getCode());
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-   /* public ResponseEntity<?> addProblem(int contestId, Problem problem){
+    }*/
+    public ResponseEntity<?> addProblem(int contestId, Problem problem){
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        *//*int check=problemMapper.checkProblemPrivilege("p.contestId="+contestId,(String) StpUtil.getLoginId());
+        int check=problemMapper.checkProblemPrivilege("p.contestId="+contestId,(String) StpUtil.getLoginId());
         if(check==0){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }*//*
+        }
         Response response=new Response();
-        problemMapper.addProblem(contestId,problem,(String) StpUtil.getLoginId());
+        String[]language=problem.getAllowedLanguage();
+        String allowed=Convert.toStr(language);
+        problemMapper.addProblem(contestId,problem,(String) StpUtil.getLoginId(),allowed);
         int problemId=problem.getProblemId();
         problemMapper.addScoreRule(problemId,problem.getScoreRule());
         Samples[] samples=problem.getSamples();
@@ -163,7 +166,7 @@ public class ProblemService {
             problemMapper.addSubmitTemplate(problemId,submitTemplate1.getLanguage(),submitTemplate1.getCode());
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }*/
+    }
     public ResponseEntity<?> deleteProblem(int problemId) {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -249,21 +252,26 @@ public class ProblemService {
             if(nameList.size() %2==0){
                 flag = false;
             }
+            int inNum =0;
+            int ourNum =0;
             int testCaseAmount = (nameList.size()-1)/2;
             for(int i =1;i<nameList.size();i++){
                 String[] tem1 = nameList.get(i).split("\\.");
-                if(!(tem1[0].equals(name) && tem1[1].equals("in"))){
-                    flag = false;
+                if( tem1[1].equals("in")){
+                    inNum++;
                     break;
                 }
                 String[] tem2 = nameList.get(i+1).split("\\.");
-                if(!(tem2[0].equals(name) && tem2[1].equals("out"))){
+                if( tem2[1].equals("out")){
                     flag = false;
+                    ourNum++;
                     break;
                 }
                 i++;
             }
-            flag=true;
+            if(inNum!=ourNum){
+                flag=false;
+            }
             if (!flag){
                 response.setCode(-1);
                 file.delete();
@@ -280,6 +288,7 @@ public class ProblemService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
     public ResponseEntity<?> addAnswer(int problemId,String language,String code) {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

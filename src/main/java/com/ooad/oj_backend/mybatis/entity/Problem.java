@@ -22,7 +22,7 @@ public class Problem implements Serializable {
     private long timeLimit;
     private long spaceLimit;
     private String testCaseId;
-    private String allowedLanguage;
+    private String[] allowedLanguage;
     private int totalScore=100;
     private String punishRule="";
     private boolean allowPartial=false;
