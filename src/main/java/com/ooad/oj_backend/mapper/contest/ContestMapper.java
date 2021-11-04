@@ -32,7 +32,7 @@ public interface ContestMapper {
 
     @Select("       SELECT\n" +
             "        id, classId, startTime, endTime, title ,description, creatorId\n" +
-            "FROM contest where id like '%${search}%' order by id limit #{itemsPerPage} offset #{offset}")
+            "FROM contest where title like '%${search}%' order by id limit #{itemsPerPage} offset #{offset}")
     List<Contest> getAllContest(@Param("offset")int offset, @Param("itemsPerPage") int itemsPerPage,@Param("search") String search);
 
     @Select("       SELECT\n" +
