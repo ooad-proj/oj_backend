@@ -18,7 +18,7 @@ public interface ProblemMapper {
             "join auth a on a.classId=class.id where p.title like '%${search}%' ${userId} limit #{itemsPerPage} offset #{offset}")
     List <ProblemView> getProblem(@Param("search") String search,@Param("userId") String userId,@Param("offset")int offset,@Param("itemsPerPage") int itemsPerPage);
     @Select("        SELECT\n" +
-            "        p.problemId,p.title,a.classId as groupId,class.name as groupName,contest.id as contestId,contest.title as contestTitle \n" +
+            "        p.problemId,p.title,contest.classId as groupId,class.name as groupName,contest.id as contestId,contest.title as contestTitle \n" +
             "        FROM problem p join contest on contest.id=p.contestId " +
             "join class on class.id=contest.classId " +
             " where p.title like '%${search}%' ${userId} limit #{itemsPerPage} offset #{offset}")
