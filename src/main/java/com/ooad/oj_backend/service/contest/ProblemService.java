@@ -66,6 +66,7 @@ public class ProblemService {
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
             userId="and (userId='"+ StpUtil.getLoginId()+"' and privilege=1 or contest.id=0)";
         }
+
         List<ProblemView>problemViews=problemMapper.getProblem(search,userId,(page - 1) * itemsPerPage,itemsPerPage);
         int count=problemMapper.getProblemNumber(search,userId);
         Paper paper=new Paper<ProblemView>(page,problemViews.size(),count,(count / itemsPerPage) + (((count % itemsPerPage) == 0) ? 0 : 1));
@@ -108,7 +109,7 @@ public class ProblemService {
         JSONArray jsonObject = JSONUtil.parseArray(problem.getAllowedLanguage());
         String[] language=new String[jsonObject.size()];
         for(int i=0;i<jsonObject.size();++i){
-            language[i]=(String)jsonObject.get(i);
+            language[i]=String.valueOf(jsonObject.get(i));
         }
         hashMap.put("shownId",problem.getShownId());
         hashMap.put("title",problem.getTitle());

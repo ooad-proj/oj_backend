@@ -12,7 +12,7 @@ import java.util.List;
 public interface ProblemMapper {
 
     @Select("        SELECT\n" +
-            "        p.problemId,p.title,a.classId as groupId,class.name as groupName\n" +
+            "        p.problemId,p.title,a.classId as groupId,class.name as groupName,contest.id as contestId,contest.title as contestTitle \n" +
             "        FROM problem p join contest on contest.id=p.contestId " +
             "join class on class.id=contest.classId " +
             "join auth a on a.classId=class.id where p.title like '%${search}%' ${userId} limit #{itemsPerPage} offset #{offset}")
@@ -61,7 +61,7 @@ public interface ProblemMapper {
     @Select("select language,code from submitTemplate where problemId=#{problemId}")
     SubmitTemplate[] getSubmitTemplate(int problemId);
 
-    @Select("select problem.creatorId,User.name as creatorName,c.id as contestId,c.name as contestTitle,c2.id as groupId,groupName from problem " +
+    @Select("select problem.creatorId,User.name as creatorName,c.id as contestId,c.title as contestTitle,c2.id as groupId,groupName from problem " +
             "join User on problem.creatorId = User.id join contest c on c.id = problem.contestId " +
             "join class c2 on c2.id = c.classId where problem.problemId=#{problemId}")
     CreatorAndGroup getCreatorAndGroup(int problemId);

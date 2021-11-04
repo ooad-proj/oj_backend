@@ -12,4 +12,6 @@ public class ProblemView implements Serializable {
     private String title;
     private int groupId;
     private String groupName;
+    private int contestId;
+    private String contestTitle;
 }
