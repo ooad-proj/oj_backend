@@ -15,14 +15,14 @@ public interface ContestMapper {
     @Select("        SELECT\n" +
             "        title, description,startTime,endTime\n" +
             "        FROM contest\n" +
-            "        where contestId=#{contestId}")
+            "        where id=#{contestId}")
     Contest getOneContest(int contestId);
 
     @Select("        SELECT\n" +
             "        id,description,title,startTime,endTime\n" +
             "        FROM contest\n" +
-            "        where classId=#{groupId}  order by id limit #{itemsPerPage} offset #{offset}")
-    List<Contest> getContestInGroup(int groupId ,@Param("offset")int offset, @Param("itemsPerPage") int itemsPerPage);
+            "        where classId=#{groupId} and title like '%${search}%' order by id limit #{itemsPerPage} offset #{offset}")
+    List<Contest> getContestInGroup(@Param("groupId")int groupId ,@Param("offset")int offset, @Param("itemsPerPage") int itemsPerPage, @Param("search") String search);
 
     @Select("        SELECT\n" +
             "        count(*)" +

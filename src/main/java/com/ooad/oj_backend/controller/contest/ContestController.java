@@ -14,7 +14,7 @@ public class ContestController {
 
 
     @RequestMapping(value = "/contest/{contestId}/answering", method = RequestMethod.GET)
-    public ResponseEntity<?> getContestInformation(int contestId) {
+    public ResponseEntity<?> getContestInformation( @PathVariable int contestId) {
         return contestService.getContestInformation(contestId);
     }
 

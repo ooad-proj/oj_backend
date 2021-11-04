@@ -47,9 +47,9 @@ public class ProblemController {
         return problemService.updateProblem(problemId,shownId,title,scoreRule,samples,description,inputFormat,
                 outputFormat,submitTemplate,tips,timeLimit,spaceLimit,allowedLanguage,testCaseId);
     }
-    @PostMapping(value = "testCase/{groupId}")
-    public ResponseEntity<?> addTestCase(@PathVariable int groupId, MultipartFile multipartFile) {
-        return problemService.addTestCase(groupId,multipartFile);
+    @PostMapping(value = "testCase/{contestId}")
+    public ResponseEntity<?> addTestCase(@PathVariable int contestId, MultipartFile file) {
+        return problemService.addTestCase(contestId,file);
     }
     @PostMapping(value = "standardAnswer/{problemId}")
     public ResponseEntity<?> addAnswer(@PathVariable int problemId,String answer,String language) {

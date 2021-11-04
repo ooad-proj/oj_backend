@@ -464,7 +464,7 @@ public class GroupService {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         Response response=new Response();
-        List<Contest>  contests = contestMapper.getContestInGroup(groupId,(page - 1) * itemsPerPage,itemsPerPage);
+        List<Contest>  contests = contestMapper.getContestInGroup(groupId,(page - 1) * itemsPerPage,itemsPerPage,search);
         int total = contestMapper.getContestInGroupNum(groupId);
         List<ContestListItem> contestListItems = new ArrayList<>();
         if(contests==null) {

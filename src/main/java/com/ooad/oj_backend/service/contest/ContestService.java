@@ -34,7 +34,7 @@ public class ContestService {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         Response response=new Response();
-        if(StpUtil.isLogin()){
+        if(!StpUtil.isLogin()){
             response.setCode(-2);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
@@ -138,6 +138,7 @@ public class ContestService {
         }
         Response response = new Response();
         Contest contest = new Contest();
+        contest.setId(contestId);
         contest.setTitle( title);
         contest.setDescription(description);
         contest.setStartTime(startTime);
