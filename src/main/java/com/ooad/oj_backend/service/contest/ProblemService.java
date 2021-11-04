@@ -108,7 +108,7 @@ public class ProblemService {
         JSONArray jsonObject = JSONUtil.parseArray(problem.getAllowedLanguage());
         String[] language=new String[jsonObject.size()];
         for(int i=0;i<jsonObject.size();++i){
-            language[i]=(String) jsonObject.get(i);
+            language[i]=(String)jsonObject.get(i);
         }
         hashMap.put("shownId",problem.getShownId());
         hashMap.put("title",problem.getTitle());
@@ -266,7 +266,7 @@ public class ProblemService {
         int contestId=problemMapper.getContestId(problemId);
         String[]language=problem.getAllowedLanguage();
         String allowed=Convert.toStr(language);
-        problemMapper.updateProblem(contestId,problem,allowed);
+        problemMapper.updateProblem(problemId,problem,allowed);
         problemMapper.updateScoreRule(problemId,problem.getScoreRule());
         Samples[] samples=problem.getSamples();
         SubmitTemplate[]submitTemplate=problem.getSubmitTemplate();

@@ -90,7 +90,8 @@ public interface ProblemMapper {
             "testCaseId=#{p.testCaseId},allowedLanguage=#{allowedLanguage},creatorId=#{p.creatorId}\n" +
             "where problemId=#{problemId};")
     void updateProblem(@Param("problemId") int problemId,@Param("p")Problem problem,@Param("allowedLanguage")String allowed);
-    @Update("update scoreRule set totalScore=#{SR.totalScore},allowPartial=#{SR.allowPartial},punishRule=#{SR.punishRule} " +
+    @Update("update scoreRule set totalScore=#{SR.totalScore}," +
+            "allowPartial=#{SR.allowPartial},punishRule=#{SR.punishRule} " +
             "where problemId=#{problemId};")
     void updateScoreRule(@Param("problemId") int problemId,@Param("SR")ScoreRule scoreRule);
 
