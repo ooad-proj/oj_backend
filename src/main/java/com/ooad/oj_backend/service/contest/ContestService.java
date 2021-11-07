@@ -57,16 +57,15 @@ public class ContestService {
         Response response = new Response();
         int total;
         List<Contest> contests;
-
-        total = contestMapper.getTotalNum(search);
-
         if(responseEntity1==null){ //get for teacher
+             total = contestMapper.getTotalNum(search);
             contests = contestMapper.getAllContest((page - 1) * itemsPerPage,itemsPerPage,search);
         }
         else {
             //get for assistant
             String userId = (String) StpUtil.getLoginId();
             contests = contestMapper.getManagementContest(userId,search);
+            total = contestMapper.getManagementNumber(userId,search);
         }
 
         if(contests==null) {
