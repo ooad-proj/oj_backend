@@ -71,7 +71,7 @@ public class ProblemService {
         List<ProblemView>problemViews;
         int count;
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
-            userId="and (userId='"+ StpUtil.getLoginId()+"' and privilege=1 or contest.id=0)";
+            userId="and (userId='"+ StpUtil.getLoginId()+"' and privilege=1)";
             count=problemMapper.getProblemNumber(search,userId);
             problemViews=problemMapper.getProblem(search,userId,(page - 1) * itemsPerPage,itemsPerPage);
         }else {
