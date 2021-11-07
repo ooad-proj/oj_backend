@@ -41,7 +41,7 @@ public interface ContestMapper {
     int getTotalNum(@Param("search") String search);
 
     @Select("       SELECT\n" +
-            "        id, classId, startTime, endTime, title ,description, creatorId\n" +
+            "        id, a.classId, startTime, endTime, title ,description, creatorId\n" +
             "from  contest join auth a on contest.classId = a.classId  where a.UserId =#{userId} and a.privilege=1 and title like '%${search}%' ")
     List<Contest> getManagementContest( @Param("userId") String userId, @Param("search") String search);
 
