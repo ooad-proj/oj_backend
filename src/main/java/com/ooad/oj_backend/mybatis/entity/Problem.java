@@ -24,11 +24,10 @@ public class Problem implements Serializable {
     private String testCaseId;
     private String[] allowedLanguage;
     private String allowedLanguage1;
-    private int totalScore=100;
-    private String punishRule="";
-    private boolean allowPartial=false;
+    private int totalScore;
+    private String punishRule="[1]";
+    private boolean allowPartial=true;
     private Samples[] samples;
     private SubmitTemplate[]submitTemplate;
-    private ScoreRule scoreRule;
     private String creatorId;
 }

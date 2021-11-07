@@ -199,7 +199,7 @@ public class ProblemService {
         String allowed=Convert.toStr(language);
         problemMapper.addProblem(contestId,problem,(String) StpUtil.getLoginId(),allowed);
         int problemId=problem.getProblemId();
-        problemMapper.addScoreRule(problemId,problem.getScoreRule());
+
         Samples[] samples=problem.getSamples();
         if(samples!=null){
             for(Samples sample:samples){
@@ -277,7 +277,6 @@ public class ProblemService {
         String[]language=problem.getAllowedLanguage();
         String allowed=Convert.toStr(language);
         problemMapper.updateProblem(problemId,problem,allowed);
-        problemMapper.updateScoreRule(problemId,problem.getScoreRule());
         Samples[] samples=problem.getSamples();
         SubmitTemplate[]submitTemplate=problem.getSubmitTemplate();
         if(samples!=null) {
@@ -499,8 +498,8 @@ public class ProblemService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     static boolean check(Problem problem){
-        return problem.getShownId()==null||problem.getTitle()==null||problem.getDescription()==null||problem.getScoreRule()==null
-                ||problem.getInputFormat()==null||problem.getOutputFormat()==null||problem.getTimeLimit()==0||problem.getSpaceLimit()==0
+        return problem.getShownId()==null||problem.getTitle()==null||problem.getDescription()==null||problem.getTotalScore()<0
+                ||problem.getInputFormat()==null||problem.getOutputFormat()==null||problem.getTimeLimit()<=0||problem.getSpaceLimit()<=0
                 ||problem.getAllowedLanguage()==null||problem.getTestCaseId()==null;
     }
 }
