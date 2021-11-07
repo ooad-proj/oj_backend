@@ -63,7 +63,7 @@ public interface ProblemMapper {
     int checkAnswerPrivilege(@Param("check")String check,@Param("userId")String userId);
 
     @Select("        SELECT\n" +
-            "        problemId,shownId,title\n" +
+            "        problemId,shownId,title,totalScore\n" +
             "        FROM problem where contestId =#{contestId} ")
     List<Problem> getContestProblem(int contestId);
     @Select("select shownId,title,description,inputFormat,outputFormat,tips,timeLimit,spaceLimit,allowedLanguage as allowedLanguage1,testCaseId,totalScore,punishRule,allowPartial from problem " +
