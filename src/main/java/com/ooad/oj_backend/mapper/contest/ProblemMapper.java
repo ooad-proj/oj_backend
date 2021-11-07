@@ -21,8 +21,15 @@ public interface ProblemMapper {
             "        p.problemId,p.title,contest.classId as groupId,class.name as groupName,contest.id as contestId,contest.title as contestTitle \n" +
             "        FROM problem p join contest on contest.id=p.contestId " +
             "join class on class.id=contest.classId " +
-            " where p.title like '%${search}%' ${userId} limit #{itemsPerPage} offset #{offset}")
-    List <ProblemView> getProblem1(@Param("search") String search,@Param("userId") String userId,@Param("offset")int offset,@Param("itemsPerPage") int itemsPerPage);
+            " where p.title like '%${search}%' limit #{itemsPerPage} offset #{offset}")
+    List <ProblemView> getProblem1(@Param("search") String search,@Param("offset")int offset,@Param("itemsPerPage") int itemsPerPage);
+
+    @Select("        SELECT\n" +
+            "       count(*)\n" +
+            "        FROM problem p join contest on contest.id=p.contestId " +
+            "join class on class.id=contest.classId " +
+            " where p.title like '%${search}%'")
+    int getProblem1Number(String search);
     @Select("        SELECT\n" +
             "        count(*)\n" +
             "        FROM problem p join contest on contest.id=p.contestId " +

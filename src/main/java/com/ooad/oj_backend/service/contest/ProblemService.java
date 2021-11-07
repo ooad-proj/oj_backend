@@ -42,13 +42,16 @@ public class ProblemService {
         Response response=new Response();
         List<ProblemView>problemViews;
         String userId="";
+        int count;
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
-            userId="and (userId='"+ StpUtil.getLoginId()+"' or contest.id=0) ";
+            userId="and (userId='"+ StpUtil.getLoginId()+"' or p.contestId=0) ";
+            count=problemMapper.getProblemNumber(search,userId);
             problemViews=problemMapper.getProblem(search,userId,(page - 1) * itemsPerPage,itemsPerPage);
         }else {
-            problemViews = problemMapper.getProblem1(search, userId, (page - 1) * itemsPerPage, itemsPerPage);
+            problemViews = problemMapper.getProblem1(search, (page - 1) * itemsPerPage, itemsPerPage);
+            count=problemMapper.getProblem1Number(search);
         }
-        int count=problemMapper.getProblemNumber(search,userId);
+
         Paper paper=new Paper<ProblemView>(page,problemViews.size(),count,(count / itemsPerPage) + (((count % itemsPerPage) == 0) ? 0 : 1));
         paper.setList(problemViews);
         response.setCode(0);
@@ -66,13 +69,15 @@ public class ProblemService {
         Response response=new Response();
         String userId="";
         List<ProblemView>problemViews;
+        int count;
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
             userId="and (userId='"+ StpUtil.getLoginId()+"' and privilege=1 or contest.id=0)";
+            count=problemMapper.getProblemNumber(search,userId);
             problemViews=problemMapper.getProblem(search,userId,(page - 1) * itemsPerPage,itemsPerPage);
         }else {
-            problemViews = problemMapper.getProblem1(search, userId, (page - 1) * itemsPerPage, itemsPerPage);
+            problemViews = problemMapper.getProblem1(search, (page - 1) * itemsPerPage, itemsPerPage);
+            count=problemMapper.getProblem1Number(search);
         }
-        int count=problemMapper.getProblemNumber(search,userId);
         Paper paper=new Paper<ProblemView>(page,problemViews.size(),count,(count / itemsPerPage) + (((count % itemsPerPage) == 0) ? 0 : 1));
         paper.setList(problemViews);
         response.setCode(0);
