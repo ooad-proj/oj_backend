@@ -95,10 +95,7 @@ public class ProblemService {
             response.setCode(-1);
             return new ResponseEntity<>(response,HttpStatus.OK);
         }
-        String role=StpUtil.getRoleList().get(0);
-        if(!role.equals("teacher")&&!role.equals("assistant")){
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+        
         String userId="";
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
             userId="and (userId='"+ StpUtil.getLoginId()+"' and privilege=1 or contest.id=0)";
