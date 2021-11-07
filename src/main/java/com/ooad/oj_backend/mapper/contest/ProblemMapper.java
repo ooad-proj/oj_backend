@@ -80,7 +80,7 @@ public interface ProblemMapper {
             "join class c2 on c2.id = c.classId where problem.problemId=#{problemId}")
     CreatorAndGroup getCreatorAndGroup(int problemId);
     @Insert("insert into problem values (null,#{p.shownId},#{p.title},#{contestId},#{p.description},#{p.inputFormat},#{p.outputFormat}" +
-            ",#{p.tips},#{p.timeLimit},#{p.spaceLimit},#{p.testCaseId},#{allowedLanguage},#{creatorId},{p.totalScore},#{p.allowPartial},#{p.punishRule});")
+            ",#{p.tips},#{p.timeLimit},#{p.spaceLimit},#{p.testCaseId},#{allowedLanguage},#{creatorId},#{p.totalScore},#{p.allowPartial},#{p.punishRule});")
     @Options(useGeneratedKeys = true, keyProperty = "p.problemId", keyColumn="problemId")
    /* @Insert("insert into problem values (null,#{shownId},#{title},#{contestId},#{description},#{inputFormat},#{outputFormat}" +
             ",#{tips},#{timeLimit},#{spaceLimit},#{testCaseId},#{allowedLanguage},#{creatorId});")*/
