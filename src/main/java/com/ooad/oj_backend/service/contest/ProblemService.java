@@ -300,8 +300,7 @@ public class ProblemService {
 
         ResponseEntity responseEntity1 = authService.checkPermission("1-0");
         if(responseEntity1 != null){
-            int groupId=contestMapper.getClassByContest(contestId);
-            ResponseEntity responseEntity2 = authService.checkPermission("1-" + groupId);
+            ResponseEntity responseEntity2 = authService.checkPermission("1-" + contestId);
             if (responseEntity2 !=null){
                 return responseEntity2;
             }
@@ -326,13 +325,21 @@ public class ProblemService {
                 nameList.add(entry.getName());
             }
             Boolean flag =true;
-            if(nameList.size() %2==0){
+            if(nameList.size() %2==1){
                 flag = false;
             }
             ArrayList<String> inName = new ArrayList<>();
             ArrayList<String> outName = new ArrayList<>();
-            int testCaseAmount = (nameList.size()-1)/2;
-            for(int i =1;i<nameList.size();i++){
+            int testCaseAmount = (nameList.size())/2;
+            for(int i =0 ; i<nameList.size();i++){
+                if( !( nameList.get(i).endsWith(".in") ||  nameList.get(i).endsWith(".out")) ){
+                    flag = false;
+                    response.setCode(-1);
+                    file.delete();
+                    return new ResponseEntity<>(response,HttpStatus.OK);
+                }
+            }
+            for(int i =0;i<nameList.size();i++){
                 String[] tem = nameList.get(i).split("\\.");
                 if( tem[1].equals("in")){
                     inName.add(tem[0]);
@@ -358,6 +365,18 @@ public class ProblemService {
                     }
                 }
             }
+
+            for(int i =0 ;i<inName.size();i++){
+                if(!inName.contains(String.valueOf(i+1))){
+                    flag = false;
+                    break;
+                }
+                if(!outName.contains(String.valueOf(i+1))){
+                    flag = false;
+                    break;
+                }
+            }
+
             if (!flag){
                 response.setCode(-1);
                 file.delete();
@@ -373,6 +392,7 @@ public class ProblemService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
 
 
     public ResponseEntity<?> addAnswer(int problemId,String language,String code) {
