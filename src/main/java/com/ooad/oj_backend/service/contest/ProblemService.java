@@ -95,13 +95,13 @@ public class ProblemService {
             response.setCode(-1);
             return new ResponseEntity<>(response,HttpStatus.OK);
         }
-        
+
         String userId="";
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
-            userId="and (userId='"+ StpUtil.getLoginId()+"' and privilege=1 or contest.id=0)";
+            userId="and (userId='"+ StpUtil.getLoginId()+"' or contest.id=0)";
             if(problemMapper.getProblemPrivilege(userId,problemId)==0){
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            };
+            }
         }
         HashMap<String,Object>hashMap=new HashMap<>();
         Problem problem=problemMapper.getDetailedProblem(problemId);
@@ -497,5 +497,8 @@ public class ProblemService {
         return problem.getShownId()==null||problem.getTitle()==null||problem.getDescription()==null||problem.getTotalScore()<0
                 ||problem.getInputFormat()==null||problem.getOutputFormat()==null||problem.getTimeLimit()<=0||problem.getSpaceLimit()<=0
                 ||problem.getAllowedLanguage()==null||problem.getTestCaseId()==null;
+    }
+    static int state(){
+        return 0;
     }
 }
