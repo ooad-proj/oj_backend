@@ -300,7 +300,8 @@ public class ProblemService {
 
         ResponseEntity responseEntity1 = authService.checkPermission("1-0");
         if(responseEntity1 != null){
-            ResponseEntity responseEntity2 = authService.checkPermission("1-" + contestId);
+            int groupId=contestMapper.getClassByContest(contestId);
+            ResponseEntity responseEntity2 = authService.checkPermission("1-" + groupId);
             if (responseEntity2 !=null){
                 return responseEntity2;
             }

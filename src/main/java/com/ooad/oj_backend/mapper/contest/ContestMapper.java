@@ -18,6 +18,9 @@ public interface ContestMapper {
             "        where id=#{contestId}")
     Contest getOneContest(int contestId);
 
+    @Select("select classId from contest where contest.id=#{contestId}")
+    int getClassByContest(int contestId);
+
     @Select("        SELECT\n" +
             "        id,description,title,startTime,endTime\n" +
             "        FROM contest\n" +
