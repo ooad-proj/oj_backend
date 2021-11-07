@@ -51,4 +51,8 @@ public class AuthController {
     public HashMap<String, Boolean> isLogin() {
         return authService.isLogin();
     }
+    @RequestMapping(value = "auth/groups/at",method = RequestMethod.GET)
+    public ResponseEntity<?> getUserGroup(int page,int itemsPerPage,String search) {
+        return authService.getUserGroup(page, itemsPerPage, search);
+    }
 }

@@ -50,6 +50,23 @@ public interface AuthMapper {
             "FROM auth join class c on c.id = auth.classId where userId=#{userId} group by classId")
     List<RoleView> getAuthListById(String userId);
 
+    @Select("SELECT classId as groupId, c.name as groupName,(case (max(privilege)) " +
+            "when 1 then 'assistant' when 0 then 'student' end)as role " +
+            "FROM auth join class c on c.id = auth.classId where userId=#{userId} and classId like '%${search}%' group by classId limit #{itemsPerPage} offset #{offset}")
+    List<RoleView> searchAuthListById(@Param("userId") String userId,@Param("search")String search,@Param("offset")int offset,@Param("itemsPerPage") int itemsPerPage);
+
+    @Select("SELECT count(*) " +
+            "FROM auth join class c on c.id = auth.classId where userId=#{userId} and classId like '%${search}%' group by classId")
+    int searchAuthListLength(@Param("userId") String userId,@Param("search")String search);
+
+    @Select("SELECT classId as groupId, c.name as groupName,'teacher' as role " +
+            "FROM auth join class c on c.id = auth.classId where auth.classId like '%${search}%' group by classId limit #{itemsPerPage} offset #{offset}")
+    List<RoleView> searchAll(@Param("search")String search,@Param("offset")int offset,@Param("itemsPerPage") int itemsPerPage);
+
+    @Select("SELECT count(*)" +
+            "FROM auth where classId like '%${search}%' group by classId")
+    int searchAllLength(String search);
+
     @Select("        SELECT\n" +
             "        UserId,classId,privilege\n" +
             "        FROM auth\n" +

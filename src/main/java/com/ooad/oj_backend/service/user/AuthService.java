@@ -5,6 +5,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.ooad.oj_backend.Response;
 import com.ooad.oj_backend.mapper.user.AuthMapper;
 import com.ooad.oj_backend.mapper.user.UserMapper;
+import com.ooad.oj_backend.mybatis.entity.Paper;
 import com.ooad.oj_backend.mybatis.entity.RoleView;
 import com.ooad.oj_backend.mybatis.entity.User;
 import com.ooad.oj_backend.mybatis.entity.UserView;
@@ -158,4 +159,27 @@ public class AuthService {
        isLogin.put("isLogin",StpUtil.isLogin());
       return isLogin;
    }
+    public ResponseEntity<?> getUserGroup(int page,int itemsPerPage,String search) {
+        Response response=new Response();
+        response.setCode(0);
+        List<RoleView>auth;
+        int length=0;
+        Paper<RoleView>paper=new Paper<>();
+        if(StpUtil.getRoleList().get(0).equals("teacher")){
+            length=authMapper.searchAllLength(search);
+            auth =authMapper.searchAll(search,(page - 1) * itemsPerPage, itemsPerPage);
+        }
+        else {
+            length=authMapper.searchAuthListLength((String) StpUtil.getLoginId(),search);
+            auth =authMapper.searchAuthListById((String) StpUtil.getLoginId(),search,(page - 1) * itemsPerPage, itemsPerPage);
+        }
+        paper.setList(auth);
+        paper.setPage(page);
+        paper.setItemsPerPage(auth.size());
+        paper.setTotalPage((length/ itemsPerPage) + (((length % itemsPerPage) == 0) ? 0 : 1));
+        paper.setTotalAmount(length);
+        response.setContent(paper);
+
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
 }
