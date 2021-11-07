@@ -101,13 +101,10 @@ public interface ProblemMapper {
 
     @Update("update problem set shownId=#{p.shownId},title=#{p.title},description=#{p.description},inputFormat=#{p.inputFormat}," +
             "outputFormat=#{p.outputFormat},tips=#{p.tips},timeLimit=#{p.timeLimit},spaceLimit=#{p.spaceLimit}," +
-            "testCaseId=#{p.testCaseId},allowedLanguage=#{allowedLanguage}\n" +
+            "testCaseId=#{p.testCaseId},allowedLanguage=#{allowedLanguage},set totalScore=#{p.totalScore},\" +\n" +
+            "            \"allowPartial=#{p.allowPartial},punishRule=#{p.punishRule}\n" +
             "where problemId=#{problemId};")
     void updateProblem(@Param("problemId") int problemId,@Param("p")Problem problem,@Param("allowedLanguage")String allowed);
-    @Update("update scoreRule set totalScore=#{SR.totalScore}," +
-            "allowPartial=#{SR.allowPartial},punishRule=#{SR.punishRule} " +
-            "where problemId=#{problemId};")
-    void updateScoreRule(@Param("problemId") int problemId,@Param("SR")ScoreRule scoreRule);
 
     @Insert("insert into submitTemplate values(null,#{problemId},#{language},#{code})" )
     void addSubmitTemplate(@Param("problemId")int problemId,@Param("language")String language,@Param("code")String code);
