@@ -241,7 +241,6 @@ public class ProblemService {
         }
         problemMapper.deleteSample(problemId);
         problemMapper.deleteSubmitTemplates(problemId);
-        problemMapper.deleteScoreRule(problemId);
         problemMapper.deleteProblem(problemId);
         response.setCode(0);
         return new ResponseEntity<>(response, HttpStatus.OK);

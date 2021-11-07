@@ -80,7 +80,7 @@ public interface ProblemMapper {
             "join class c2 on c2.id = c.classId where problem.problemId=#{problemId}")
     CreatorAndGroup getCreatorAndGroup(int problemId);
     @Insert("insert into problem values (null,#{p.shownId},#{p.title},#{contestId},#{p.description},#{p.inputFormat},#{p.outputFormat}" +
-            ",#{p.tips},#{p.timeLimit},#{p.spaceLimit},#{p.testCaseId},#{allowedLanguage},#{creatorId});")
+            ",#{p.tips},#{p.timeLimit},#{p.spaceLimit},#{p.testCaseId},#{allowedLanguage},#{creatorId},{p.totalScore},#{p.allowPartial},#{p.punishRule});")
     @Options(useGeneratedKeys = true, keyProperty = "p.problemId", keyColumn="problemId")
    /* @Insert("insert into problem values (null,#{shownId},#{title},#{contestId},#{description},#{inputFormat},#{outputFormat}" +
             ",#{tips},#{timeLimit},#{spaceLimit},#{testCaseId},#{allowedLanguage},#{creatorId});")*/
@@ -90,11 +90,7 @@ public interface ProblemMapper {
                     @Param("tips")String tips,@Param("timeLimit")String timeLimit,@Param("spaceLimit")String spaceLimit,
                     @Param("allowedLanguage")String allowedLanguage,@Param("testCaseId")String testCaseId);*/
    int addProblem(@Param("contestId")int contestId,@Param("p") Problem problem,@Param("creatorId")String creatorId,@Param("allowedLanguage")String allowedLanguage);
-    @Insert("insert into scoreRule values(#{problemId},#{SR.totalScore},#{SR.allowPartial},#{SR.punishRule});" )
-/*    @Insert("insert into scoreRule values(#{problemId},#{totalScore},#{allowPartial},#{punishRule});" )*/
-   /* void addScoreRule(@Param("problemId")int problemId, @Param("totalScore")int totalScore,
-                      @Param("allowPartial")boolean allowPartial,@Param("punishRule")String punishRule);*/
-    void addScoreRule(@Param("problemId")int problemId,@Param("SR") ScoreRule scoreRule);
+
 
     @Insert("insert into samples values(null,#{problemId},#{input},#{output});" )
     void addSample(@Param("problemId")int problemId,@Param("input")String input, @Param("output")String output);
@@ -115,8 +111,6 @@ public interface ProblemMapper {
     void deleteProblem(int problemId);
     @Delete("DELETE FROM samples WHERE problemId =#{problemId}")
     void deleteSample(int problemId);
-    @Delete("DELETE FROM scoreRule WHERE problemId =#{problemId}")
-    void deleteScoreRule(int problemId);
     @Delete("DELETE FROM submitTemplate WHERE problemId =#{problemId};")
     void deleteSubmitTemplates(int problemId);
 
