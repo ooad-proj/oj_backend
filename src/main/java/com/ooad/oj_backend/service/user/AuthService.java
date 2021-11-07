@@ -116,6 +116,9 @@ public class AuthService {
     not finished
     * */
     public ResponseEntity<?> getGroupInformation() {
+        if(!StpUtil.isLogin()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         Response response=new Response();
         response.setCode(0);
         List<RoleView>auth;
@@ -160,6 +163,9 @@ public class AuthService {
       return isLogin;
    }
     public ResponseEntity<?> getUserGroup(int page,int itemsPerPage,String search) {
+        if(!StpUtil.isLogin()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         Response response=new Response();
         response.setCode(0);
         List<RoleView>auth;
