@@ -31,6 +31,12 @@ public interface ProblemMapper {
             " where p.title like '%${search}%'")
     int getProblem1Number(String search);
     @Select("        SELECT\n" +
+            "        count(distinct p.problemId)\n" +
+            "        FROM problem p join contest on contest.id=p.contestId " +
+            "join class on class.id=contest.classId " +
+            "join auth a on a.classId=class.id where p.title like '%${search}%' ${userId}")
+    int getProblemNumber(@Param("search") String search,@Param("userId") String userId);
+    @Select("        SELECT\n" +
             "        count(*)\n" +
             "        FROM problem p join contest on contest.id=p.contestId " +
             "join class on class.id=contest.classId " +
@@ -40,12 +46,7 @@ public interface ProblemMapper {
     @Select("SELECT count(*) from contest join class on class.id=contest.classId\n" +
             "    join auth a on a.classId=class.id where contest.id=#{contestId}; ${userId}")
     int getContestPrivilege(@Param("userId") String userId,@Param("contestId")int contestId);
-    @Select("        SELECT\n" +
-            "        count(*)\n" +
-            "        FROM problem p join contest on contest.id=p.contestId " +
-            "join class on class.id=contest.classId " +
-            "join auth a on a.classId=class.id where p.title like '%${search}%' ${userId}")
-    int getProblemNumber(@Param("search") String search,@Param("userId") String userId);
+
 
     @Select("        SELECT\n" +
             "        count(*)\n" +
