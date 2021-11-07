@@ -34,10 +34,10 @@ public class ContestService {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         Response response=new Response();
-        if(!StpUtil.isLogin()){
+      /*  if(!StpUtil.isLogin()){
             response.setCode(-2);
             return new ResponseEntity<>(response, HttpStatus.OK);
-        }
+        }*/
         Contest contest = contestMapper.getOneContest(contestId);
         List<Problem> problems = problemMapper.getContestProblem(contestId);
         //TODO: get myScore and score
