@@ -30,6 +30,9 @@ public interface ProblemMapper {
             "join class on class.id=contest.classId " +
             " where p.title like '%${search}%'")
     int getProblem1Number(String search);
+
+    @Select("        SELECT startTime and endTime from contest join problem p on p.problemId=#{problemId}'")
+    Contest getContestNumber(int problemId);
     @Select("        SELECT\n" +
             "        count(distinct p.problemId)\n" +
             "        FROM problem p join contest on contest.id=p.contestId " +
@@ -105,8 +108,8 @@ public interface ProblemMapper {
     @Insert("insert into submitTemplate values(null,#{problemId},#{language},#{code})" )
     void addSubmitTemplate(@Param("problemId")int problemId,@Param("language")String language,@Param("code")String code);
 
-    @Select("select contestId from problem where problemId=#{problemId}")
-    int getContestId(int problemId);
+    @Select("select classId from contest join problem on problem.contestId=contest.id where problemId=#{problemId}")
+    int getGroupId(int problemId);
     @Delete(" DELETE FROM problem WHERE problemId =#{problemId};")
     void deleteProblem(int problemId);
     @Delete("DELETE FROM samples WHERE problemId =#{problemId}")

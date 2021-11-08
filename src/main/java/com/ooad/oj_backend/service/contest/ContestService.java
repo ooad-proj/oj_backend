@@ -33,11 +33,21 @@ public class ContestService {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+        if(!StpUtil.getRoleList().get(0).equals("teacher")){
+            int classId=contestMapper.getClassByContest(contestId);
+            ResponseEntity responseEntity1 = authService.checkPermission("0-" + classId);
+            ResponseEntity responseEntity2 = authService.checkPermission("1-" + classId);
+            if (responseEntity2 !=null&&responseEntity1!=null){
+                return responseEntity2;
+            }
+            if(responseEntity1==null){
+                int s=state(contestId);
+                if(s==-1){
+                    return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+                }
+            }
+        }
         Response response=new Response();
-      /*  if(!StpUtil.isLogin()){
-            response.setCode(-2);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }*/
         Contest contest = contestMapper.getOneContest(contestId);
         List<Problem> problems = problemMapper.getContestProblem(contestId);
         //TODO: get myScore and score
@@ -174,5 +184,16 @@ public class ContestService {
         contestMapper.delete(contestId);
         response.setCode(0);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    int state(int contestId){
+        Contest contest=contestMapper.getOneContest(contestId);
+        long start=contest.getStartTime();
+        long end=contest.getEndTime();
+        long time=System.currentTimeMillis();
+        if(time<=start) {
+            return -1;
+        }if(time<end)
+            return 0;
+        return 1;
     }
 }

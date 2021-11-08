@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Time;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -43,8 +44,9 @@ public class ProblemService {
         List<ProblemView>problemViews;
         String userId="";
         int count;
+        long time=System.currentTimeMillis();
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
-            userId="and (userId='"+ StpUtil.getLoginId()+"' or p.contestId=0) ";
+            userId="and (userId='"+ StpUtil.getLoginId()+"' and privilege==1 or p.contestId=0) or (userId='"+ StpUtil.getLoginId()+"' and privilege==0 and contest.startTime<"+time+" or p.contestId=0)";
             count=problemMapper.getProblemNumber(search,userId);
             problemViews=problemMapper.getProblem(search,userId,(page - 1) * itemsPerPage,itemsPerPage);
         }else {
@@ -95,12 +97,21 @@ public class ProblemService {
             response.setCode(-1);
             return new ResponseEntity<>(response,HttpStatus.OK);
         }
-
         String userId="";
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
-            userId="and (userId='"+ StpUtil.getLoginId()+"' or contest.id=0)";
-            if(problemMapper.getProblemPrivilege(userId,problemId)==0){
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            int classId=problemMapper.getGroupId(problemId);
+            if(classId!=0) {
+                ResponseEntity responseEntity1 = authService.checkPermission("0-" + classId);
+                ResponseEntity responseEntity2 = authService.checkPermission("1-" + classId);
+                if (responseEntity2 != null && responseEntity1 != null) {
+                    return responseEntity2;
+                }
+                if (responseEntity1 == null) {
+                    int s = state(problemId);
+                    if (s == -1) {
+                        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+                    }
+                }
             }
         }
         HashMap<String,Object>hashMap=new HashMap<>();
@@ -183,10 +194,11 @@ public class ProblemService {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
-            userId="and (userId='"+ StpUtil.getLoginId()+"' and privilege=1 or contest.id=0)";
-            if(problemMapper.getContestPrivilege(userId,contestId)==0){
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            }
+            int classId=contestMapper.getClassByContest(contestId);
+                ResponseEntity responseEntity2 = authService.checkPermission("1-" + classId);
+                if (responseEntity2 != null) {
+                    return responseEntity2;
+                }
         }
         if(check(problem)){
             response.setCode(-1);
@@ -231,10 +243,11 @@ public class ProblemService {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
-            userId="and (userId='"+ StpUtil.getLoginId()+"' and privilege=1 or contest.id=0)";
-            if(problemMapper.getProblemPrivilege(userId,problemId)==0){
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            };
+            int classId=problemMapper.getGroupId(problemId);
+            ResponseEntity responseEntity2 = authService.checkPermission("1-" + classId);
+            if (responseEntity2 != null) {
+                return responseEntity2;
+            }
         }
         problemMapper.deleteSample(problemId);
         problemMapper.deleteSubmitTemplates(problemId);
@@ -261,9 +274,10 @@ public class ProblemService {
         }
         String userId="";
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
-            userId="and (userId='"+ StpUtil.getLoginId()+"' and privilege=1 or contest.id=0)";
-            if(problemMapper.getProblemPrivilege(userId,problemId)==0){
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            int classId=problemMapper.getGroupId(problemId);
+            ResponseEntity responseEntity2 = authService.checkPermission("1-" + classId);
+            if (responseEntity2 != null) {
+                return responseEntity2;
             }
         }
         if(check(problem)){
@@ -498,7 +512,15 @@ public class ProblemService {
                 ||problem.getInputFormat()==null||problem.getOutputFormat()==null||problem.getTimeLimit()<=0||problem.getSpaceLimit()<=0
                 ||problem.getAllowedLanguage()==null||problem.getTestCaseId()==null;
     }
-    static int state(){
-        return 0;
+    int state(int problemId){
+        Contest contest=problemMapper.getContestNumber(problemId);
+        long start=contest.getStartTime();
+        long end=contest.getEndTime();
+        long time=System.currentTimeMillis();
+        if(time<=start) {
+            return -1;
+        }if(time<end)
+            return 0;
+        return 1;
     }
 }
