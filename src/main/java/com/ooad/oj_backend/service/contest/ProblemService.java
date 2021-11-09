@@ -304,7 +304,6 @@ public class ProblemService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     public ResponseEntity<?> addTestCase(int contestId , MultipartFile multipartFile) {
-        //TODO testCase haven't be tested.
 
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
