@@ -1,6 +1,5 @@
-package connector;
+package com.ooad.oj_backend.rabbitmq;
 
-import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 

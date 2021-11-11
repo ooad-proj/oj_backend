@@ -1,6 +1,5 @@
-package judger;
+package com.ooad.oj_backend.rabbitmq.entity;
 
-import judger.Template;
 import java.util.ArrayList;
 import java.util.List;
 

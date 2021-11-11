@@ -1,8 +1,7 @@
-package utils;
+package com.ooad.oj_backend.utils;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
-import configs.PathConfig;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

@@ -1,8 +1,10 @@
-package result;
+package com.ooad.oj_backend.rabbitmq.entity;
 
+import lombok.Getter;
+import lombok.Setter;
 
-import com.google.gson.Gson;
-
+@Getter
+@Setter
 public class Result {
     int id = 1;
     int total = 1;
