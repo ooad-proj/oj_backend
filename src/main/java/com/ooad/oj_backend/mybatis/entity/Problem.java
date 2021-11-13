@@ -21,6 +21,7 @@ public class Problem implements Serializable {
     private String tips;
     private long timeLimit;
     private long spaceLimit;
+    private String testCase;
     private String testCaseId;
     private String[] allowedLanguage;
     private String allowedLanguage1;

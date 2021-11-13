@@ -86,12 +86,12 @@ public interface ProblemMapper {
             ",#{p.tips},#{p.timeLimit},#{p.spaceLimit},#{p.testCaseId},#{allowedLanguage},#{creatorId},#{p.totalScore},#{p.allowPartial},#{p.punishRule});")
     @Options(useGeneratedKeys = true, keyProperty = "p.problemId", keyColumn="problemId")
    /* @Insert("insert into problem values (null,#{shownId},#{title},#{contestId},#{description},#{inputFormat},#{outputFormat}" +
-            ",#{tips},#{timeLimit},#{spaceLimit},#{testCaseId},#{allowedLanguage},#{creatorId});")*/
+            ",#{tips},#{timeLimit},#{spaceLimit},#{testCaseIdId},#{allowedLanguage},#{creatorId});")*/
    /* @Options(useGeneratedKeys = true, keyProperty = "p.problemId", keyColumn="problemId")*/
    /* int addProblem(@Param("contestId") int contestId,@Param("shownId") int shownId, @Param("title")String title,
                     @Param("description")String description,@Param("inputFormat") String inputFormat,@Param("outputFormat") String outputFormat,
                     @Param("tips")String tips,@Param("timeLimit")String timeLimit,@Param("spaceLimit")String spaceLimit,
-                    @Param("allowedLanguage")String allowedLanguage,@Param("testCaseId")String testCaseId);*/
+                    @Param("allowedLanguage")String allowedLanguage,@Param("testCaseIdId")String testCaseIdId);*/
    int addProblem(@Param("contestId")int contestId,@Param("p") Problem problem,@Param("creatorId")String creatorId,@Param("allowedLanguage")String allowedLanguage);
 
 
@@ -142,4 +142,10 @@ public interface ProblemMapper {
             "       WHERE \n" +
             "       answerId =#{answerId}")
     void deleteAnswer(int answerId);
+
+    @Update("       UPDATE\n" +
+            "        problem SET \n" +
+            "       testCase=#{testCase}," +
+            " problemId=#{problemId}")
+    void putTestCase(@Param("testCase") String testCaseId, @Param("problemId") int problemId);
 }

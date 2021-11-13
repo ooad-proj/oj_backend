@@ -10,7 +10,9 @@ import com.ooad.oj_backend.Response;
 import com.ooad.oj_backend.mapper.contest.ContestMapper;
 import com.ooad.oj_backend.mapper.contest.ProblemMapper;
 import com.ooad.oj_backend.mybatis.entity.*;
+import com.ooad.oj_backend.redis.RedisUtil;
 import com.ooad.oj_backend.service.user.AuthService;
+import com.ooad.oj_backend.utils.FileToString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,8 @@ public class ProblemService {
     private AuthService authService;
     @Autowired
     private ContestMapper contestMapper;
+    @Autowired
+    private RedisUtil redisUtil;
     public ResponseEntity<?> getProblem(String search,int page,int itemsPerPage) {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -255,6 +259,7 @@ public class ProblemService {
         response.setCode(0);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     public ResponseEntity<?> updateProblem(int problemId, Problem problem) {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -263,6 +268,7 @@ public class ProblemService {
         if(check==0){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }*/
+
         String role=StpUtil.getRoleList().get(0);
         if(!role.equals("teacher")&&!role.equals("assistant")){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -289,6 +295,11 @@ public class ProblemService {
         problemMapper.updateProblem(problemId,problem,allowed);
         Samples[] samples=problem.getSamples();
         SubmitTemplate[]submitTemplate=problem.getSubmitTemplate();
+        String testCaseUUId = problem.getTestCaseId();
+        String stringTest = redisUtil.get(testCaseUUId);
+        redisUtil.delete(testCaseUUId);
+        problemMapper.putTestCase(stringTest,problemId);
+
         if(samples!=null) {
             problemMapper.deleteSample(problemId);
             for (Samples sample : samples) {
@@ -303,12 +314,11 @@ public class ProblemService {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    public ResponseEntity<?> addTestCase(int contestId , MultipartFile multipartFile) {
 
+    public ResponseEntity<?> addTestCase(int contestId ,MultipartFile multipartFile) {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-
         ResponseEntity responseEntity1 = authService.checkPermission("1-0");
         if(responseEntity1 != null){
             int classId=contestMapper.getClassByContest(contestId);
@@ -317,7 +327,6 @@ public class ProblemService {
                 return responseEntity2;
             }
         }
-
 //        String name = multipartFile.getOriginalFilename();
         Response response=new Response();
         try {
@@ -331,6 +340,10 @@ public class ProblemService {
             }
             multipartFile.transferTo(file);
             ZipFile zipFile = new ZipFile(file);
+
+
+
+
             List<String> nameList = new ArrayList<>();
             for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e.hasMoreElements();) {
                 ZipEntry entry = e.nextElement();
@@ -394,6 +407,10 @@ public class ProblemService {
                 file.delete();
                 return new ResponseEntity<>(response,HttpStatus.OK);
             }
+            String stringFile = FileToString.fileToString(file.getPath());
+//            problemMapper.putTestCase(stringTest,problem);
+            redisUtil.set(universallyUniqueID,stringFile);
+
             response.setCode(0);
             Map<String,Object> map = new HashMap<>();
             map.put("testCaseId",universallyUniqueID);
@@ -404,8 +421,7 @@ public class ProblemService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
-
+    
 
     public ResponseEntity<?> addAnswer(int problemId,String language,String code) {
         if(!StpUtil.isLogin()){
@@ -509,7 +525,7 @@ public class ProblemService {
     static boolean check(Problem problem){
         return problem.getShownId()==null||problem.getTitle()==null||problem.getDescription()==null||problem.getTotalScore()<0
                 ||problem.getInputFormat()==null||problem.getOutputFormat()==null||problem.getTimeLimit()<=0||problem.getSpaceLimit()<=0
-                ||problem.getAllowedLanguage()==null||problem.getTestCaseId()==null;
+                ||problem.getAllowedLanguage()==null;
     }
     int state(int problemId){
         Contest contest=problemMapper.getContestNumber(problemId);
