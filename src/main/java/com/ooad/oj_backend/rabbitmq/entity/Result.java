@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Result {
+public class Result implements Comparable<Result> {
     int id = 1;
     int total = 1;
     boolean correct = false;
@@ -58,4 +58,8 @@ public class Result {
         return new Result(id, total, false, 0, 0, "NS", "Not Supported", message, Color.GRAY);
     }
 
+    @Override
+    public int compareTo(Result o) {
+        return this.id - o.id;
+    }
 }

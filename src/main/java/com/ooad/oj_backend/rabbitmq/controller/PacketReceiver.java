@@ -34,6 +34,16 @@ public class PacketReceiver {
             //
             //
 //            redisUtil.del(recvPacket.getSubmitId());
+        } else if (recvPacket.getType() == 2) {
+            System.out.println(recvPacket.getResult().getMessage());
+            String totalSubmitId = recvPacket.getSubmitId();
+            if (totalSubmitId.charAt(0) == 'a') {
+                redisUtil.hPut(totalSubmitId.substring(1), "a", (new Gson()).toJson(recvPacket.getResult()));
+                redisUtil.expire(recvPacket.getSubmitId(), 1, TimeUnit.HOURS);
+            } else if (totalSubmitId.charAt(0) == 'u') {
+                redisUtil.hPut(totalSubmitId.substring(1), "u", (new Gson()).toJson(recvPacket.getResult()));
+                redisUtil.expire(recvPacket.getSubmitId(), 1, TimeUnit.HOURS);
+            }
         }
 
     }
