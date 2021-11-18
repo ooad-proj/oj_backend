@@ -76,4 +76,15 @@ public interface ContestMapper {
             "       WHERE \n" +
             "       id =#{id}")
     void delete(int contestId);
+
+    @Select("       select id," +
+            "title," +
+            "endTime " +
+            "from contest where endTime>#{nowTime}")
+    List<Contest> getCloseContest( @Param("nowTime") long nowTime);
+
+    @Select("select * from contest where classId in (" +
+            "    select id from class join auth a on class.id = a.classId where a.UserId = userId );")
+    List<Contest> getAllowedContest( @Param("userId") String userId);
+
 }
