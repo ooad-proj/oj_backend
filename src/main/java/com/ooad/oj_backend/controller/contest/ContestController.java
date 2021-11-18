@@ -43,4 +43,9 @@ public class ContestController {
         return contestService.deleteContest(contestId);
     }
 
+    @RequestMapping(value = "/contest/ddl", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> getCloseContest (  int amount ) {
+        return contestService.getCloseContest(amount);
+    }
 }

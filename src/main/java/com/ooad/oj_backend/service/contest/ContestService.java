@@ -6,10 +6,7 @@ import com.ooad.oj_backend.mapper.contest.ContestMapper;
 import com.ooad.oj_backend.mapper.contest.ProblemMapper;
 import com.ooad.oj_backend.mapper.user.AuthMapper;
 import com.ooad.oj_backend.mapper.user.UserMapper;
-import com.ooad.oj_backend.mybatis.entity.Contest;
-import com.ooad.oj_backend.mybatis.entity.Paper;
-import com.ooad.oj_backend.mybatis.entity.Problem;
-import com.ooad.oj_backend.mybatis.entity.UserView;
+import com.ooad.oj_backend.mybatis.entity.*;
 import com.ooad.oj_backend.service.user.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ContestService {
@@ -185,6 +183,7 @@ public class ContestService {
         response.setCode(0);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     int state(int contestId){
         Contest contest=contestMapper.getOneContest(contestId);
         long start=contest.getStartTime();
@@ -195,5 +194,30 @@ public class ContestService {
         }if(time<end)
             return 0;
         return 1;
+    }
+
+    public ResponseEntity<?> getCloseContest(int amount) {
+        if(!StpUtil.isLogin()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        String userId = (String) StpUtil.getLoginId();
+        Response response = new Response();
+        long nowTime = System.currentTimeMillis();
+
+        List<Contest> contests = contestMapper.getCloseContest(nowTime);
+        List<Contest> sortedContest = contests.stream().sorted(Comparator.comparing( Contest::getEndTime)).limit(amount).collect(Collectors.toList());
+        List<Content> contents = new ArrayList<>();
+        List<Contest> allAllowedContest = contestMapper.getAllowedContest(userId);
+        for(int i =0;i<sortedContest.size();i++){
+            Content tem = new Content();
+            tem.contestId = contests.get(i).getId();
+            tem.title = contests.get(i).getTitle();
+            tem.timeLeft =nowTime- contests.get(i).getEndTime();
+            tem.allowed = allAllowedContest.contains(contests.get(i));
+            contents.add(tem);
+        }
+        response.setContent(contents);
+        response.setCode(0);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
