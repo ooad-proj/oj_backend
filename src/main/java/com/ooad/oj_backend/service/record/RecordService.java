@@ -28,8 +28,11 @@ public class RecordService {
     }
 
     @Autowired
+    private AuthService authService;
+    @Autowired
     private RecordMapper recordMapper;
-
+    @Autowired
+    private ProblemMapper problemMapper;
     @Autowired
     private JudgerService judgerService;
 
@@ -55,6 +58,26 @@ public class RecordService {
         Response response = new Response();
         response.setContent(content);
         response.setCode(0);
+       if( judgerService.judgeRunning(recordId)){
+           response.setCode(1);
+       }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    public ResponseEntity<?> getStandardTestRecord(String recordId){
+        if (!StpUtil.isLogin()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        Result[] results = judgerService.getTestResult(recordId);
+        HashMap<String,Object>hashMap=new HashMap<>();
+        hashMap.put("standardResult",results[1]);
+        hashMap.put("userResult",results[0]);
+        Response response = new Response();
+        response.setContent(hashMap);
+        response.setCode(0);
+        if( judgerService.testTestCaseRunning(recordId)){
+            response.setCode(1);
+        }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

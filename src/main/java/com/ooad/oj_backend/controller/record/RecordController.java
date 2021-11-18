@@ -18,4 +18,8 @@ public class RecordController {
     public ResponseEntity<?> getProblem(String recordId) {
         return recordService.getRecord(recordId);
     }
+    @RequestMapping(value = "standard/{recordId}",method = RequestMethod.GET)
+    public ResponseEntity<?> getStandardTest(String recordId) {
+        return recordService.getStandardTestRecord(recordId);
+    }
 }
