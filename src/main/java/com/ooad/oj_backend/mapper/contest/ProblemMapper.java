@@ -1,6 +1,7 @@
 package com.ooad.oj_backend.mapper.contest;
 
 import com.ooad.oj_backend.mybatis.entity.*;
+import com.ooad.oj_backend.rabbitmq.entity.Template;
 import lombok.Setter;
 
 import org.apache.ibatis.annotations.*;
@@ -76,7 +77,10 @@ public interface ProblemMapper {
     @Select("select input,output from samples s where s.problemId=#{problem}")
     Samples[] getSamples(int problemId);
     @Select("select language,code from submitTemplate where problemId=#{problemId}")
-    SubmitTemplate[] getSubmitTemplate(int problemId);
+    List<SubmitTemplate> getSubmitTemplate(int problemId);
+
+    @Select("select language,code from submitTemplate where problemId=#{problemId}")
+    List<Template> getTemplate(int problemId);
 
     @Select("select problem.creatorId,User.name as creatorName,c.id as contestId,c.title as contestTitle,c2.id as groupId,c2.name as groupName from problem " +
             "join User on problem.creatorId = User.id join contest c on c.id = problem.contestId " +
@@ -118,10 +122,11 @@ public interface ProblemMapper {
     void deleteSubmitTemplates(int problemId);
 
     @Insert("       INSERT INTO\n" +
-            "         answer(problemId,language,code)\n" +
+            "         answer(problemId,language,code,isStandard)\n" +
             "       VALUES\n" +
             "       (#{problemId},#{language},#{code})")
-    void addAnswer(@Param("problemId") int problemId,@Param("language") String language,@Param("code") String code);
+    void addAnswer(@Param("problemId") int problemId,@Param("language") String language,
+                   @Param("code") String code,@Param("isStandard") boolean isStandard);
 
     @Select("Select count(*) from problem where problemId=#{problemId}")
     int searchProblem(int problemId);
@@ -129,8 +134,11 @@ public interface ProblemMapper {
     @Select("Select * from answer where problemId=#{problemId}")
     List<Answer> getAnswerByProblem(int problemId);
 
-    @Select("Select * from answer where answerId=#{answerId}")
-    Answer getAnswerById(int answerId);
+    @Select("Select count(*) from answer where problemId=#{problemId} and isStandard=true;")
+    int searchStandardAnswerByProblem(int problemId);
+    @Update("       UPDATE\n" +
+            "        problem set isPublish={isPublish} where problemId={problemId}")
+    void updateProblemOfPublish(@Param("isPublish") boolean isPublish,@Param("problemId")int problemId);
     @Update("       UPDATE\n" +
             "        answer SET \n" +
             "       code=#{code}," +
@@ -138,10 +146,8 @@ public interface ProblemMapper {
     void updateAnswer(@Param("answerId") int answerId, @Param("language") String language,@Param("code")String code);
 
     @Delete("       DELETE FROM\n" +
-            "            answer\n" +
-            "       WHERE \n" +
-            "       answerId =#{answerId}")
-    void deleteAnswer(int answerId);
+            "            answer where problemId={problemId}\n")
+    void deleteAnswer(int problemId);
 
     @Update("       UPDATE\n" +
             "        problem SET \n" +

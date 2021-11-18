@@ -15,15 +15,15 @@ public class SubmitController {
     @Autowired
     private SubmitService submitService;
     @RequestMapping(value = "submit/{problemId}",method = RequestMethod.POST)
-    public ResponseEntity<?> submitCode(@PathVariable int problemId) {
-        return submitService.submitCode(problemId);
+    public ResponseEntity<?> submitCode(@PathVariable int problemId,String language,String code) {
+        return submitService.submitCode(problemId,language,code);
     }
     @RequestMapping(value = "submit/standard/{problemId}",method = RequestMethod.GET)
-    public ResponseEntity<?> standardAnsTest(@PathVariable int problemId,String testcase) {
-        return submitService.standardAnsTest(problemId, testcase);
+    public ResponseEntity<?> standardAnsTest(@PathVariable int problemId,String code,String testcase) {
+        return submitService.standardAnsTest(problemId,code,testcase);
     }
 
-    @RequestMapping(value = "auth/submit/haveAnswer/{problemId}",method = RequestMethod.GET)
+    @RequestMapping(value = "submit/haveAnswer/{problemId}",method = RequestMethod.GET)
     public ResponseEntity<?> AskIfhaveAnswer(@PathVariable int problemId){
         return submitService.AskIfhaveAnswer(problemId);
     }

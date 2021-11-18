@@ -1,14 +1,13 @@
 package com.ooad.oj_backend.controller.contest;
 
-import com.ooad.oj_backend.mybatis.entity.Problem;
-import com.ooad.oj_backend.mybatis.entity.Samples;
-import com.ooad.oj_backend.mybatis.entity.ScoreRule;
-import com.ooad.oj_backend.mybatis.entity.SubmitTemplate;
+import com.ooad.oj_backend.mybatis.entity.*;
 import com.ooad.oj_backend.service.contest.ProblemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/problem/")
@@ -50,20 +49,12 @@ public class ProblemController {
     public ResponseEntity<?> addTestCase(@PathVariable int contestId, MultipartFile file) {
         return problemService.addTestCase(contestId,file);
     }
-    @PostMapping(value = "standardAnswer/{problemId}")
-    public ResponseEntity<?> addAnswer(@PathVariable int problemId,String answer,String language) {
-        return problemService.addAnswer(problemId,language,answer);
-    }
-    @RequestMapping(value = "standardAnswer/{answerId}",method=RequestMethod.PUT)
-    public ResponseEntity<?> updateAnswer(@PathVariable int answerId,String answer,String language) {
-        return problemService.updateAnswer(answerId,language,answer);
+    @RequestMapping(value = "standardAnswer/{problemId}",method=RequestMethod.PUT)
+    public ResponseEntity<?> updateAnswer(@PathVariable int problemId, AnswerList answer) {
+        return problemService.updateAnswer(problemId,answer);
     }
     @RequestMapping(value = "standardAnswer/{problemId}",method=RequestMethod.GET)
     public ResponseEntity<?> getAnswer(@PathVariable int problemId) {
         return problemService.getAnswer(problemId);
-    }
-    @RequestMapping(value = "standardAnswer/{answerId}",method=RequestMethod.DELETE)
-    public ResponseEntity<?> deleteAnswer(@PathVariable int answerId) {
-        return problemService.deleteAnswer(answerId);
     }
 }

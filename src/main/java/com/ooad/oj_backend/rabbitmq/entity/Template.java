@@ -1,6 +1,8 @@
 package com.ooad.oj_backend.rabbitmq.entity;
 
-public class Template {
+import java.io.Serializable;
+
+public class Template implements Serializable {
     String language = "";
     String code = "";
 

@@ -121,7 +121,7 @@ public class ProblemService {
         HashMap<String,Object>hashMap=new HashMap<>();
         Problem problem=problemMapper.getDetailedProblem(problemId);
         CreatorAndGroup creatorAndGroup=problemMapper.getCreatorAndGroup(problemId);
-        SubmitTemplate[] submitTemplates=problemMapper.getSubmitTemplate(problemId);
+        List<SubmitTemplate> submitTemplates=problemMapper.getSubmitTemplate(problemId);
         Samples[] samples=problemMapper.getSamples(problemId);
         ScoreRule scoreRule=new ScoreRule();
         scoreRule.setPunishRule(problem.getPunishRule());
@@ -264,11 +264,6 @@ public class ProblemService {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-      /* int check=problemMapper.checkProblemPrivilege("p.problemId="+problemId,(String) StpUtil.getLoginId());
-        if(check==0){
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }*/
-
         String role=StpUtil.getRoleList().get(0);
         if(!role.equals("teacher")&&!role.equals("assistant")){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
@@ -296,10 +291,12 @@ public class ProblemService {
         Samples[] samples=problem.getSamples();
         SubmitTemplate[]submitTemplate=problem.getSubmitTemplate();
         String testCaseUUId = problem.getTestCaseId();
-        String stringTest = redisUtil.get(testCaseUUId);
-        redisUtil.delete(testCaseUUId);
-        problemMapper.putTestCase(stringTest,problemId);
-
+        Problem problem1=problemMapper.getDetailedProblem(problemId);
+        if(!problem1.getTestCaseId().equals(testCaseUUId)) {
+            String stringTest = redisUtil.get(testCaseUUId);
+            redisUtil.delete(testCaseUUId);
+            problemMapper.putTestCase(stringTest, problemId);
+        }
         if(samples!=null) {
             problemMapper.deleteSample(problemId);
             for (Samples sample : samples) {
@@ -421,9 +418,9 @@ public class ProblemService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-    
 
-    public ResponseEntity<?> addAnswer(int problemId,String language,String code) {
+
+   /* public ResponseEntity<?> addAnswer(int problemId,String language,String code) {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -445,59 +442,60 @@ public class ProblemService {
         problemMapper.addAnswer(problemId,language,code);
         response.setMsg("add success");
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-    public ResponseEntity<?> updateAnswer(int answerId,String language,String code) {
-        if(!StpUtil.isLogin()){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        String role=StpUtil.getRoleList().get(0);
-        if(!role.equals("teacher")&&!role.equals("assistant")) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+    }*/
+    public ResponseEntity<?> updateAnswer(int problemId,AnswerList answers) {
+        int groupId=problemMapper.getGroupId(problemId);
         Response response=new Response();
         response.setCode(0);
-        Answer answer=problemMapper.getAnswerById(answerId);
-        if(answer==null){
-            response.setCode(-1);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        }
-        if(role.equals("assistant")) {
-            int check = problemMapper.checkAnswerPrivilege("answerId=" + answerId, (String) StpUtil.getLoginId());
-            if (check == 0) {
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        ResponseEntity responseEntity2 = authService.checkPermission("1-"+groupId);
+        if (responseEntity2 != null){
+            ResponseEntity responseEntity1 = authService.checkPermission("1-0");
+            if (responseEntity1 != null ){
+                response.setCode(-2);
+                return new ResponseEntity<>(response, HttpStatus.OK);
             }
-        }
-        problemMapper.updateAnswer(answerId,language,code);
-        response.setMsg("update success");
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-    public ResponseEntity<?> getAnswer(int problemId) {
-        if(!StpUtil.isLogin()){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        String role=StpUtil.getRoleList().get(0);
-        if(!role.equals("teacher")&&!role.equals("assistant")){
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
-        if(role.equals("assistant")) {
-            int check = problemMapper.checkProblemPrivilege("p.problemId=" + problemId, (String) StpUtil.getLoginId());
-            if (check == 0) {
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            }
-        }
-        Response response=new Response();
-        response.setCode(0);
         int problem=problemMapper.searchProblem(problemId);
         if(problem==0){
             response.setCode(-1);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
+        problemMapper.deleteAnswer(problemId);
+        Answer[] answers1 =answers.getAnswer();
+        problemMapper.updateProblemOfPublish(answers.isPublish(),problemId);
+        for (Answer answer:answers1) {
+            problemMapper.addAnswer(problemId,answer.getLanguage(), answer.getCode(),answer.isStandard());
+        }
+        response.setMsg("update success");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    public ResponseEntity<?> getAnswer(int problemId) {
+        int groupId=problemMapper.getGroupId(problemId);
+        Response response=new Response();
+        response.setCode(0);
+            ResponseEntity responseEntity = authService.checkPermission("0-" + groupId);
+            ResponseEntity responseEntity2 = authService.checkPermission("1-" + groupId);
+            if (responseEntity2 != null && responseEntity != null) {
+                ResponseEntity responseEntity1 = authService.checkPermission("1-0");
+                if (responseEntity1 != null&& groupId!=0) {
+                    return responseEntity1;
+                }
+            }
+        int problem=problemMapper.searchProblem(problemId);
+        if(problem==0){
+            response.setCode(-1);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        Problem problem1=problemMapper.getDetailedProblem(problemId);
+        if (responseEntity==null && !problem1.isPublish()){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
         List<Answer> answer=problemMapper.getAnswerByProblem(problemId);
         response.setContent(answer);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    public ResponseEntity<?> deleteAnswer(int answerId) {
+    /*public ResponseEntity<?> deleteAnswer(int answerId) {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -521,7 +519,7 @@ public class ProblemService {
         }
         problemMapper.deleteAnswer(answerId);
         return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+    }*/
     static boolean check(Problem problem){
         return problem.getShownId()==null||problem.getTitle()==null||problem.getDescription()==null||problem.getTotalScore()<0
                 ||problem.getInputFormat()==null||problem.getOutputFormat()==null||problem.getTimeLimit()<=0||problem.getSpaceLimit()<=0

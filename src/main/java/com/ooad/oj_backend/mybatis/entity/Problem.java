@@ -31,4 +31,5 @@ public class Problem implements Serializable {
     private Samples[] samples;
     private SubmitTemplate[]submitTemplate;
     private String creatorId;
+    private boolean isPublish=false;
 }

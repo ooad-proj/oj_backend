@@ -25,6 +25,10 @@ public class JudgerService {
         return uuid;
     }
 
+    public boolean judgeRunning(String submitId) {
+        return true;
+    }
+
     public String testTestCase(String testCase, JudgeDetail userJudgeDetail, JudgeDetail answerJudgeDetail) {
         String uuid = UUID.randomUUID().toString();
         SendPacket userPacket = new SendPacket("u" + uuid, 1, null, testCase, userJudgeDetail);
@@ -32,6 +36,10 @@ public class JudgerService {
         packetSender.sendPacket(userPacket);
         packetSender.sendPacket(answerPacket);
         return uuid;
+    }
+
+    public boolean testTestCaseRunning(String testId) {
+        return true;
     }
 
     public List<Result> getResultFromRedis(String uuid) {

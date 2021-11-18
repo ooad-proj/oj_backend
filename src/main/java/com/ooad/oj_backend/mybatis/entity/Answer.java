@@ -11,4 +11,5 @@ public class Answer implements Serializable {
     private int answerId;
     private String language;
     private String code;
+    private boolean isStandard;
 }

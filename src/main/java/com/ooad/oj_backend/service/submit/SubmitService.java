@@ -3,13 +3,15 @@ package com.ooad.oj_backend.service.submit;
 import cn.dev33.satoken.exception.NotPermissionException;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ooad.oj_backend.Response;
+import com.ooad.oj_backend.mapper.contest.ProblemMapper;
 import com.ooad.oj_backend.mapper.user.AuthMapper;
 import com.ooad.oj_backend.mapper.user.UserMapper;
-import com.ooad.oj_backend.mybatis.entity.Paper;
-import com.ooad.oj_backend.mybatis.entity.RoleView;
-import com.ooad.oj_backend.mybatis.entity.User;
-import com.ooad.oj_backend.mybatis.entity.UserView;
+import com.ooad.oj_backend.mybatis.entity.*;
 import com.ooad.oj_backend.rabbitmq.MqUtil;
+import com.ooad.oj_backend.rabbitmq.entity.JudgeDetail;
+import com.ooad.oj_backend.rabbitmq.entity.Template;
+import com.ooad.oj_backend.service.JudgerService;
+import com.ooad.oj_backend.service.user.AuthService;
 import com.ooad.oj_backend.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,16 +28,80 @@ public class SubmitService {
     private UserMapper userMapper;
     @Autowired
     private AuthMapper authMapper;
-
-    public ResponseEntity<?> submitCode(int problemId) {
-        return null;
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private ProblemMapper problemMapper;
+    @Autowired
+    private JudgerService judgerService;
+    public ResponseEntity<?> submitCode(int problemId,String language,String code) {
+        int groupId=problemMapper.getGroupId(problemId);
+        Response response=new Response();
+        response.setCode(0);
+        if(groupId!=0) {
+            ResponseEntity responseEntity = authService.checkPermission("0-" + groupId);
+            ResponseEntity responseEntity2 = authService.checkPermission("1-" + groupId);
+            if (responseEntity2 != null && responseEntity != null) {
+                ResponseEntity responseEntity1 = authService.checkPermission("1-0");
+                if (responseEntity1 != null) {
+                    response.setCode(-2);
+                    return new ResponseEntity<>(response, HttpStatus.OK);
+                }
+            }
+        }
+        if(problemMapper.searchProblem(problemId)==0){
+            response.setCode(-1);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        Problem problem=problemMapper.getDetailedProblem(problemId);
+        List<Template>submitTemplates=problemMapper.getTemplate(problemId);
+        JudgeDetail detail=new JudgeDetail(language,code,(int)problem.getTimeLimit(),(int)problem.getSpaceLimit(),submitTemplates);
+        String UUID=judgerService.judge(problem.getTestCase(),detail);
+        response.setContent(UUID);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> standardAnsTest(int problemId, String testcase){
+    public ResponseEntity<?> standardAnsTest(int problemId,String code,String testcase){
+        int groupId=problemMapper.getGroupId(problemId);
+        Response response=new Response();
+        response.setCode(0);
+        if(groupId!=0) {
+        ResponseEntity responseEntity = authService.checkPermission("0-"+groupId);
+        ResponseEntity responseEntity2 = authService.checkPermission("1-"+groupId);
+        if (responseEntity2 != null && responseEntity!=null){
+            ResponseEntity responseEntity1 = authService.checkPermission("1-0");
+            if (responseEntity1 != null ){
+                response.setCode(-2);
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }
+        }
+        }
         return null;
     }
 
     public ResponseEntity<?> AskIfhaveAnswer(int problemId) {
-        return null;
+        int groupId=problemMapper.getGroupId(problemId);
+        Response response=new Response();
+        response.setCode(0);
+        if(groupId!=0) {
+            ResponseEntity responseEntity = authService.checkPermission("0-" + groupId);
+            ResponseEntity responseEntity2 = authService.checkPermission("1-" + groupId);
+            if (responseEntity2 != null && responseEntity != null) {
+                ResponseEntity responseEntity1 = authService.checkPermission("1-0");
+                if (responseEntity1 != null) {
+                    response.setCode(-2);
+                    return new ResponseEntity<>(response, HttpStatus.OK);
+                }
+            }
+        }
+        if(problemMapper.searchProblem(problemId)==0){
+            response.setCode(-1);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        HashMap<String,Object>hash=new HashMap<>();
+        int haveAnswer=problemMapper.searchStandardAnswerByProblem(problemId);
+        hash.put("haveAnswer",haveAnswer!=0);
+        response.setContent(hash);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
