@@ -58,7 +58,7 @@ public class RecordService {
         Response response = new Response();
         response.setContent(content);
         response.setCode(0);
-       if( judgerService.judgeRunning(recordId)){
+       if(!judgerService.judgeRunning(recordId)){
            response.setCode(1);
        }
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -75,7 +75,7 @@ public class RecordService {
         Response response = new Response();
         response.setContent(hashMap);
         response.setCode(0);
-        if( judgerService.testTestCaseRunning(recordId)){
+        if(!judgerService.testTestCaseRunning(recordId)){
             response.setCode(1);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
