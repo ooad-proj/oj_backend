@@ -134,6 +134,9 @@ public interface ProblemMapper {
     @Select("Select * from answer where problemId=#{problemId}")
     List<Answer> getAnswerByProblem(int problemId);
 
+    @Select("Select * from answer where problemId=#{problemId} and isStandard=true;")
+    List<Answer> getStandardAnswerByProblem(int problemId);
+
     @Select("Select count(*) from answer where problemId=#{problemId} and isStandard=true;")
     int searchStandardAnswerByProblem(int problemId);
     @Update("       UPDATE\n" +

@@ -19,8 +19,8 @@ public class SubmitController {
         return submitService.submitCode(problemId,language,code);
     }
     @RequestMapping(value = "submit/standard/{problemId}",method = RequestMethod.GET)
-    public ResponseEntity<?> standardAnsTest(@PathVariable int problemId,String code,String testcase) {
-        return submitService.standardAnsTest(problemId,code,testcase);
+    public ResponseEntity<?> standardAnsTest(@PathVariable int problemId,String language,String code,String testcase) {
+        return submitService.standardAnsTest(problemId,language,code,testcase);
     }
 
     @RequestMapping(value = "submit/haveAnswer/{problemId}",method = RequestMethod.GET)

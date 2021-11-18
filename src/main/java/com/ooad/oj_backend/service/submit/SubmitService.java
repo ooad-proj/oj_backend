@@ -57,11 +57,13 @@ public class SubmitService {
         List<Template>submitTemplates=problemMapper.getTemplate(problemId);
         JudgeDetail detail=new JudgeDetail(language,code,(int)problem.getTimeLimit(),(int)problem.getSpaceLimit(),submitTemplates);
         String UUID=judgerService.judge(problem.getTestCase(),detail);
-        response.setContent(UUID);
+        HashMap<String,Object>hashMap=new HashMap<>();
+        hashMap.put("submitId",UUID);
+        response.setContent(hashMap);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> standardAnsTest(int problemId,String code,String testcase){
+    public ResponseEntity<?> standardAnsTest(int problemId,String language,String code,String testcase){
         int groupId=problemMapper.getGroupId(problemId);
         Response response=new Response();
         response.setCode(0);
@@ -76,7 +78,24 @@ public class SubmitService {
             }
         }
         }
-        return null;
+        if(problemMapper.searchProblem(problemId)==0){
+            response.setCode(-1);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        if(problemMapper.searchStandardAnswerByProblem(problemId)==0){
+            response.setCode(-2);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        List<Answer> answers=problemMapper.getStandardAnswerByProblem(problemId);
+        Problem problem=problemMapper.getDetailedProblem(problemId);
+        List<Template>submitTemplates=problemMapper.getTemplate(problemId);
+        JudgeDetail userJudgeDetail=new JudgeDetail(language,code,(int)problem.getTimeLimit(),(int)problem.getSpaceLimit(),submitTemplates);
+        JudgeDetail answerJudgeDetail=new JudgeDetail(answers.get(0).getLanguage(),answers.get(0).getCode(),(int)problem.getTimeLimit(),(int)problem.getSpaceLimit(),submitTemplates);
+        String UUID=judgerService.testTestCase(testcase,userJudgeDetail,answerJudgeDetail);
+        HashMap<String,Object>hashMap=new HashMap<>();
+        hashMap.put("submitId",UUID);
+        response.setContent(hashMap);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     public ResponseEntity<?> AskIfhaveAnswer(int problemId) {
