@@ -124,8 +124,8 @@ public interface ProblemMapper {
 
     @Insert("       INSERT INTO\n" +
             "         answer(problemId,language,code,isStandard)\n" +
-            "       VALUES\n" +
-            "       (#{problemId},#{language},#{code})")
+            "       VALUE\n" +
+            "       (#{problemId},#{language},#{code},#{isStandard})")
     void addAnswer(@Param("problemId") int problemId,@Param("language") String language,
                    @Param("code") String code,@Param("isStandard") boolean isStandard);
 
