@@ -253,8 +253,6 @@ public class ProblemService {
                 return responseEntity2;
             }
         }
-        problemMapper.deleteSample(problemId);
-        problemMapper.deleteSubmitTemplates(problemId);
         problemMapper.deleteProblem(problemId);
         response.setCode(0);
         return new ResponseEntity<>(response, HttpStatus.OK);
