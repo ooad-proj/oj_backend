@@ -25,32 +25,32 @@ public class PacketReceiver {
     RedisUtil redisUtil;
     @Autowired
     JudgerService judgerService;
-
-    @RabbitHandler
-    public void recievePacket(byte[] bytes) {
-        RecvPacket recvPacket = RecvPacket.fromString(new String(bytes));
-        if (recvPacket.getType() == 0) { //basic
-            System.out.println(recvPacket.getResult().getMessage());
-            redisUtil.hPut(recvPacket.getSubmitId(), ""+recvPacket.getResult().getId(), (new Gson()).toJson(recvPacket.getResult()));
-            redisUtil.expire(recvPacket.getSubmitId(), 1, TimeUnit.HOURS);
-        } else if (recvPacket.getType() == 1) { //end
-            List<Result> checkPoints = judgerService.getResultFromRedis(recvPacket.getSubmitId());
-            com.ooad.oj_backend.mybatis.entity.Result result = judgerService.getSubmitDetail(recvPacket.getSubmitId());
-            judgerService.setResultToSql(result, checkPoints);
-            redisUtil.hDelete("judge", recvPacket.getSubmitId());
-//            redisUtil.del(recvPacket.getSubmitId());
-        } else if (recvPacket.getType() == 2) {
-            System.out.println(recvPacket.getResult().getMessage());
-            String totalSubmitId = recvPacket.getSubmitId();
-            if (totalSubmitId.charAt(0) == 'a') {
-                redisUtil.hPut(totalSubmitId.substring(1), "a", (new Gson()).toJson(recvPacket.getResult()));
-                redisUtil.expire(recvPacket.getSubmitId(), 1, TimeUnit.HOURS);
-            } else if (totalSubmitId.charAt(0) == 'u') {
-                redisUtil.hPut(totalSubmitId.substring(1), "u", (new Gson()).toJson(recvPacket.getResult()));
-                redisUtil.expire(recvPacket.getSubmitId(), 1, TimeUnit.HOURS);
-            }
-        }
-
-    }
+//
+//    @RabbitHandler
+//    public void recievePacket(byte[] bytes) {
+//        RecvPacket recvPacket = RecvPacket.fromString(new String(bytes));
+//        if (recvPacket.getType() == 0) { //basic
+//            System.out.println(recvPacket.getResult().getMessage());
+//            redisUtil.hPut(recvPacket.getSubmitId(), ""+recvPacket.getResult().getId(), (new Gson()).toJson(recvPacket.getResult()));
+//            redisUtil.expire(recvPacket.getSubmitId(), 1, TimeUnit.HOURS);
+//        } else if (recvPacket.getType() == 1) { //end
+//            List<Result> checkPoints = judgerService.getResultFromRedis(recvPacket.getSubmitId());
+//            com.ooad.oj_backend.mybatis.entity.Result result = judgerService.getSubmitDetail(recvPacket.getSubmitId());
+//            judgerService.setResultToSql(result, checkPoints);
+//            redisUtil.hDelete("judge", recvPacket.getSubmitId());
+////            redisUtil.del(recvPacket.getSubmitId());
+//        } else if (recvPacket.getType() == 2) {
+//            System.out.println(recvPacket.getResult().getMessage());
+//            String totalSubmitId = recvPacket.getSubmitId();
+//            if (totalSubmitId.charAt(0) == 'a') {
+//                redisUtil.hPut(totalSubmitId.substring(1), "a", (new Gson()).toJson(recvPacket.getResult()));
+//                redisUtil.expire(recvPacket.getSubmitId(), 1, TimeUnit.HOURS);
+//            } else if (totalSubmitId.charAt(0) == 'u') {
+//                redisUtil.hPut(totalSubmitId.substring(1), "u", (new Gson()).toJson(recvPacket.getResult()));
+//                redisUtil.expire(recvPacket.getSubmitId(), 1, TimeUnit.HOURS);
+//            }
+//        }
+//
+//    }
 
 }

@@ -50,7 +50,7 @@ public class ProblemService {
         int count;
         long time=System.currentTimeMillis();
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
-            userId="and ((userId='"+ StpUtil.getLoginId()+"' and privilege==1 or p.contestId=0) or (userId='"+ StpUtil.getLoginId()+"' and privilege==0 and contest.startTime<"+time+" or p.contestId=0))";
+            userId="and ((userId='"+ StpUtil.getLoginId()+"' and privilege=1 or p.contestId=0) or (userId='"+ StpUtil.getLoginId()+"' and privilege=0 and contest.startTime<"+time+" or p.contestId=0))";
             count=problemMapper.getProblemNumber(search,userId);
             problemViews=problemMapper.getProblem(search,userId,(page - 1) * itemsPerPage,itemsPerPage);
         }else {

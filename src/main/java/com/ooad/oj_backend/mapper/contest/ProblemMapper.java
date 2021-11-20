@@ -32,7 +32,7 @@ public interface ProblemMapper {
             " where p.title like '%${search}%'")
     int getProblem1Number(String search);
 
-    @Select("        SELECT startTime and endTime from contest join problem p on p.problemId=#{problemId}'")
+    @Select("SELECT startTime,endTime from problem p join contest on contest.id=p.contestId where p.problemId=#{problemId};")
     Contest getContestNumber(int problemId);
     @Select("        SELECT\n" +
             "        count(distinct p.problemId)\n" +
