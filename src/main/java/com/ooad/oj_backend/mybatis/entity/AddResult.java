@@ -14,6 +14,7 @@ public class AddResult implements Serializable {
 
     private String UserId;
     private int status;
+    private String detailed;
 
     public AddResult(){
         super();

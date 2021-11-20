@@ -193,23 +193,40 @@ public class UserService {
             while ((line = reader.readLine()) != null) {
                 String[] content = line.split(",");
                 AddResult addResult=new AddResult();
+                if (content.length==0||!line.contains(",")){
+                    addResult.setStatus(-2);
+                    addResult.setDetailed(line);
+                    addResults.add(addResult);
+                    judge=-1;
+                    continue;
+                }
                 User temp=userMapper.getOne(content[0]);
                 addResult.setUserId(content[0]);
+                if (content.length < 4) {
+                    addResult.setStatus(-2);
+                    addResults.add(addResult);
+                    addResult.setDetailed(line);
+                    judge=-1;
+                    continue;
+                }
                 if(temp!=null){
                     addResult.setStatus(-1);
                     addResults.add(addResult);
+                    addResult.setDetailed(line);
                     judge=-1;
                     continue;
                 }
                 if(content[0].equals("")||content[3].equals("")){
                     addResult.setStatus(-2);
                     addResults.add(addResult);
+                    addResult.setDetailed(line);
                     judge=-1;
                     continue;
                 }
                 if(!checkPassWord(content[3])){
                     addResult.setStatus(-3);
                     addResults.add(addResult);
+                    addResult.setDetailed(line);
                     judge=-1;
                     continue;
                 }
