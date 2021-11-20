@@ -150,7 +150,7 @@ public interface ProblemMapper {
     void updateAnswer(@Param("answerId") int answerId, @Param("language") String language,@Param("code")String code);
 
     @Delete("       DELETE FROM\n" +
-            "            answer where problemId={problemId}\n")
+            "            answer where problemId=#{problemId}\n")
     void deleteAnswer(int problemId);
 
     @Update("       UPDATE\n" +
