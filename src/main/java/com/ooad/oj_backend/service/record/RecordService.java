@@ -82,17 +82,23 @@ public class RecordService {
         if (!StpUtil.isLogin()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-
-        Result[] results = judgerService.getTestResult(recordId);
-        HashMap<String,Object>hashMap=new HashMap<>();
-        hashMap.put("standardResult",results[1]);
-        hashMap.put("userResult",results[0]);
         Response response = new Response();
-        response.setContent(hashMap);
         response.setCode(0);
         if(!judgerService.testTestCaseRunning(recordId)){
             response.setCode(1);
         }
+        HashMap<String,Object>hashMap=new HashMap<>();
+        if (judgerService.judgeRunning(recordId)) {
+            Result[]results = judgerService.getTestResult(recordId);
+            hashMap.put("standardResult",results[1]);
+            hashMap.put("userResult",results[0]);
+        }else {
+            List<Result>results = getResultFromSql(recordId);
+            hashMap.put("standardResult",results.get(0));
+            hashMap.put("userResult",results.get(1));
+        }
+
+        response.setContent(hashMap);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
