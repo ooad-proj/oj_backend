@@ -212,7 +212,9 @@ public class ProblemService {
         String allowed=Convert.toStr(language);
         problemMapper.addProblem(contestId,problem,(String) StpUtil.getLoginId(),allowed);
         int problemId=problem.getProblemId();
-
+        String stringTest = redisUtil.get(problem.getTestCaseId());
+        redisUtil.delete(problem.getTestCaseId());
+        problemMapper.putTestCase(stringTest, problemId);
         Samples[] samples=problem.getSamples();
         if(samples!=null){
             for(Samples sample:samples){
