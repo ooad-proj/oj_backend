@@ -155,7 +155,7 @@ public interface ProblemMapper {
 
     @Update("       UPDATE\n" +
             "        problem SET \n" +
-            "       testCase=#{testCase}," +
-            " problemId=#{problemId}")
-    void putTestCase(@Param("testCase") String testCaseId, @Param("problemId") int problemId);
+            "       testCase=#{testCase}" +
+            " where problemId=#{problemId}")
+    void putTestCase(@Param("testCase") String testCase, @Param("problemId") int problemId);
 }
