@@ -104,8 +104,18 @@ public class GroupService {
         Auth test=authMapper.getAuthById(userId,groupId);
         if(test!=null){
             response.setCode(-3);
+            if (test.getPrivilege() == 1) {
+                response.setCode(-5);
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        }
+        Auth auth2=authMapper.getTeacher(userId);
+        if(auth2!=null){
+            response.setCode(-4);
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
+
         Auth auth = new Auth();
         auth.setUserId(userId);
         auth.setClassId(groupId);
@@ -143,23 +153,33 @@ public class GroupService {
                 AddResult addResult=new AddResult();
                 addResult.setUserId(line);
                 User user=userMapper.getOne(line);
-                if(user==null){
+                Group group1=groupMapper.getOne(groupId);
+                if(group1==null){
                     judge=-2;
                     addResult.setStatus(-1);
+                    addResults.add(addResult);
+                    continue;
+                }
+                if(user==null){
+                    judge=-2;
+                    addResult.setStatus(-2);
                     addResults.add(addResult);
                     continue;
                 }
                 Auth auth=authMapper.getAuthById(line,groupId);
                 if(auth!=null){
                     judge=-2;
-                    addResult.setStatus(-2);
+                    addResult.setStatus(-3);
+                    if (auth.getPrivilege() == 1) {
+                        addResult.setStatus(-5);
+                    }
                     addResults.add(addResult);
                     continue;
                 }
-                Auth test=authMapper.getAuthById(line,groupId);
-                if(test!=null){
-                    judge=-2;
-                    addResult.setStatus(-3);
+
+                Auth auth2=authMapper.getTeacher(line);
+                if(auth2!=null){
+                    addResult.setStatus(-4);
                     addResults.add(addResult);
                     continue;
                 }
