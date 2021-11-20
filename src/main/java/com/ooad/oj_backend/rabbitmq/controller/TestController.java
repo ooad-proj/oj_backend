@@ -1,5 +1,8 @@
 package com.ooad.oj_backend.rabbitmq.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ooad.oj_backend.mybatis.entity.Answer;
 import com.ooad.oj_backend.rabbitmq.entity.Result;
 import com.ooad.oj_backend.rabbitmq.entity.SendPacket;
 import com.ooad.oj_backend.service.JudgerService;
@@ -27,6 +30,22 @@ public class TestController {
     public String mqTestTestSend() {
         judgerService.testTestCase("1 2 3", PacketSender.getJudgeDetailTest(), PacketSender.getJudgeDetailTest());
         return "yes";
+    }
+
+    @GetMapping("/test/json")
+    public String json() {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        Answer car = new Answer();
+        car.setStandard(true);
+
+        String json = "?";
+        try {
+            json = objectMapper.writeValueAsString(car);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return json;
     }
 
     @GetMapping("/test/mq/redis")

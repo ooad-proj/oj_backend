@@ -80,5 +80,10 @@ public class RecordService {
         }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    //TODO
+    public void addResult(com.ooad.oj_backend.mybatis.entity.Result result, List<Result> checkPoints) {
+
+    }
 }
 

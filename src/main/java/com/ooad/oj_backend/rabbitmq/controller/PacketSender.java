@@ -35,7 +35,7 @@ public class PacketSender {
                 "        }\n" +
                 "    }\n" +
                 "}";
-        JudgeDetail judgeDetail = new JudgeDetail("java", codeJava, 2000, 128, null);
+        JudgeDetail judgeDetail = new JudgeDetail("java", codeJava, 2000, 128000, null);
         return judgeDetail;
     }
 

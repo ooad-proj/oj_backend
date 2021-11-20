@@ -56,7 +56,7 @@ public class SubmitService {
         Problem problem=problemMapper.getDetailedProblem(problemId);
         List<Template>submitTemplates=problemMapper.getTemplate(problemId);
         JudgeDetail detail=new JudgeDetail(language,code,(int)problem.getTimeLimit(),(int)problem.getSpaceLimit(),submitTemplates);
-        String UUID=judgerService.judge(problem.getTestCase(),detail);
+        String UUID=judgerService.judge(problem.getTestCase(),detail,problemId);
         HashMap<String,Object>hashMap=new HashMap<>();
         hashMap.put("submitId",UUID);
         response.setContent(hashMap);
