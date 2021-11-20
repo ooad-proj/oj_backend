@@ -32,11 +32,23 @@ public class RecordService {
     private JudgerService judgerService;
 
     public ResponseEntity<?> getRecord(String recordId) {
+        Response response = new Response();
+        response.setCode(0);
+        if(!judgerService.judgeRunning(recordId)){
+            response.setCode(1);
+        }
+
         if (!StpUtil.isLogin()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        List<Result> results = judgerService.getResultFromRedis(recordId);
+        List<Result> results;
+        if (judgerService.judgeRunning(recordId)) {
+            results = judgerService.getResultFromRedis(recordId);
+        } else {
+            results = getResultFromSql(recordId);
+        }
+
         int totalNum = results.size();
         int correctNum = (int) results.stream().filter(Result::isCorrect).count();
         String finialResult="";
@@ -53,7 +65,7 @@ public class RecordService {
         if(flag){
             finialResult = "AC";
         }
-        Response response = new Response();
+
         HashMap<String,Object>hashMap=new HashMap<>();
         hashMap.put("totalNum",results.size());
         hashMap.put("correctNum",(int) results.stream().filter(Result::isCorrect).count());
@@ -61,10 +73,7 @@ public class RecordService {
         hashMap.put("finialResult",finialResult);
 
         response.setContent(hashMap);
-        response.setCode(0);
-       if(!judgerService.judgeRunning(recordId)){
-           response.setCode(1);
-       }
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -93,6 +102,10 @@ public class RecordService {
         for(Result result1:checkPoints){
             recordMapper.addCheckpoint(result1,result.getResultId());
         }
+    }
+
+    public List<Result> getResultFromSql(String submitId) {
+        return recordMapper.getCheckpoint(submitId);
     }
 }
 

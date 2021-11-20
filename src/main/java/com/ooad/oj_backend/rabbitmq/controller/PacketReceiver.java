@@ -28,6 +28,7 @@ public class PacketReceiver {
 
     @RabbitHandler
     public void receivePacket(byte[] bytes) {
+        System.out.println(new String(bytes));
         RecvPacket recvPacket = RecvPacket.fromString(new String(bytes));
         if (recvPacket.getType() == 0) { //basic
             redisUtil.hPut(recvPacket.getSubmitId(), ""+recvPacket.getResult().getId(), (new Gson()).toJson(recvPacket.getResult()));
