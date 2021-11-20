@@ -50,7 +50,7 @@ public class ProblemController {
         return problemService.addTestCase(contestId,file);
     }
     @RequestMapping(value = "standardAnswer/{problemId}",method=RequestMethod.PUT)
-    public ResponseEntity<?> updateAnswer(@PathVariable int problemId, AnswerList answer) {
+    public ResponseEntity<?> updateAnswer(@PathVariable int problemId,@RequestBody AnswerList answer) {
         return problemService.updateAnswer(problemId,answer);
     }
     @RequestMapping(value = "standardAnswer/{problemId}",method=RequestMethod.GET)
