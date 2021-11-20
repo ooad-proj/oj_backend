@@ -91,7 +91,7 @@ public class RecordService {
     public void addResult(com.ooad.oj_backend.mybatis.entity.Result result, List<Result> checkPoints) {
         recordMapper.addResult(result);
         for(Result result1:checkPoints){
-            recordMapper.addCheckpoint(result1);
+            recordMapper.addCheckpoint(result1,result.getResultId());
         }
     }
 }
