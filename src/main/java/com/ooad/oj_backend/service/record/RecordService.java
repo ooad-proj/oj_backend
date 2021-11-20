@@ -20,12 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class RecordService {
-    private static class Content{
-        private String finialResult;
-        private int correctNum;
-        private int totalNum;
-        private List<Result> records;
-    }
+
 
     @Autowired
     private AuthService authService;
@@ -42,27 +37,38 @@ public class RecordService {
         }
 
         List<Result> results = judgerService.getResultFromRedis(recordId);
-        Content content = new Content();
-        content.totalNum = results.size();
-        content.correctNum = (int) results.stream().filter(Result::isCorrect).count();
-        content.records = results;
-        content.finialResult = "AC";
-        if(content.correctNum != content.totalNum){
+        int totalNum = results.size();
+        int correctNum = (int) results.stream().filter(Result::isCorrect).count();
+        String finialResult="";
+        boolean flag = true;
+        if(correctNum != totalNum){
             for(int i =0 ;i<results.size();i++){
                 if(!results.get(i).isCorrect()){
-                    content.finialResult  = results.get(i).getCode();
+                    finialResult  = results.get(i).getCode();
+                    flag = false;
                     break;
                 }
             }
         }
+        if(flag){
+            finialResult = "AC";
+        }
         Response response = new Response();
-        response.setContent(content);
+        HashMap<String,Object>hashMap=new HashMap<>();
+        hashMap.put("totalNum",results.size());
+        hashMap.put("correctNum",(int) results.stream().filter(Result::isCorrect).count());
+        hashMap.put("records",results);
+        hashMap.put("finialResult",finialResult);
+
+        response.setContent(hashMap);
         response.setCode(0);
        if(!judgerService.judgeRunning(recordId)){
            response.setCode(1);
        }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
     public ResponseEntity<?> getStandardTestRecord(String recordId){
         if (!StpUtil.isLogin()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);

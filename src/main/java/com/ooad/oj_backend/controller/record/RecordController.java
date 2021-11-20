@@ -15,11 +15,11 @@ public class RecordController {
     private RecordService recordService;
 
     @RequestMapping(value = "{recordId}",method = RequestMethod.GET)
-    public ResponseEntity<?> getProblem(String recordId) {
+    public ResponseEntity<?> getProblem(@PathVariable String recordId) {
         return recordService.getRecord(recordId);
     }
     @RequestMapping(value = "standard/{recordId}",method = RequestMethod.GET)
-    public ResponseEntity<?> getStandardTest(String recordId) {
+    public ResponseEntity<?> getStandardTest(@PathVariable String recordId) {
         return recordService.getStandardTestRecord(recordId);
     }
 }

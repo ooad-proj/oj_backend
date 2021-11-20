@@ -27,7 +27,7 @@ public class PacketReceiver {
     JudgerService judgerService;
 
     @RabbitHandler
-    public void recievePacket(byte[] bytes) {
+    public void receivePacket(byte[] bytes) {
         RecvPacket recvPacket = RecvPacket.fromString(new String(bytes));
         if (recvPacket.getType() == 0) { //basic
             redisUtil.hPut(recvPacket.getSubmitId(), ""+recvPacket.getResult().getId(), (new Gson()).toJson(recvPacket.getResult()));
