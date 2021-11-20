@@ -17,6 +17,7 @@ public class CheckPoint {
     int total;
     int timeCost;
     int memoryCost;
+    boolean correct;
     String code;
     String name;
     String message;
