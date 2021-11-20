@@ -3,7 +3,9 @@ package com.ooad.oj_backend.rabbitmq.controller;
 import com.google.gson.Gson;
 import com.ooad.oj_backend.rabbitmq.MqUtil;
 import com.ooad.oj_backend.rabbitmq.entity.RecvPacket;
+import com.ooad.oj_backend.rabbitmq.entity.Result;
 import com.ooad.oj_backend.redis.RedisUtil;
+import com.ooad.oj_backend.service.JudgerService;
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -20,6 +23,8 @@ import java.util.concurrent.TimeUnit;
 public class PacketReceiver {
     @Autowired
     RedisUtil redisUtil;
+    @Autowired
+    JudgerService judgerService;
 
     @RabbitHandler
     public void recievePacket(byte[] bytes) {
@@ -29,10 +34,10 @@ public class PacketReceiver {
             redisUtil.hPut(recvPacket.getSubmitId(), ""+recvPacket.getResult().getId(), (new Gson()).toJson(recvPacket.getResult()));
             redisUtil.expire(recvPacket.getSubmitId(), 1, TimeUnit.HOURS);
         } else if (recvPacket.getType() == 1) { //end
-            //
-            //数据库操作
-            //
-            //
+            List<Result> checkPoints = judgerService.getResultFromRedis(recvPacket.getSubmitId());
+            com.ooad.oj_backend.mybatis.entity.Result result = judgerService.getSubmitDetail(recvPacket.getSubmitId());
+            judgerService.setResultToSql(result, checkPoints);
+            redisUtil.hDelete("judge", recvPacket.getSubmitId());
 //            redisUtil.del(recvPacket.getSubmitId());
         } else if (recvPacket.getType() == 2) {
             System.out.println(recvPacket.getResult().getMessage());
