@@ -256,12 +256,10 @@ public class UserService {
     }
     public static boolean checkPassWord(String passWord){
         int length=passWord.length();
-        if(length<8){
+        if(length<6){
             return false;
         }
         return true;
-        //String regex = "^[0-9a-zA-Z]{1,}$";
-        //return passWord.matches(regex);
     }
     public static boolean checkMail(String mail){
         String regex=".+@.+\\..+";
