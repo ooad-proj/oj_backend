@@ -36,12 +36,13 @@ public class PacketReceiver {
 
 
         } else if (recvPacket.getType() == 1) { //end
-            List<Result> checkPoints = judgerService.getResultFromRedis(recvPacket.getSubmitId());
-            com.ooad.oj_backend.mybatis.entity.Result result = judgerService.getSubmitDetail(recvPacket.getSubmitId());
-            judgerService.setResultToSql(result, checkPoints);
-            redisUtil.hDelete("judge", recvPacket.getSubmitId());
-            redisUtil.delete(recvPacket.getSubmitId());
-
+            if (redisUtil.hExists("judge", recvPacket.getSubmitId())) {
+                List<Result> checkPoints = judgerService.getResultFromRedis(recvPacket.getSubmitId());
+                com.ooad.oj_backend.mybatis.entity.Result result = judgerService.getSubmitDetail(recvPacket.getSubmitId());
+                judgerService.setResultToSql(result, checkPoints);
+                redisUtil.hDelete("judge", recvPacket.getSubmitId());
+                redisUtil.delete(recvPacket.getSubmitId());
+            }
 
         } else if (recvPacket.getType() == 2) {
             String totalSubmitId = recvPacket.getSubmitId();

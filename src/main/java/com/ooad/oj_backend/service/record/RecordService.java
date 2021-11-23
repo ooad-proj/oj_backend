@@ -84,19 +84,16 @@ public class RecordService {
         }
         Response response = new Response();
         response.setCode(0);
-        if(!judgerService.testTestCaseRunning(recordId)){
+        HashMap<String,Object>hashMap=new HashMap<>();
+
+        Result[] results = judgerService.getTestResult(recordId);
+        if(results!=null) {
+            hashMap.put("standardResult", results[1]);
+            hashMap.put("userResult", results[0]);
             response.setCode(1);
         }
-        HashMap<String,Object>hashMap=new HashMap<>();
-        if (judgerService.judgeRunning(recordId)) {
-            Result[]results = judgerService.getTestResult(recordId);
-            hashMap.put("standardResult",results[1]);
-            hashMap.put("userResult",results[0]);
-        }else {
-            List<Result>results = getResultFromSql(recordId);
-            hashMap.put("standardResult",results.get(0));
-            hashMap.put("userResult",results.get(1));
-        }
+
+
 
         response.setContent(hashMap);
         return new ResponseEntity<>(response, HttpStatus.OK);
