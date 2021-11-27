@@ -22,4 +22,12 @@ public class RecordController {
     public ResponseEntity<?> getStandardTest(@PathVariable String recordId) {
         return recordService.getStandardTestRecord(recordId);
     }
+    @RequestMapping(value = "get/list",method = RequestMethod.GET)
+    public ResponseEntity<?> getResult(String userId,int problemId,String stateCode,int page,int itemsPerPage) {
+        return recordService.getResult(userId, problemId, stateCode, page, itemsPerPage);
+    }
+    @RequestMapping(value = "get/ranklist",method = RequestMethod.GET)
+    public ResponseEntity<?> getRank() {
+        return recordService.getRank();
+    }
 }

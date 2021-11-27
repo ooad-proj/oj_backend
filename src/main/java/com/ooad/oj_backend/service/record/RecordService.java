@@ -98,6 +98,28 @@ public class RecordService {
         response.setContent(hashMap);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    public ResponseEntity<?> getResult(String userId,int problemId,String stateCode,int page,int itemsPerPage) {
+        if (!StpUtil.isLogin()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        Response response = new Response();
+        response.setCode(0);
+        Paper<com.ooad.oj_backend.mybatis.entity.Result>paper=new Paper<>();
+        List<com.ooad.oj_backend.mybatis.entity.Result>results=recordMapper.getResult(userId,problemId,stateCode,(page - 1) * itemsPerPage, itemsPerPage);
+        int total=recordMapper.getResultNum(userId,problemId,stateCode);
+        paper.setItemsPerPage(results.size());
+        paper.setPage(page);
+        paper.setTotalAmount(total);
+        paper.setTotalPage((total/ itemsPerPage) + (((total % itemsPerPage) == 0) ? 0 : 1));
+        paper.setList(results);
+        response.setContent(paper);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+    public ResponseEntity<?> getRank() {
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
     //TODO
     public void addResult(com.ooad.oj_backend.mybatis.entity.Result result, List<Result> checkPoints) {

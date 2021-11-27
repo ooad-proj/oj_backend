@@ -14,4 +14,12 @@ public class Result {
     long submitTime;
     String userId;
     int problemId;
+    double score;
+    boolean allowPartial=false;
+    public Result(String resultId,long submitTime,String userId,int problemId){
+        this.resultId=resultId;
+        this.submitTime=submitTime;
+        this.userId=userId;
+        this.problemId=problemId;
+    };
 }
