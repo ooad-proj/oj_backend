@@ -115,9 +115,22 @@ public class RecordService {
         response.setContent(paper);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
-    public ResponseEntity<?> getRank() {
-
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> getRank(int page,int itemsPerPage) {
+        if (!StpUtil.isLogin()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        Response response = new Response();
+        response.setCode(0);
+        Paper<com.ooad.oj_backend.mybatis.entity.Result>paper=new Paper<>();
+        List<Rank>results=recordMapper.getRank((page - 1) * itemsPerPage, itemsPerPage);
+        int total=recordMapper.getRankNum();
+        paper.setItemsPerPage(results.size());
+        paper.setPage(page);
+        paper.setTotalAmount(total);
+        paper.setTotalPage((total/ itemsPerPage) + (((total % itemsPerPage) == 0) ? 0 : 1));
+        paper.setList(results);
+        response.setContent(paper);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
 

@@ -1,5 +1,6 @@
 package com.ooad.oj_backend.mapper.record;
 
+import com.ooad.oj_backend.mybatis.entity.Rank;
 import com.ooad.oj_backend.mybatis.entity.Result;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
@@ -24,8 +25,6 @@ public interface RecordMapper {
     @Select("select * from checkpoint " +
             "where resultId = #{submitId}")
     List<com.ooad.oj_backend.rabbitmq.entity.Result> getCheckpoint(String submitId);
-<<<<<<< Updated upstream
-
     @Select("        SELECT\n" +
             "        submitTime\n" +
             "        FROM result\n" +
@@ -39,8 +38,7 @@ public interface RecordMapper {
             "        where submitTime>#{milliSecond}" +
             "        order by submitTime asc")
     List<Long> getAllSubmitNum(String userId,long milliSecond);
-=======
-    @Select("select resultId,submitTime,score,allowPartial from(select temp.resultId,userId,problemId,submitTime,allowPartial,\n" +
+    @Select("select r.resultId,r.submitTime,(IF(allowPartial = 0, if(stateCode = 'AC', score, 0), score)) as score from result r join (select temp.resultId,userId,problemId,submitTime,allowPartial,\n" +
             "       count(if(correct=1,1,null))/count(*)*totalScore*\n" +
             "       substring_index(substring_index(substr(punishRule,2,LENGTH(punishRule)-2),',',\n" +
             "           if((@pre=problemId and @preUser=userId),(if (@resultId=temp.resultId,@s,@s:=@s+1)),@s:=1)),',',-1) as score,\n" +
@@ -48,11 +46,12 @@ public interface RecordMapper {
             "from(select resultId,punishRule,submitTime,p.problemId,userId,totalScore,allowPartial\n" +
             "from result join problem p on result.problemId = p.problemId order by userId,problemId,submitTime)\n" +
             "    temp join checkpoint on temp.resultId=checkpoint.resultId,(select @s:=0,@pre:=null,@preUser:=null,@resultId:=null)q group by userId,problemId,submitTime,temp.resultId order by userId,problemId,submitTime)\n" +
-            "    score where userId like '%${userId}%' and problemId like '%${problemId}%' and stateCode like '%${stateCode}%'" +
+            "    score on score.resultId=r.resultId where r.userId like '%${userId}%' and r.problemId like '%${problemId}%' and stateCode like '%${stateCode}%'" +
+            "order by submitTime desc" +
             "limit #{itemsPerPage} offset #{offset}")
     List<Result> getResult(@Param("userId") String userId,@Param("problemId") int problemId,@Param("stateCode") String stateCode,@Param("offset")int offset, @Param("itemsPerPage") int itemsPerPage);
 
-    @Select("select count(*) from(select temp.resultId,userId,problemId,submitTime,allowPartial,\n" +
+    @Select("select count(*) from result join (select temp.resultId,userId,problemId,submitTime,allowPartial,\n" +
             "       count(if(correct=1,1,null))/count(*)*totalScore*\n" +
             "       substring_index(substring_index(substr(punishRule,2,LENGTH(punishRule)-2),',',\n" +
             "           if((@pre=problemId and @preUser=userId),(if (@resultId=temp.resultId,@s,@s:=@s+1)),@s:=1)),',',-1) as score,\n" +
@@ -60,20 +59,31 @@ public interface RecordMapper {
             "from(select resultId,punishRule,submitTime,p.problemId,userId,totalScore,allowPartial\n" +
             "from result join problem p on result.problemId = p.problemId order by userId,problemId,submitTime)\n" +
             "    temp join checkpoint on temp.resultId=checkpoint.resultId,(select @s:=0,@pre:=null,@preUser:=null,@resultId:=null)q group by userId,problemId,submitTime,temp.resultId order by userId,problemId,submitTime)\n" +
-            " score where userId like '%${userId}%' and problemId like '%${problemId}%' and stateCode like '%${stateCode}%'")
+            "    score on score.resultId=result.resultId where result.userId like '%${userId}%' and result.problemId like '%${problemId}%' and stateCode like '%${stateCode}%'")
     int getResultNum(@Param("userId") String userId,@Param("problemId") int problemId,@Param("stateCode") String stateCode);
 
-    @Select("select userId,problemId,submitTime,\n" +
-            "       count(if(correct=1,1,null))/count(*)*totalScore*\n" +
-            "       substring_index(substring_index(substr(punishRule,2,LENGTH(punishRule)-2),',',\n" +
-            "           if((@pre=problemId and @preUser=userId),(if (@resultId=temp.resultId,@s,@s:=@s+1)),@s:=1)),',',-1) as score,\n" +
-            "       @pre:=problemId,@preUser:=userId,@resultId:=temp.resultId\n" +
-            "from(select punishRule,submitTime,p.problemId,userId,totalScore,resultId\n" +
-            "from result " +
-            "join problem p on result.problemId = p.problemId order by userId,problemId,submitTime)temp " +
-            "join checkpoint on temp.resultId=checkpoint.resultId,(select @s:=0,@pre:=null,@preUser:=null,@resultId:=null)q " +
-            "group by userId,problemId,submitTime,temp.resultId order by userId,problemId,submitTime;")
-    List<Result>get();
+    @Select("select u1.id as userId,name as userName,correctNum,answerNum,correctNum/answerNum as correctRate,(if(@pr=correctNum,@r,@r:=@r+1))as rank,@pr:=correctNum as i from User u1 join (select u.id,sum(correct)as correctNum,sum(answerNum) as answerNum from User u join (select id,name,problemId,if(count(if(stateCode='AC',1,null))>0,1,0)as correct,if((count(*))>0,1,0) as answerNum  from User u join (select temp.resultId,userId,problemId,submitTime,allowPartial,\n" +
+            "                   count(if(correct=1,1,null))/count(*)*totalScore*\n" +
+            "                   substring_index(substring_index(substr(punishRule,2,LENGTH(punishRule)-2),',',\n" +
+            "                       if((@pre=problemId and @preUser=userId),(if (@resultId=temp.resultId,@s,@s:=@s+1)),@s:=1)),',',-1) as score,\n" +
+            "                   @pre:=problemId,@preUser:=userId,@resultId:=temp.resultId,max(checkpoint.code) as stateCode\n" +
+            "            from(select resultId,punishRule,submitTime,p.problemId,userId,totalScore,allowPartial\n" +
+            "            from result join problem p on result.problemId = p.problemId order by userId,problemId,submitTime)\n" +
+            "                temp join checkpoint on temp.resultId=checkpoint.resultId,(select @s:=0,@pre:=null,@preUser:=null,@resultId:=null)q group by userId,problemId,submitTime,temp.resultId order by userId,problemId,submitTime)\n" +
+            "                score on score.userId=u.id group by problemId,id)up on up.id=u.id group by id)u2 on u1.id=u2.id ,(select @r:=0,@pr:=null)q order by correctNum desc " +
+            "limit #{itemsPerPage} offset #{offset};")
+    List<Rank>getRank(@Param("offset")int offset, @Param("itemsPerPage") int itemsPerPage);
 
->>>>>>> Stashed changes
+    @Select("select count(*) from User u1 join (select u.id,sum(correct)as correctNum,sum(answerNum) as answerNum from User u join (select id,name,problemId,if(count(if(stateCode='AC',1,null))>0,1,0)as correct,if((count(*))>0,1,0) as answerNum  from User u join (select temp.resultId,userId,problemId,submitTime,allowPartial,\n" +
+            "                   count(if(correct=1,1,null))/count(*)*totalScore*\n" +
+            "                   substring_index(substring_index(substr(punishRule,2,LENGTH(punishRule)-2),',',\n" +
+            "                       if((@pre=problemId and @preUser=userId),(if (@resultId=temp.resultId,@s,@s:=@s+1)),@s:=1)),',',-1) as score,\n" +
+            "                   @pre:=problemId,@preUser:=userId,@resultId:=temp.resultId,max(checkpoint.code) as stateCode\n" +
+            "            from(select resultId,punishRule,submitTime,p.problemId,userId,totalScore,allowPartial\n" +
+            "            from result join problem p on result.problemId = p.problemId order by userId,problemId,submitTime)\n" +
+            "                temp join checkpoint on temp.resultId=checkpoint.resultId,(select @s:=0,@pre:=null,@preUser:=null,@resultId:=null)q group by userId,problemId,submitTime,temp.resultId order by userId,problemId,submitTime)\n" +
+            "                score on score.userId=u.id group by problemId,id)up on up.id=u.id group by id)u2 on u1.id=u2.id ,(select @r:=0,@pr:=null)q order by correctNum desc " +
+            "limit #{itemsPerPage} offset #{offset};")
+    int getRankNum();
+
 }

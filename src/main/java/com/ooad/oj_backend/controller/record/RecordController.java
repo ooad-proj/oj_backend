@@ -27,7 +27,7 @@ public class RecordController {
         return recordService.getResult(userId, problemId, stateCode, page, itemsPerPage);
     }
     @RequestMapping(value = "get/ranklist",method = RequestMethod.GET)
-    public ResponseEntity<?> getRank() {
-        return recordService.getRank();
+    public ResponseEntity<?> getRank(int page,int itemsPerPage) {
+        return recordService.getRank(page,itemsPerPage);
     }
 }
