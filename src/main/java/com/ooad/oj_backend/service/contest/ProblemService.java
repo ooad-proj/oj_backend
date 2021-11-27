@@ -470,6 +470,7 @@ public class ProblemService {
         response.setMsg("update success");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     public ResponseEntity<?> getAnswer(int problemId) {
         int groupId=problemMapper.getGroupId(problemId);
         Response response=new Response();
@@ -482,6 +483,8 @@ public class ProblemService {
                     return responseEntity1;
                 }
             }
+
+
         int problem=problemMapper.searchProblem(problemId);
         if(problem==0){
             response.setCode(-1);

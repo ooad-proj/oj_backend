@@ -24,4 +24,18 @@ public interface RecordMapper {
     @Select("select * from checkpoint where resultId = #{submitId}"
     )
     List<com.ooad.oj_backend.rabbitmq.entity.Result> getCheckpoint(String submitId);
+
+    @Select("        SELECT\n" +
+            "        submitTime\n" +
+            "        FROM result\n" +
+            "        where userId=#{userId} and submitTime>#{milliSecond}" +
+            "        order by submitTime asc")
+    List<Long> getSubmitNum(String userId,long milliSecond);
+
+    @Select("        SELECT\n" +
+            "        submitTime\n" +
+            "        FROM result\n" +
+            "        where submitTime>#{milliSecond}" +
+            "        order by submitTime asc")
+    List<Long> getAllSubmitNum(String userId,long milliSecond);
 }
