@@ -121,7 +121,7 @@ public class RecordService {
         }
         Response response = new Response();
         response.setCode(0);
-        Paper<com.ooad.oj_backend.mybatis.entity.Result>paper=new Paper<>();
+        Paper<Rank>paper=new Paper<>();
         List<Rank>results=recordMapper.getRank((page - 1) * itemsPerPage, itemsPerPage);
         int total=recordMapper.getRankNum();
         paper.setItemsPerPage(results.size());
