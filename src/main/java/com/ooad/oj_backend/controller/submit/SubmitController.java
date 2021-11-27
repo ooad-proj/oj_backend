@@ -27,4 +27,8 @@ public class SubmitController {
     public ResponseEntity<?> AskIfhaveAnswer(@PathVariable int problemId){
         return submitService.AskIfhaveAnswer(problemId);
     }
+    @RequestMapping(value = "/submit/get/times/{userId}",method = RequestMethod.GET)
+    public ResponseEntity<?> getSubmitNum(@PathVariable String userId){
+        return submitService.getSubmitNum(userId);
+    }
 }
