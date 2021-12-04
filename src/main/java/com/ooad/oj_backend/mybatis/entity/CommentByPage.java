@@ -16,4 +16,5 @@ public class CommentByPage implements Serializable {
     String userName;
     String comment;
     Long modifyTime;
+    Boolean deleteable;
 }
