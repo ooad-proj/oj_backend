@@ -16,10 +16,12 @@ public class Result {
     int problemId;
     double score;
     boolean allowPartial=false;
-    public Result(String resultId,long submitTime,String userId,int problemId){
+    String code;
+    public Result(String resultId,long submitTime,String userId,int problemId, String code){
         this.resultId=resultId;
         this.submitTime=submitTime;
         this.userId=userId;
         this.problemId=problemId;
-    };
+        this.code = code;
+    }
 }

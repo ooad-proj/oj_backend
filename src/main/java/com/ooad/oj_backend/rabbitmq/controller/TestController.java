@@ -28,7 +28,7 @@ public class TestController {
     @GetMapping("/test/mq/send")
     public String mqTestSend() {
         String userId = "me";
-        redisUtil.hPut("judge", "avbkdj", new Gson().toJson(new com.ooad.oj_backend.mybatis.entity.Result("avbkdj", System.currentTimeMillis(), userId, 12)));
+        redisUtil.hPut("judge", "avbkdj", new Gson().toJson(new com.ooad.oj_backend.mybatis.entity.Result("avbkdj", System.currentTimeMillis(), userId, 12, "zzzz")));
         SendPacket packet = new SendPacket("avbkdj", "src/main/resources/tc.zip", PacketSender.getJudgeDetailTest());
         packetSender.sendPacket(packet);
         return "yes";

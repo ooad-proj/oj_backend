@@ -25,7 +25,7 @@ public class JudgerService {
     public String judge(String testCaseFile, JudgeDetail judgeDetail, int problemId) {
         String uuid = UUID.randomUUID().toString();
         String userId = (String) StpUtil.getLoginId();
-        redisUtil.hPut("judge", uuid, new Gson().toJson(new com.ooad.oj_backend.mybatis.entity.Result(uuid, System.currentTimeMillis()*1000, userId, problemId)));
+        redisUtil.hPut("judge", uuid, new Gson().toJson(new com.ooad.oj_backend.mybatis.entity.Result(uuid, System.currentTimeMillis()*1000, userId, problemId, judgeDetail.code)));
         SendPacket sendPacket = new SendPacket(uuid, 0, testCaseFile, null, judgeDetail);
         packetSender.sendPacket(sendPacket);
         return uuid;
