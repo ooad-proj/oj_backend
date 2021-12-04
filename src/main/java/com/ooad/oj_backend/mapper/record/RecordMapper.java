@@ -12,9 +12,9 @@ import java.util.List;
 @Mapper
 public interface RecordMapper {
     @Insert("       INSERT INTO\n" +
-            "         result (resultId,submitTime,userId,problemId)\n" +
+            "         result (resultId,submitTime,userId,problemId,code)\n" +
             "       VALUE\n" +
-            "       (#{resultId},#{submitTime},#{userId},#{problemId})")
+            "       (#{resultId},#{submitTime},#{userId},#{problemId},#{code})")
     void addResult(Result result);
 
     @Insert("       INSERT INTO\n" +
@@ -26,6 +26,9 @@ public interface RecordMapper {
     @Select("select * from checkpoint " +
             "where resultId = #{submitId}")
     List<com.ooad.oj_backend.rabbitmq.entity.Result> getCheckpoint(String submitId);
+    @Select("select * from result " +
+            "where resultId = #{submitId}")
+    Result getResultAndCode(String submitId);
     @Select("        SELECT\n" +
             "        submitTime/1000\n" +
             "        FROM result\n" +
@@ -40,7 +43,7 @@ public interface RecordMapper {
             "        order by submitTime asc")
     List<Long> getAllSubmitNum(long milliSecond);
 
-    @Select("select r.userId,r.resultId,r.submitTime,(IF(allowPartial = 0, if(stateCode = 'AC', score, 0), score)) as score from result r join (select temp.resultId,userId,problemId,submitTime,allowPartial,\n" +
+    @Select("select r.userId,r.resultId,r.problemId,r.submitTime,stateCode,(IF(allowPartial = 0, if(stateCode = 'AC', score, 0), score)) as score from result r join (select temp.resultId,userId,problemId,submitTime,allowPartial,\n" +
             "       count(if(correct=1,1,null))/count(*)*totalScore*\n" +
             "       substring_index(substring_index(substr(punishRule,2,LENGTH(punishRule)-2),',',\n" +
             "           if((@pre=problemId and @preUser=userId),(if (@resultId=temp.resultId,@s,@s:=@s+1)),@s:=1)),',',-1) as score,\n" +
@@ -132,7 +135,7 @@ public interface RecordMapper {
             "                          max(checkpoint.code) as stateCode\n" +
             "                   from (select resultId,contestId, punishRule, submitTime,shownId, p.problemId, userId, totalScore, allowPartial\n" +
             "                         from result\n" +
-            "                                  join problem p on result.problemId = p.problemId\n" +
+            "                                  join problem p on result.problemId = p.problemId join contest c2 on p.contestId = c2.id where c2.endTime>result.submitTime\n" +
             "                         order by userId, problemId, submitTime) temp\n" +
             "                            join checkpoint on temp.resultId = checkpoint.resultId,\n" +
             "                        (select @s := 0, @pre := null, @preUser := null, @resultId := null) q\n" +
@@ -140,11 +143,11 @@ public interface RecordMapper {
             "                   order by userId, problemId, submitTime) score on score.resultId = r.resultId,\n" +
             "         (select @pre1 := null, @preUser1 := null,@maxScore:=0,@minTime:=0)m\n" +
             "    order by submitTime\n" +
-            ")s on s.userId=u.id join contest c on c.id=s.contestId  where contestId=0 group by shownId,userId,totalScore order by userId,shownId;")
+            ")s on s.userId=u.id join contest c on c.id=s.contestId  where contestId=#{contestId} group by shownId,userId,totalScore order by userId,shownId;")
     List<UserResult> getContestResult(@Param("contestId")int contestId);
 
 
-    @Select("select name,sum(score) as score from User join\n" +
+    @Select("select name as userName,sum(score) as score from User join\n" +
             "(select u.name as userName,shownId,if((max(a)-c.startTime)>0,(max(a)-c.startTime),0) as time,max(b) AS score,totalScore from User u join (\n" +
             "    select shownId,r.userId,contestId, r.submitTime,score.totalScore, (IF(allowPartial = 0, if(stateCode = 'AC', score, 0), score)) as score,\n" +
             "            if((@pre1 =r.problemId and @preUser1 =r.userId),@maxScore,@maxScore:=0),\n" +
@@ -172,7 +175,7 @@ public interface RecordMapper {
             "                          max(checkpoint.code) as stateCode\n" +
             "                   from (select resultId,contestId, punishRule, submitTime,shownId, p.problemId, userId, totalScore, allowPartial\n" +
             "                         from result\n" +
-            "                                  join problem p on result.problemId = p.problemId\n" +
+            "                                  join problem p on result.problemId = p.problemId join contest c2 on p.contestId = c2.id where c2.endTime>result.submitTime\n" +
             "                         order by userId, problemId, submitTime) temp\n" +
             "                            join checkpoint on temp.resultId = checkpoint.resultId,\n" +
             "                        (select @s := 0, @pre := null, @preUser := null, @resultId := null) q\n" +
@@ -180,6 +183,6 @@ public interface RecordMapper {
             "                   order by userId, problemId, submitTime) score on score.resultId = r.resultId,\n" +
             "         (select @pre1 := null, @preUser1 := null,@maxScore:=0,@minTime:=0)m\n" +
             "    order by submitTime\n" +
-            ")s on s.userId=u.id join contest c on c.id=s.contestId  where contestId=0 group by shownId,userId,totalScore)s1 on s1.userName=User.name group by userName order by score desc;")
+            ")s on s.userId=u.id join contest c on c.id=s.contestId  where contestId=#{contestId} group by shownId,userId,totalScore)s1 on s1.userName=User.name group by userName order by score desc;")
     List<UserResult> getNameScore(@Param("contestId")int contestId);
 }

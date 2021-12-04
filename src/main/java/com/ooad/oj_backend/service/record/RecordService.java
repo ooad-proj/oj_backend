@@ -52,6 +52,7 @@ public class RecordService {
 
         int totalNum = results.size();
         int correctNum = (int) results.stream().filter(Result::isCorrect).count();
+        com.ooad.oj_backend.mybatis.entity.Result results1=recordMapper.getResultAndCode(recordId);
         String finialResult="";
         boolean flag = true;
         if(correctNum != totalNum){
@@ -69,6 +70,7 @@ public class RecordService {
 
         HashMap<String,Object>hashMap=new HashMap<>();
         hashMap.put("totalNum",results.size());
+        hashMap.put("code",results1.getCode());
         hashMap.put("correctNum",(int) results.stream().filter(Result::isCorrect).count());
         hashMap.put("records",results);
         hashMap.put("finialResult",finialResult);

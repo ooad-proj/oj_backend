@@ -17,6 +17,7 @@ public class Result {
     double score;
     boolean allowPartial=false;
     String code;
+    String stateCode;
     public Result(String resultId,long submitTime,String userId,int problemId, String code){
         this.resultId=resultId;
         this.submitTime=submitTime;
