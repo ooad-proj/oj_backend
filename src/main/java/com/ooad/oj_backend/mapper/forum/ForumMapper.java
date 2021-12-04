@@ -87,7 +87,7 @@ public interface ForumMapper {
             "        where postId =#{postId}")
     int getCommentByPageTotalAmount(@Param("postId") int postId);
 
-    @Select("SELECT postId,title,content as preview,userId,u.name,modifyTime FROM post join User u on post.userId = u.id " +
+    @Select("SELECT postId,title,content as preview,userId,u.name as userName ,modifyTime FROM post join User u on post.userId = u.id " +
             " where groupId =#{groupId} and goPublic=TRUE" +
             "        order by modifyTime desc limit #{length}" )
     List<Announcement> getAnnouncement(@Param("groupId") int groupId,@Param("length") int length );
