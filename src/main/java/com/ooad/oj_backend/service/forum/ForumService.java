@@ -209,7 +209,7 @@ public class ForumService {
         if(forumMapper.getFloorNum(postId)==null){
             floorId = 0;
         }else {
-            floorId  = Integer.parseInt(forumMapper.getFloorNum(postId) + 1);
+            floorId  = Integer.parseInt(forumMapper.getFloorNum(postId))+1;
         }
 
         String userId = (String) StpUtil.getLoginId();
