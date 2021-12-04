@@ -223,10 +223,7 @@ public class ContestService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     public ResponseEntity<?> getContestRank (int contestId) {
-<<<<<<< Updated upstream
-//        recordMapper.getContestResult();
-        return null;
-=======
+
         Response response = new Response();
         response.setCode(0);
         if(contestMapper.getOneContest(contestId)==null){
@@ -283,7 +280,7 @@ public class ContestService {
         }
         hashMap.put("tableData",list);
         return new ResponseEntity<>(response, HttpStatus.OK);
->>>>>>> Stashed changes
+
     }
     public ResponseEntity<?> getAcceptedCode (int contestId) {
         return null;
