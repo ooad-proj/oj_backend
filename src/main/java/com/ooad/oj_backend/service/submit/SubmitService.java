@@ -158,23 +158,28 @@ public class SubmitService {
         SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
         String dateStr = dateformat.format(System.currentTimeMillis());
         LocalDate localDate = LocalDate.parse(dateStr);
-        LocalDate localDate1 =localDate.minusDays(30);
+        LocalDate localDate1 =localDate.minusDays(29);
         Long milliSecond = localDate1.atStartOfDay().toInstant(ZoneOffset.of("+8")).toEpochMilli();
 
         String[] label = new String[30];
         for(int i=0;i<30;i++){
-            label[0]= String.valueOf(localDate1);
+            label[i]= String.valueOf(localDate1);
             localDate1 =localDate1.plusDays(1);
         }
         int[] data = new  int[30];
 
         if(userId.isEmpty()){
-            List<Long> submitTimes = recordMapper.getAllSubmitNum(userId,milliSecond);
+            List<Long> submitTimes = recordMapper.getAllSubmitNum(milliSecond);
             for(int i =0;i<submitTimes.size();i++){
                 int index = (int) ( (submitTimes.get(i)-milliSecond)/(86400000) );
                 data[index]++;
             }
         }else {
+//            if(!StpUtil.getLoginId().equals(userId) ){
+//                Response response=new Response();
+//                response.setCode(-1);
+//                return new ResponseEntity<>(response, HttpStatus.OK);
+//            }
             List<Long> submitTimes = recordMapper.getSubmitNum(userId,milliSecond);
             for(int i =0;i<submitTimes.size();i++){
                 int index = (int) ( (submitTimes.get(i)-milliSecond)/(86400000) );
@@ -190,7 +195,7 @@ public class SubmitService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     public ResponseEntity<?> getAllSubmit(String userId){
-        if(StpUtil.isLogin()){
+        if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         Response response=new Response();

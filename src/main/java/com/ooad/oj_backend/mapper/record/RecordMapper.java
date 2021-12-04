@@ -26,18 +26,19 @@ public interface RecordMapper {
             "where resultId = #{submitId}")
     List<com.ooad.oj_backend.rabbitmq.entity.Result> getCheckpoint(String submitId);
     @Select("        SELECT\n" +
-            "        submitTime\n" +
+            "        submitTime/1000\n" +
             "        FROM result\n" +
-            "        where userId=#{userId} and submitTime>#{milliSecond}" +
+            "        where userId=#{userId} and submitTime/1000>#{milliSecond}" +
             "        order by submitTime asc")
-    List<Long> getSubmitNum(String userId,long milliSecond);
+    List<Long> getSubmitNum(@Param("userId") String userId,@Param("milliSecond")long milliSecond);
 
     @Select("        SELECT\n" +
-            "        submitTime\n" +
+            "        submitTime/1000\n" +
             "        FROM result\n" +
-            "        where submitTime>#{milliSecond}" +
+            "        where submitTime/1000>#{milliSecond}" +
             "        order by submitTime asc")
-    List<Long> getAllSubmitNum(String userId,long milliSecond);
+    List<Long> getAllSubmitNum(long milliSecond);
+
     @Select("select r.resultId,r.submitTime,(IF(allowPartial = 0, if(stateCode = 'AC', score, 0), score)) as score from result r join (select temp.resultId,userId,problemId,submitTime,allowPartial,\n" +
             "       count(if(correct=1,1,null))/count(*)*totalScore*\n" +
             "       substring_index(substring_index(substr(punishRule,2,LENGTH(punishRule)-2),',',\n" +
@@ -47,7 +48,7 @@ public interface RecordMapper {
             "from result join problem p on result.problemId = p.problemId order by userId,problemId,submitTime)\n" +
             "    temp join checkpoint on temp.resultId=checkpoint.resultId,(select @s:=0,@pre:=null,@preUser:=null,@resultId:=null)q group by userId,problemId,submitTime,temp.resultId order by userId,problemId,submitTime)\n" +
             "    score on score.resultId=r.resultId where r.userId like '%${userId}%' and r.problemId like '%${problemId}%' and stateCode like '%${stateCode}%'" +
-            "order by submitTime desc" +
+            "order by submitTime desc " +
             "limit #{itemsPerPage} offset #{offset}")
     List<Result> getResult(@Param("userId") String userId,@Param("problemId") String problemId,@Param("stateCode") String stateCode,@Param("offset")int offset, @Param("itemsPerPage") int itemsPerPage);
 
@@ -93,7 +94,7 @@ public interface RecordMapper {
             "            from result join problem p on result.problemId = p.problemId order by userId,problemId,submitTime)\n" +
             "                temp join checkpoint on temp.resultId=checkpoint.resultId,(select @s:=0,@pre:=null,@preUser:=null,@resultId:=null)q group by userId,problemId,submitTime,temp.resultId order by userId,problemId,submitTime)\n" +
             "                score on score.userId=u.id group by problemId,id)up on up.id=u.id group by id)u2 on u1.id=u2.id ,(select @r:=0,@pr:=null)q order by correctNum desc " +
-            "limit #{itemsPerPage} offset #{offset};")
+            ";")
     int getRankNum();
     @Select("select u1.id,name,correctNum,answerNum,correctNum/answerNum as correctRate,(if(@pr=correctNum,@r,@r:=@r+1))as rank,@pr:=correctNum from User u1 join (select u.id,sum(correct)as correctNum,sum(answerNum) as answerNum from User u join (select id,name,count(if(stateCode='AC',1,null))as correct,count(*) as answerNum  from User u join (select temp.resultId,userId,submitTime,allowPartial,\n" +
             "                   count(if(correct=1,1,null))/count(*)*totalScore*\n" +

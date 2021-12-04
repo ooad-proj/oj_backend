@@ -44,8 +44,7 @@ public interface ForumMapper {
     void delete(int postId);
 
     @Select("SELECT postId,title,content,userId,u.name,modifyTime FROM post join User u on post.userId = u.id " +
-            "        order by id limit #{itemsPerPage} offset #{offset}" +
-            "        where groupId =#{groupId} and title like '%${search}%' ")
+            "        where groupId =#{groupId} and title like '%${search}%' order by id limit #{itemsPerPage} offset #{offset}")
     List<PostByPage> getPostByPage(@Param("groupId") int groupId, @Param("offset")int offset, @Param("itemsPerPage") int itemsPerPage, @Param("search") String search );
 
     @Select("SELECT count(*) FROM post join User u on post.userId = u.id " +
@@ -76,8 +75,9 @@ public interface ForumMapper {
     void deleteComment(int commentId);
 
     @Select("SELECT commentId,floorId,userId,u.name,comment,modifyTime FROM comment join User u on comment.userId = u.id " +
-            "        order by id limit #{itemsPerPage} offset #{offset}" +
-            "        where postId =#{postId}")
+
+            "        where postId =#{postId} "+
+            "        order by id limit #{itemsPerPage} offset #{offset}" )
     List<CommentByPage> getCommentByPage(@Param("postId") int postId, @Param("offset")int offset, @Param("itemsPerPage") int itemsPerPage );
 
     @Select("SELECT count(*) FROM comment join User u on comment.userId = u.id " +
@@ -85,8 +85,8 @@ public interface ForumMapper {
     int getCommentByPageTotalAmount(@Param("postId") int postId);
 
     @Select("SELECT postId,title,content,userId,u.name,modifyTime FROM post join User u on post.userId = u.id " +
-            "        order by modifyTime desc limit #{length}" +
-            "where groupId =#{groupId} and goPublic=TRUE")
+            " where groupId =#{groupId} and goPublic=TRUE" +
+            "        order by modifyTime desc limit #{length}" )
     List<Announcement> getAnnouncement(@Param("groupId") int groupId,@Param("length") int length );
 
 

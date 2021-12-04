@@ -55,13 +55,13 @@ public class ForumController {
         return forumService.deleteComment(commentId);
     }
 
-    @RequestMapping(value = "/forum/post/{postId}/comment", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/forum/post/{postId}/comment", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getCommentList (  @PathVariable int postId,int page, int itemsPerPage  ) {
         return forumService.getCommentList(postId,page,itemsPerPage);
     }
 
-    @RequestMapping(value = "/forum/{groupId}/announcement", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/forum/{groupId}/announcement", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getAnnouncement (  @PathVariable int groupId,int length  ) {
         return forumService.getAnnouncement(groupId, length);
