@@ -242,10 +242,11 @@ public class ContestService {
         List<UserResult>nameScore=recordMapper.getNameScore(contestId);
         HashMap<String,Object>hashMap=new HashMap<>();
         List<Problem>problems=problemMapper.getContestProblem(contestId);
-
-        for (Problem problem:problems){
-            hashMap.put("problems",problem);
+        List<String>shown=new LinkedList<>();
+        for(Problem problem:problems){
+            shown.add(problem.getShownId());
         }
+        hashMap.put("problems",shown);
         if(userResults.size()==0){
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
@@ -255,30 +256,52 @@ public class ContestService {
         }
         List<HashMap<String,Object>>list=new LinkedList<>();
         for (UserResult name:nameScore) {
+            String Totalcolor = "GREEN";
+            long Totaltime = 0;
             HashMap<String, Object> hashMap1 = new HashMap<>();
             hashMap1.put("userName",name.getUserName());
-            hashMap1.put("totalScore",name.getScore());
-            for(Problem problem:problems){
-                Object []arr=fast.get(name.getUserName()+"|"+problem.getShownId());
+            HashMap<String, Object> hashMap3 = new HashMap<>();
+            for(Problem problem:problems) {
                 HashMap<String, Object> hashMap2 = new HashMap<>();
-                int a=(Integer) arr[0];
-                int  b=(Integer) arr[1];
-                String color;
-                if(a==0) {
-                    color = "RED";
-                }else if(a==b){
-                    color = "GREEN";
-                }else{
-                    color = "YELLOW";
+                if (!fast.containsKey(name.getUserName() + "|" + problem.getShownId())) {
+                    hashMap2.put("time", 0);
+                    hashMap2.put("score", 0);
+                    hashMap2.put("color", "RED");
+                    hashMap1.put(problem.getShownId(), hashMap2);
+                    continue;
+                } else {
+                    Object[] arr = fast.get(name.getUserName() + "|" + problem.getShownId());
+
+                    int a = (Integer) arr[0];
+                    int b = (Integer) arr[1];
+                    String color;
+                    if (a == 0) {
+                        Totalcolor= "ORANGE";
+                        color = "RED";
+                    } else if (a == b) {
+                        color = "GREEN";
+                    } else {
+                        Totalcolor= "ORANGE";
+                        color = "ORANGE";
+                    }
+                    Totaltime+=(long)arr[2];
+                    hashMap2.put("time", arr[2]);
+                    hashMap2.put("score", arr[0]);
+                    hashMap2.put("color", color);
+                    hashMap1.put(problem.getShownId(), hashMap2);
                 }
-                hashMap2.put("time",arr[2]);
-                hashMap2.put("score",arr[0]);
-                hashMap2.put("color",color);
-                hashMap1.put(problem.getShownId(),hashMap2);
             }
+            if(Totaltime==0){
+                Totalcolor = "RED";
+            }
+            hashMap3.put("time", Totaltime);
+            hashMap3.put("score", name.getScore());
+            hashMap3.put("color", Totalcolor);
+            hashMap1.put("totalScore",hashMap3);
             list.add(hashMap1);
         }
         hashMap.put("tableData",list);
+        response.setContent(hashMap);
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
