@@ -234,8 +234,9 @@ public class ContestService {
         ResponseEntity responseEntity1 = authService.checkPermission("1-0");
         if(responseEntity1 != null){
             ResponseEntity responseEntity2 = authService.checkPermission("1-" + classId);
-            if (responseEntity2 !=null){
-                return responseEntity2;
+            ResponseEntity responseEntity3 = authService.checkPermission("0-"+classId);
+            if (responseEntity2 !=null&&responseEntity3 !=null){
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
         }
         List<UserResult>userResults=recordMapper.getContestResult(contestId);

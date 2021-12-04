@@ -480,7 +480,7 @@ public class ProblemService {
             if (responseEntity2 != null && responseEntity != null) {
                 ResponseEntity responseEntity1 = authService.checkPermission("1-0");
                 if (responseEntity1 != null&& groupId!=0) {
-                    return responseEntity1;
+                    return new ResponseEntity<>(HttpStatus.FORBIDDEN);
                 }
             }
 
@@ -492,7 +492,8 @@ public class ProblemService {
         }
         Problem problem1=problemMapper.getDetailedProblem(problemId);
         if (responseEntity==null && !problem1.isPublish()){
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            response.setContent(List.of());
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
         List<Answer> answer=problemMapper.getAnswerByProblem(problemId);
         response.setContent(answer);
