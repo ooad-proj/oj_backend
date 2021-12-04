@@ -45,7 +45,7 @@ public class ForumController {
 
     @RequestMapping(value = "/forum/post/{postId}/comment", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> addComment (  @PathVariable int postId, @RequestBody String comment ) {
+    public ResponseEntity<?> addComment (  @PathVariable int postId, String comment ) {
         return forumService.addComment(postId, comment);
     }
 
