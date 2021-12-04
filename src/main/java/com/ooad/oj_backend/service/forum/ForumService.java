@@ -74,7 +74,7 @@ public class ForumService {
                 }
             }
         }else {
-            if (!userId.equals(forumMapper.getCreatorId(postId)) ){
+            if (!userId.equals(forumMapper.getPostCreatorId(postId)) ){
                 response.setCode(-1);
                 return new ResponseEntity<>(response,HttpStatus.OK);
             }
@@ -105,11 +105,11 @@ public class ForumService {
                 }
             }
         }else {
-            if(!userId.equals(forumMapper.getCreatorId(postId))){
+            if(!userId.equals(forumMapper.getPostCreatorId(postId))){
                 ResponseEntity responseEntity1 = authService.checkPermission("1-0");
                 if(responseEntity1!=null){
                     ResponseEntity responseEntity2 = authService.checkPermission("1-" + groupId);
-                    if(responseEntity2!=null){
+                    if(responseEntity2!=null && !forumMapper.getPostCreatorId(postId).equals(userId)){
                         response.setCode(-1);
                         return new ResponseEntity<>(response,HttpStatus.OK);
                     }
@@ -161,7 +161,7 @@ public class ForumService {
         hashMap.put("modifyable",true);
         Response response=new Response();
         int groupId = postInformation.getGroupId();
-        String userId = postInformation.getUserId();
+        String userId = (String) StpUtil.getLoginId();
         if(postInformation.getGoPublic()){
             ResponseEntity responseEntity1 = authService.checkPermission("1-0");
             if(responseEntity1!=null){
@@ -171,11 +171,11 @@ public class ForumService {
                 }
             }
         }else {
-            if(!userId.equals(forumMapper.getCreatorId(postId))){
+            if(!userId.equals(forumMapper.getPostCreatorId(postId))){
                 ResponseEntity responseEntity1 = authService.checkPermission("1-0");
                 if(responseEntity1!=null){
                     ResponseEntity responseEntity2 = authService.checkPermission("1-" + groupId);
-                    if(responseEntity2!=null){
+                    if(responseEntity2!=null &&!userId.equals(forumMapper.getPostCreatorId(postId))){
                         hashMap.put("deleteable",false);
                     }
                 }
@@ -191,7 +191,7 @@ public class ForumService {
                 }
             }
         }else {
-            if (!userId.equals(forumMapper.getCreatorId(postId)) ){
+            if (!userId.equals(forumMapper.getPostCreatorId(postId)) ){
                 hashMap.put("modifyable",false);
             }
         }
@@ -205,10 +205,16 @@ public class ForumService {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        int floorNum = forumMapper.getFloorNum(postId) + 1;
+        int floorId;
+        if(forumMapper.getFloorNum(postId)==null){
+            floorId = 0;
+        }else {
+            floorId  = Integer.parseInt(forumMapper.getFloorNum(postId) + 1);
+        }
+
         String userId = (String) StpUtil.getLoginId();
         long modifyTime = System.currentTimeMillis();
-        forumMapper.addComment(postId,floorNum,userId,comment,modifyTime);
+        forumMapper.addComment(postId,floorId,userId,comment,modifyTime);
         Response response=new Response();
         response.setCode(0);
         return new ResponseEntity<>(response,HttpStatus.OK);
@@ -218,6 +224,7 @@ public class ForumService {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+
         int postId = forumMapper.getPostId(commentId);
         int groupId = forumMapper.getGroupId(postId);
         String userId = (String) StpUtil.getLoginId();
@@ -228,7 +235,7 @@ public class ForumService {
         if(responseEntity!=null){
             ResponseEntity responseEntity1 = authService.checkPermission("1-"+groupId);
             if(responseEntity1!=null){
-                if (!userId.equals(forumMapper.getCreatorId(commentId))){
+                if (!userId.equals(forumMapper.getCommentCreatorId(commentId))){
                     response.setCode(-1);
                     return new ResponseEntity<>(response,HttpStatus.OK);
                 }
@@ -248,6 +255,11 @@ public class ForumService {
         int totalAmount = forumMapper.getCommentByPageTotalAmount(postId);
         int totalPage = (totalAmount/ itemsPerPage) + (((totalAmount % itemsPerPage) == 0) ? 0 : 1);
 
+        for(int i =0 ; i<commentByPage.size();i++){
+            if(StpUtil.getLoginId().toString().equals(commentByPage.get(i).getUserId())){
+                commentByPage.get(i).setDeleteable(true);
+            }
+        }
         HashMap<String,Object>hashMap=new HashMap<>();
         hashMap.put("list",commentByPage);
         hashMap.put("totalPage",totalPage);
