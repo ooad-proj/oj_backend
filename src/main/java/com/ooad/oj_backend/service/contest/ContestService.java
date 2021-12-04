@@ -206,7 +206,6 @@ public class ContestService {
         String userId = (String) StpUtil.getLoginId();
         Response response = new Response();
         long nowTime = System.currentTimeMillis();
-
         List<Contest> contests = contestMapper.getCloseContest(nowTime);
         List<Contest> sortedContest = contests.stream().sorted(Comparator.comparing( Contest::getEndTime)).limit(amount).collect(Collectors.toList());
         List<Content> contents = new ArrayList<>();
@@ -224,8 +223,64 @@ public class ContestService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     public ResponseEntity<?> getContestRank (int contestId) {
-//        recordMapper.getContestResult();
-        return null;
+
+        Response response = new Response();
+        response.setCode(0);
+        if(contestMapper.getOneContest(contestId)==null){
+            response.setCode(-1);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        };
+        int classId=contestMapper.getClassByContest(contestId);
+        ResponseEntity responseEntity1 = authService.checkPermission("1-0");
+        if(responseEntity1 != null){
+            ResponseEntity responseEntity2 = authService.checkPermission("1-" + classId);
+            if (responseEntity2 !=null){
+                return responseEntity2;
+            }
+        }
+        List<UserResult>userResults=recordMapper.getContestResult(contestId);
+        List<UserResult>nameScore=recordMapper.getNameScore(contestId);
+        HashMap<String,Object>hashMap=new HashMap<>();
+        List<Problem>problems=problemMapper.getContestProblem(contestId);
+
+        for (Problem problem:problems){
+            hashMap.put("problems",problem);
+        }
+        if(userResults.size()==0){
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        HashMap<String,Object []>fast=new HashMap<>();
+        for (UserResult userResult:userResults) {
+            fast.put(userResult.getUserName()+"|"+userResult.getShownId(),new Object[]{userResult.getScore(),userResult.getTotalScore(),userResult.getTime()});
+        }
+        List<HashMap<String,Object>>list=new LinkedList<>();
+        for (UserResult name:nameScore) {
+            HashMap<String, Object> hashMap1 = new HashMap<>();
+            hashMap1.put("userName",name.getUserName());
+            hashMap1.put("totalScore",name.getScore());
+            for(Problem problem:problems){
+                Object []arr=fast.get(name.getUserName()+"|"+problem.getShownId());
+                HashMap<String, Object> hashMap2 = new HashMap<>();
+                int a=(Integer) arr[0];
+                int  b=(Integer) arr[1];
+                String color;
+                if(a==0) {
+                    color = "RED";
+                }else if(a==b){
+                    color = "GREEN";
+                }else{
+                    color = "YELLOW";
+                }
+                hashMap2.put("time",arr[2]);
+                hashMap2.put("score",arr[0]);
+                hashMap2.put("color",color);
+                hashMap1.put(problem.getShownId(),hashMap2);
+            }
+            list.add(hashMap1);
+        }
+        hashMap.put("tableData",list);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
     }
     public ResponseEntity<?> getAcceptedCode (int contestId) {
         return null;
