@@ -130,6 +130,29 @@ public class SubmitService {
         response.setContent(hash);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    public ResponseEntity<?> getSubmitTemplate(int problemId){
+        int groupId=problemMapper.getGroupId(problemId);
+        Response response=new Response();
+        response.setCode(0);
+        if(groupId!=0) {
+            ResponseEntity responseEntity = authService.checkPermission("0-" + groupId);
+            ResponseEntity responseEntity2 = authService.checkPermission("1-" + groupId);
+            if (responseEntity2 != null && responseEntity != null) {
+                ResponseEntity responseEntity1 = authService.checkPermission("1-0");
+                if (responseEntity1 != null) {
+                    response.setCode(-2);
+                    return new ResponseEntity<>(response, HttpStatus.OK);
+                }
+            }
+        }
+        if(problemMapper.searchProblem(problemId)==0){
+            response.setCode(-1);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        List<Template>templates=problemMapper.getTemplate(problemId);
+        response.setContent(templates);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     public ResponseEntity<?> getSubmitNum(String userId) {
         SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd");
@@ -164,6 +187,16 @@ public class SubmitService {
         Response response=new Response();
         response.setCode(0);
         response.setContent(hashMap);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    public ResponseEntity<?> getAllSubmit(String userId){
+        if(StpUtil.isLogin()){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        Response response=new Response();
+        response.setCode(0);
+        List<Rank>rank=recordMapper.getUserRank(userId);
+        response.setContent(rank);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

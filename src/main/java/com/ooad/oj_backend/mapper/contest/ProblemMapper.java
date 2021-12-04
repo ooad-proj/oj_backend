@@ -140,6 +140,8 @@ public interface ProblemMapper {
 
     @Select("Select count(*) from answer where problemId=#{problemId} and isStandard=true;")
     int searchStandardAnswerByProblem(int problemId);
+
+
     @Update("       UPDATE\n" +
             "        problem set isPublish=#{isPublish} where problemId=#{problemId}")
     void updateProblemOfPublish(@Param("isPublish") boolean isPublish,@Param("problemId")int problemId);

@@ -27,8 +27,16 @@ public class SubmitController {
     public ResponseEntity<?> AskIfhaveAnswer(@PathVariable int problemId){
         return submitService.AskIfhaveAnswer(problemId);
     }
+    @RequestMapping(value = "/submit/template/{problemId}",method = RequestMethod.GET)
+    public ResponseEntity<?> getSubmitTemplate(@PathVariable int problemId){
+        return submitService.getSubmitTemplate(problemId);
+    }
     @RequestMapping(value = "/submit/get/times/{userId}",method = RequestMethod.GET)
     public ResponseEntity<?> getSubmitNum(@PathVariable String userId){
         return submitService.getSubmitNum(userId);
+    }
+    @RequestMapping(value = "/submit/get/allTimes/{userId}",method = RequestMethod.GET)
+    public ResponseEntity<?> getAllSubmit(@PathVariable String userId){
+        return submitService.getAllSubmit(userId);
     }
 }

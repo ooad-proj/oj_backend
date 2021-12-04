@@ -48,4 +48,19 @@ public class ContestController {
     public ResponseEntity<?> getCloseContest (  int amount ) {
         return contestService.getCloseContest(amount);
     }
+    @RequestMapping(value = "/contest/{contestId}/rank", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> getContestRank (@PathVariable int contestId) {
+        return contestService.getContestRank(contestId);
+    }
+    @RequestMapping(value = "/contest/{contestId}/accepted", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> getAcceptedCode (@PathVariable int contestId) {
+        return contestService.getAcceptedCode(contestId);
+    }
+    @RequestMapping(value = "/contest/export/score", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> getStudentScore () {
+        return contestService.getStudentScore();
+    }
 }
