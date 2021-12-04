@@ -224,7 +224,7 @@ public class ContestService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     public ResponseEntity<?> getContestRank (int contestId) {
-        recordMapper.getContestResult();
+//        recordMapper.getContestResult();
         return null;
     }
     public ResponseEntity<?> getAcceptedCode (int contestId) {
