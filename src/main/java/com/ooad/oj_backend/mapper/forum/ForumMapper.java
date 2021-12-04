@@ -13,9 +13,9 @@ import java.util.List;
 @Mapper
 public interface ForumMapper {
 
-    @Insert("insert into post (     postId,groupId,userId, title, content,modifyTime,goPublic,goMail," +
+    @Insert("insert into post (postId,groupId,userId, title, content,modifyTime,goPublic,goMail) " +
             "values ( 0,#{groupId},#{userId},#{title},#{content},#{modifyTime},#{goPublic},#{goMail});")
-    void createPost(int groupId,String userId, String title,String content,long modifyTime, Boolean goPublic,Boolean goMail);
+    void createPost(@Param("groupId")int groupId,@Param("userId")String userId, @Param("title")String title,@Param("content")String content,@Param("modifyTime")long modifyTime, @Param("goPublic")Boolean goPublic,@Param("goMail")Boolean goMail);
 
     @Update("       UPDATE\n" +
             "        post\n" +
@@ -43,7 +43,7 @@ public interface ForumMapper {
             "       postId =#{postId}")
     void delete(int postId);
 
-    @Select("SELECT postId,title,content,userId,u.name,modifyTime FROM post join User u on post.userId = u.id " +
+    @Select("SELECT postId,title,content as preview,userId,u.name as userName,modifyTime FROM post join User u on post.userId = u.id " +
             "        where groupId =#{groupId} and title like '%${search}%' order by id limit #{itemsPerPage} offset #{offset}")
     List<PostByPage> getPostByPage(@Param("groupId") int groupId, @Param("offset")int offset, @Param("itemsPerPage") int itemsPerPage, @Param("search") String search );
 
@@ -51,7 +51,7 @@ public interface ForumMapper {
             "        where groupId =#{groupId} and title like '%${search}%' ")
     int getPostByPageTotalAmount(@Param("groupId") int groupId, @Param("search") String search );
 
-    @Select("SELECT title,content,userId,u.name,modifyTime,goPublic FROM post join User u on post.userId = u.id " +
+    @Select("SELECT title,content,userId,u.name,modifyTime,goPublic,groupId FROM post join User u on post.userId = u.id " +
             "        where postId =#{postId}")
     PostInformation getPostInformation(@Param("postId") int postId );
 
@@ -74,7 +74,7 @@ public interface ForumMapper {
             "       commentId =#{commentId}")
     void deleteComment(int commentId);
 
-    @Select("SELECT commentId,floorId,userId,u.name,comment,modifyTime FROM comment join User u on comment.userId = u.id " +
+    @Select("SELECT commentId,floorId,userId,u.name as userName ,comment,modifyTime FROM comment join User u on comment.userId = u.id " +
 
             "        where postId =#{postId} "+
             "        order by id limit #{itemsPerPage} offset #{offset}" )

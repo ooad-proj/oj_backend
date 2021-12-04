@@ -16,4 +16,5 @@ public class PostInformation implements Serializable {
     String title;
     String content;
     Boolean goPublic;
+    int groupId;
 }

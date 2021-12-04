@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class PostByPage implements Serializable {
     int postId ;
     String title;
-    String content;
+    String preview;
     String userId;
     String userName;
     Long modifyTime;

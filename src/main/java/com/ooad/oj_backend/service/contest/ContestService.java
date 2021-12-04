@@ -223,10 +223,10 @@ public class ContestService {
         response.setCode(0);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    public ResponseEntity<?> getContestRank (int contestId) {
-        recordMapper.getContestResult();
-        return null;
-    }
+//    public ResponseEntity<?> getContestRank (int contestId) {
+//        recordMapper.getContestResult();
+//        return null;
+//    }
     public ResponseEntity<?> getAcceptedCode (int contestId) {
         return null;
     }

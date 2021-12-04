@@ -8,6 +8,7 @@ import com.ooad.oj_backend.mybatis.entity.CommentByPage;
 import com.ooad.oj_backend.mybatis.entity.PostByPage;
 import com.ooad.oj_backend.mybatis.entity.PostInformation;
 import com.ooad.oj_backend.service.user.AuthService;
+import com.ooad.oj_backend.service.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,8 @@ public class ForumService {
 //    private ProblemMapper problemMapper;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private ForumMapper forumMapper;
@@ -48,6 +51,7 @@ public class ForumService {
         long modifyTime = System.currentTimeMillis();
         forumMapper.createPost(groupId,userId,title,content,modifyTime,goPublic,goMail);
         Response response=new Response();
+
         response.setCode(0);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
@@ -126,9 +130,10 @@ public class ForumService {
         int totalAmount = forumMapper.getPostByPageTotalAmount(groupId,search);
         int totalPage = (totalAmount/ itemsPerPage) + (((totalAmount % itemsPerPage) == 0) ? 0 : 1);
         for(int i =0 ; i<postByPage.size();i++){
-            if( postByPage.get(i).getContent().length()>20){
-                postByPage.get(i).setContent(postByPage.get(i).getContent().substring(0,20));
+            if( postByPage.get(i).getPreview().length()>20){
+                postByPage.get(i).setPreview(postByPage.get(i).getPreview().substring(0,20));
             }
+
         }
         HashMap<String,Object>hashMap=new HashMap<>();
         hashMap.put("list",postByPage);
@@ -152,8 +157,45 @@ public class ForumService {
         hashMap.put("title",postInformation.getTitle());
         hashMap.put("content",postInformation.getContent());
         hashMap.put("goPublic",postInformation.getGoPublic());
-
+        hashMap.put("deleteable",true);
+        hashMap.put("modifyable",true);
         Response response=new Response();
+        int groupId = postInformation.getGroupId();
+        String userId = postInformation.getUserId();
+        if(postInformation.getGoPublic()){
+            ResponseEntity responseEntity1 = authService.checkPermission("1-0");
+            if(responseEntity1!=null){
+                ResponseEntity responseEntity2 = authService.checkPermission("1-" + groupId);
+                if(responseEntity2!=null){
+                    hashMap.put("deleteable",false);
+                }
+            }
+        }else {
+            if(!userId.equals(forumMapper.getCreatorId(postId))){
+                ResponseEntity responseEntity1 = authService.checkPermission("1-0");
+                if(responseEntity1!=null){
+                    ResponseEntity responseEntity2 = authService.checkPermission("1-" + groupId);
+                    if(responseEntity2!=null){
+                        hashMap.put("deleteable",false);
+                    }
+                }
+            }
+        }
+
+        if(postInformation.getGoPublic()){
+            ResponseEntity responseEntity1 = authService.checkPermission("1-0");
+            if(responseEntity1!=null){
+                ResponseEntity responseEntity2 = authService.checkPermission("1-" + groupId);
+                if(responseEntity2!=null){
+                    hashMap.put("modifyable",false);
+                }
+            }
+        }else {
+            if (!userId.equals(forumMapper.getCreatorId(postId)) ){
+                hashMap.put("modifyable",false);
+            }
+        }
+
         response.setContent(hashMap);
         response.setCode(0);
         return new ResponseEntity<>(response,HttpStatus.OK);
