@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -98,15 +99,21 @@ public class RecordService {
         response.setContent(hashMap);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    public ResponseEntity<?> getResult(String userId,int problemId,String stateCode,int page,int itemsPerPage) {
+    public ResponseEntity<?> getResult(String userId,String problemId,String stateCode,int page,int itemsPerPage) {
         if (!StpUtil.isLogin()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+
         Response response = new Response();
         response.setCode(0);
         Paper<com.ooad.oj_backend.mybatis.entity.Result>paper=new Paper<>();
         List<com.ooad.oj_backend.mybatis.entity.Result>results=recordMapper.getResult(userId,problemId,stateCode,(page - 1) * itemsPerPage, itemsPerPage);
-        int total=recordMapper.getResultNum(userId,problemId,stateCode);
+        String regex="\\d*";
+        /*int total=0;
+        boolean judge=problemId.matches(regex);
+        if(judge) {*/
+           int total = recordMapper.getResultNum(userId, problemId, stateCode);
+       // }
         paper.setItemsPerPage(results.size());
         paper.setPage(page);
         paper.setTotalAmount(total);
