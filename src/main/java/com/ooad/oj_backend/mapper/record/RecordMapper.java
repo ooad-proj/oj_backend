@@ -12,9 +12,9 @@ import java.util.List;
 @Mapper
 public interface RecordMapper {
     @Insert("       INSERT INTO\n" +
-            "         result (resultId,submitTime,userId,problemId)\n" +
+            "         result (resultId,submitTime,userId,problemId,code)\n" +
             "       VALUE\n" +
-            "       (#{resultId},#{submitTime},#{userId},#{problemId})")
+            "       (#{resultId},#{submitTime},#{userId},#{problemId},#{code})")
     void addResult(Result result);
 
     @Insert("       INSERT INTO\n" +
