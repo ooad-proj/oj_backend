@@ -4,6 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.ooad.oj_backend.Response;
 import com.ooad.oj_backend.mapper.contest.ContestMapper;
 import com.ooad.oj_backend.mapper.contest.ProblemMapper;
+import com.ooad.oj_backend.mapper.record.RecordMapper;
 import com.ooad.oj_backend.mapper.user.AuthMapper;
 import com.ooad.oj_backend.mapper.user.UserMapper;
 import com.ooad.oj_backend.mybatis.entity.*;
@@ -26,6 +27,8 @@ public class ContestService {
     private ProblemMapper problemMapper;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private RecordMapper recordMapper;
 
     public ResponseEntity<?> getContestInformation(int contestId) {
         if(!StpUtil.isLogin()){
@@ -221,6 +224,7 @@ public class ContestService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     public ResponseEntity<?> getContestRank (int contestId) {
+        recordMapper.getContestResult();
         return null;
     }
     public ResponseEntity<?> getAcceptedCode (int contestId) {
