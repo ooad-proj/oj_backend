@@ -59,6 +59,8 @@ public class ContestService {
         Response response=new Response();
         Contest contest = contestMapper.getOneContest(contestId);
         List<Problem> problems = problemMapper.getContestProblem(contestId);
+        User user=userMapper.getOne((String) StpUtil.getLoginId());
+        List<UserResult>userResults= recordMapper.getContestResultByName(contestId,user.getName());
         //TODO: get myScore and score
         Map<String,Object> map = new HashMap<>();
         map.put("contest",contest);
