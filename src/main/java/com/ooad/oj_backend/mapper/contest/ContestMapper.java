@@ -34,7 +34,7 @@ public interface ContestMapper {
     int getContestInGroupNum(int groupId );
 
     @Select("       SELECT\n" +
-            "        id, classId, startTime, endTime, title ,description, creatorId\n" +
+            "        id, classId, startTime, endTime, title ,description, creatorId,access\n" +
             "FROM contest where title like '%${search}%' order by id limit #{itemsPerPage} offset #{offset}")
     List<Contest> getAllContest(@Param("offset")int offset, @Param("itemsPerPage") int itemsPerPage,@Param("search") String search);
 
@@ -49,7 +49,7 @@ public interface ContestMapper {
     int getManagementNumber( @Param("userId") String userId, @Param("search") String search);
 
     @Select("       SELECT\n" +
-            "        id, a.classId, startTime, endTime, title ,description, creatorId\n" +
+            "        id, a.classId, startTime, endTime, title ,description, creatorId,access\n" +
             "from  contest join auth a on contest.classId = a.classId  where a.UserId =#{userId} and a.privilege=1 and title like '%${search}%' ")
     List<Contest> getManagementContest( @Param("userId") String userId, @Param("search") String search);
 
