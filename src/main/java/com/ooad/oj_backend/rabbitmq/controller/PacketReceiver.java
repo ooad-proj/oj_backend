@@ -28,7 +28,7 @@ public class PacketReceiver {
     @Autowired
     JudgerService judgerService;
 
-    @RabbitHandler
+   /* @RabbitHandler
     public void receivePacket(byte[] bytes) {
         System.out.println(new String(bytes));
         RecvPacket recvPacket = RecvPacket.fromString(new String(bytes));
@@ -69,6 +69,6 @@ public class PacketReceiver {
             }
         }
 
-    }
+    }*/
 
 }
