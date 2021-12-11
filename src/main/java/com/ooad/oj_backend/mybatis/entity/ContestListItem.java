@@ -8,6 +8,7 @@ public class ContestListItem {
     public long endTime;
     public int myScore;
     public int totalScore;
+    public boolean access;
 
     public ContestListItem(){}
 }
