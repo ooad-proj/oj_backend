@@ -86,5 +86,4 @@ public interface ContestMapper {
     @Select("select * from contest where classId in (" +
             "    select id from class join auth a on class.id = a.classId where a.UserId = userId );")
     List<Contest> getAllowedContest( @Param("userId") String userId);
-
 }

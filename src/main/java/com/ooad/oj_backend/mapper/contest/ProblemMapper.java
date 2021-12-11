@@ -65,7 +65,8 @@ public interface ProblemMapper {
             "join class on class.id=contest.classId " +
             "join auth a on a.classId=class.id join answer a2 on p.problemId = a2.problemId where ${check},userId=#{userId} and privilege=1 or contest.id=0")
     int checkAnswerPrivilege(@Param("check")String check,@Param("userId")String userId);
-
+    @Select("select testCase from problem where testCaseId=#{testCaseId}")
+    String getTestCase(String testCaseId);
     @Select("        SELECT\n" +
             "        problemId,shownId,title,totalScore\n" +
             "        FROM problem where contestId =#{contestId} order by shownId ")

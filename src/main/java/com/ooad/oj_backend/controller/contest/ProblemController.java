@@ -49,7 +49,7 @@ public class ProblemController {
     public ResponseEntity<?> addTestCase(@PathVariable int contestId, MultipartFile file) {
         return problemService.addTestCase(contestId,file);
     }
-    @PostMapping(value = "testCase/{testCaseId}")
+    @GetMapping(value = "testCase/{testCaseId}")
     public ResponseEntity<?> downloadTestCase(@PathVariable("testCaseId")String testCaseId) {
         return problemService.downloadTestCase(testCaseId);
     }

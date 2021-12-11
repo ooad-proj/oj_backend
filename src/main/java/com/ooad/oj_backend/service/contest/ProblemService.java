@@ -2,7 +2,6 @@ package com.ooad.oj_backend.service.contest;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.convert.Convert;
-import cn.hutool.core.io.resource.InputStreamResource;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
@@ -16,6 +15,7 @@ import com.ooad.oj_backend.service.user.AuthService;
 import com.ooad.oj_backend.utils.FileToString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -423,7 +423,9 @@ public class ProblemService {
         }
     }
     public ResponseEntity<InputStreamResource> downloadTestCase(String testCaseId) {
-        String filePath = "D:/a.csv";
+        FileToString.stringToFile(StpUtil.getLoginId()+".zip",problemMapper.getTestCase(testCaseId));
+        String filePath = StpUtil.getLoginId()+".zip";
+        File f=new File(StpUtil.getLoginId()+".zip");
         FileSystemResource file = new FileSystemResource(filePath);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -431,7 +433,9 @@ public class ProblemService {
         headers.add("Pragma", "no-cache");
         headers.add("Expires", "0");
         try {
-            return ResponseEntity.ok().headers(headers).contentLength(file.contentLength()).contentType(MediaType.parseMediaType("application/octet-stream")).body(new InputStreamResource(file.getInputStream()));
+            ResponseEntity<InputStreamResource>responseEntity=ResponseEntity.ok().headers(headers).contentLength(file.contentLength()).contentType(MediaType.parseMediaType("application/octet-stream")).body(new InputStreamResource(file.getInputStream()));
+            f.delete();
+            return responseEntity;
         }catch (IOException e){
             e.printStackTrace();
         }return null;

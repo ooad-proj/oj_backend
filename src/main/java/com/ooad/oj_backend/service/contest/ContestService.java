@@ -1,7 +1,7 @@
 package com.ooad.oj_backend.service.contest;
 
 import cn.dev33.satoken.stp.StpUtil;
-import cn.hutool.core.io.resource.*;
+
 import com.ooad.oj_backend.Response;
 import com.ooad.oj_backend.mapper.contest.ContestMapper;
 import com.ooad.oj_backend.mapper.contest.ProblemMapper;
@@ -12,15 +12,18 @@ import com.ooad.oj_backend.mybatis.entity.*;
 import com.ooad.oj_backend.service.user.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Service
 public class ContestService {
@@ -312,19 +315,49 @@ public class ContestService {
 
     }
     public ResponseEntity<?> getAcceptedCode (int contestId) {
-        return null;
-    }
-    public ResponseEntity<?> getStudentScore () {
-        return null;
-    }
-    public ResponseEntity<InputStreamResource> download() throws IOException {
-        String filePath = "D:/a.csv";
+        List<UserResult>userResults=recordMapper.getLatestContestResult(contestId);
+        File file1 = new File(StpUtil.getLoginId()+".zip");
+        try {
+        if(!file1.exists())
+            file1.createNewFile();
+        FileOutputStream fOutputStream = new FileOutputStream(file1);
+        ZipOutputStream zoutput = new ZipOutputStream(fOutputStream);
+        for (UserResult userResult:userResults){
+                ZipEntry zEntry = new ZipEntry(userResult.getUserName() + "-" + userResult.getShownId()+".txt");
+                zoutput.putNextEntry(zEntry);
+                zoutput.write(recordMapper.getCode(contestId,userResult.getUserName(),userResult.getShownId(),userResult.getTime()).getBytes());
+                zoutput.close();
+        }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        String filePath = StpUtil.getLoginId()+".zip";
         FileSystemResource file = new FileSystemResource(filePath);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
         headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", file.getFilename()));
         headers.add("Pragma", "no-cache");
         headers.add("Expires", "0");
-        return ResponseEntity.ok().headers(headers).contentLength(file.contentLength()).contentType(MediaType.parseMediaType("application/octet-stream")).body(new InputStreamResource(file.getInputStream()));
+        try {
+            return ResponseEntity.ok().headers(headers).contentLength(file.contentLength()).contentType(MediaType.parseMediaType("application/octet-stream")).body(new InputStreamResource(file.getInputStream()));
+        }catch (IOException e){
+            e.printStackTrace();
+        }return null;
     }
+    public ResponseEntity<?> getStudentScore () {
+
+        String filePath = "";
+        FileSystemResource file = new FileSystemResource(filePath);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", file.getFilename()));
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+        try {
+            return ResponseEntity.ok().headers(headers).contentLength(file.contentLength()).contentType(MediaType.parseMediaType("application/octet-stream")).body(new InputStreamResource(file.getInputStream()));
+        }catch (IOException e){
+            e.printStackTrace();
+        }return null;
+    }
+
 }
