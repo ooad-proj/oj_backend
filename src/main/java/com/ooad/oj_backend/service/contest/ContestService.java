@@ -109,7 +109,7 @@ public class ContestService {
     }
 
 
-    public ResponseEntity<?> addContest(int groupId , String title, String description, long startTime, long endTime) {
+    public ResponseEntity<?> addContest(int groupId , String title, String description, long startTime, long endTime,boolean accessible) {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -124,6 +124,7 @@ public class ContestService {
         Response response = new Response();
         Contest contest =new Contest();
         contest.setId(0);
+        contest.setAccessible(accessible);
         contest.setClassId(groupId);
         contest.setTitle(title);
         contest.setDescription(description);
@@ -136,7 +137,7 @@ public class ContestService {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> modifyContest(int contestId, String title, String description, long startTime, long endTime) {
+    public ResponseEntity<?> modifyContest(int contestId, String title, String description, long startTime, long endTime,boolean accessible) {
         if(!StpUtil.isLogin()){
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -157,6 +158,7 @@ public class ContestService {
         Response response = new Response();
         Contest contest = new Contest();
         contest.setId(contestId);
+        contest.setAccessible(accessible);
         contest.setTitle( title);
         contest.setDescription(description);
         contest.setStartTime(startTime);

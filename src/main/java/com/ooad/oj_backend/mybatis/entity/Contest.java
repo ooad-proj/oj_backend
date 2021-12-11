@@ -21,4 +21,5 @@ public class Contest implements Serializable {
     String description;
     String creatorName;
     String creatorId;
+    boolean accessible;
 }

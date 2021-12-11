@@ -38,10 +38,21 @@ public class RecordService {
         if(!judgerService.judgeRunning(recordId)){
             response.setCode(1);
         }
-
         if (!StpUtil.isLogin()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+        com.ooad.oj_backend.mybatis.entity.Result result=recordMapper.getResultAndCode(recordId);
+        if(result.getProblemId()!=0){
+            int classId=problemMapper.getGroupId(result.getProblemId());
+            ResponseEntity responseEntity = authService.checkPermission("1-0");
+            ResponseEntity responseEntity2 = authService.checkPermission("1-" +classId);
+            if(responseEntity!=null&&responseEntity2!=null){
+                if(!StpUtil.getLoginId().equals(result.getUserId())){
+                    return responseEntity;
+                }
+            }
+        }
+
 
         List<Result> results;
         if (judgerService.judgeRunning(recordId)) {

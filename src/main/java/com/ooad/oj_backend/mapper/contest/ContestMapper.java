@@ -55,9 +55,9 @@ public interface ContestMapper {
 
     @Insert("       INSERT INTO\n" +
             "         contest\n" +
-            "       (id, classId, startTime, endTime, title ,description, creatorId)\n" +
+            "       (id, classId, startTime, endTime, title ,description, creatorId,accessible)\n" +
             "       VALUES\n" +
-            "       (#{id},#{classId},#{startTime},#{endTime},#{title},#{description},#{creatorId} )")
+            "       (#{id},#{classId},#{startTime},#{endTime},#{title},#{description},#{creatorId},#{accessible} )")
     void insert(Contest contest);
 
     @Update("       UPDATE\n" +
@@ -66,7 +66,7 @@ public interface ContestMapper {
             "       title = #{title}," +
             "       description = #{description}," +
             "       startTime = #{startTime}," +
-            "       endTime = #{endTime}\n" +
+            "       endTime = #{endTime},accessible=#{accessible}\n" +
             "       WHERE \n" +
             "       id = #{id}")
     void update(Contest contest);
