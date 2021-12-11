@@ -431,7 +431,7 @@ public class ProblemService {
         }catch (IOException e){
             e.printStackTrace();
         }
-        Path path=Paths.get("."+File.pathSeparator+filePath);
+        Path path=Paths.get("."+File.separator+filePath);
         path=path.toAbsolutePath();
         FileToString.stringToFile(path.toString(),problemMapper.getTestCase(testCaseId));
         File f=new File(filePath);
