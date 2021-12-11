@@ -511,6 +511,7 @@ public class GroupService {
                 }
                 ContestListItem item = new ContestListItem();
                 item.contestId = c.getId();
+                item.access=c.isAccess();
                 item.description =c.getDescription();
                 item.endTime = c.getEndTime();
                 item.startTime = c.getStartTime();
