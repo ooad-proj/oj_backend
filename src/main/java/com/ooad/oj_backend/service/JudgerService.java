@@ -3,6 +3,7 @@ package com.ooad.oj_backend.service;
 import cn.dev33.satoken.stp.StpUtil;
 import com.google.gson.Gson;
 import com.ooad.oj_backend.rabbitmq.controller.PacketSender;
+import com.ooad.oj_backend.rabbitmq.entity.Color;
 import com.ooad.oj_backend.rabbitmq.entity.JudgeDetail;
 import com.ooad.oj_backend.rabbitmq.entity.Result;
 import com.ooad.oj_backend.rabbitmq.entity.SendPacket;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class JudgerService {
@@ -38,6 +40,7 @@ public class JudgerService {
     public String testTestCase(String testCase, JudgeDetail userJudgeDetail, JudgeDetail answerJudgeDetail) {
         String uuid = UUID.randomUUID().toString();
         redisUtil.hPut(uuid, "r", "RUNNING");
+        redisUtil.expire(uuid, 1, TimeUnit.HOURS);
         SendPacket userPacket = new SendPacket("u" + uuid, 1, null, testCase, userJudgeDetail);
         SendPacket answerPacket = new SendPacket("a" + uuid, 1, null, testCase, answerJudgeDetail);
         packetSender.sendPacket(userPacket);
@@ -80,6 +83,12 @@ public class JudgerService {
             ans[0] = gson.fromJson((String) map.get("u"), Result.class);
             ans[1] = gson.fromJson((String) map.get("a"), Result.class);
             redisUtil.delete(uuid);
+            return ans;
+        }
+        if (map.get("r").equals("ERROR")) {
+            Result[] ans = new Result[2];
+            ans[0] = new Result(0,0,false,0,0,"ERR","Judge Server Error", "Judge Server Error", Color.GRAY);
+            ans[1] = new Result(0,0,false,0,0,"ERR","Judge Server Error", "Judge Server Error", Color.GRAY);
             return ans;
         }
         return null;

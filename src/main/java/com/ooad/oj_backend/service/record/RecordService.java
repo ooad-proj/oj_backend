@@ -48,6 +48,7 @@ public class RecordService {
             results = judgerService.getResultFromRedis(recordId);
         } else {
             results = getResultFromSql(recordId);
+            if (results == null || results.size() == 0) results = judgerService.getResultFromRedis(recordId);
         }
 
         int totalNum = results.size();
@@ -70,7 +71,7 @@ public class RecordService {
 
         HashMap<String,Object>hashMap=new HashMap<>();
         hashMap.put("totalNum",results.size());
-        hashMap.put("code",results1.getCode());
+        if (results1 != null) hashMap.put("code",results1.getCode());
         hashMap.put("correctNum",(int) results.stream().filter(Result::isCorrect).count());
         hashMap.put("records",results);
         hashMap.put("finialResult",finialResult);
@@ -136,7 +137,7 @@ public class RecordService {
         paper.setItemsPerPage(results.size());
         paper.setPage(page);
         paper.setTotalAmount(total);
-        paper.setTotalPage((total/ itemsPerPage) + (((total % itemsPerPage) == 0) ? 0 : 1));
+        paper.setTotalPage((total / itemsPerPage) + (((total % itemsPerPage) == 0) ? 0 : 1));
         paper.setList(results);
         response.setContent(paper);
         return new ResponseEntity<>(response,HttpStatus.OK);
