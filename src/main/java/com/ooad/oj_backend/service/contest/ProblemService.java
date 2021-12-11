@@ -55,7 +55,7 @@ public class ProblemService {
         int count;
         long time=System.currentTimeMillis();
         if(!StpUtil.getRoleList().get(0).equals("teacher")){
-            userId="and ((userId='"+ StpUtil.getLoginId()+"' and privilege=1 or p.contestId=0) or (userId='"+ StpUtil.getLoginId()+"' and privilege=0 and contest.startTime<"+time+" or p.contestId=0))";
+            userId="and ((userId='"+ StpUtil.getLoginId()+"' and privilege=1 or p.contestId=0) or (userId='"+ StpUtil.getLoginId()+"' and privilege=0 and contest.startTime<"+time+" and contest.access=1 or p.contestId=0))";
             count=problemMapper.getProblemNumber(search,userId);
             problemViews=problemMapper.getProblem(search,userId,(page - 1) * itemsPerPage,itemsPerPage);
         }else {
@@ -521,9 +521,13 @@ public class ProblemService {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         Problem problem1=problemMapper.getDetailedProblem(problemId);
-        if (responseEntity==null && !problem1.isPublish()){
-            response.setContent(List.of());
-            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        if (responseEntity==null ){
+            Contest contest=problemMapper.getContestNumber(problemId);
+            if(!problem1.isPublish()||!contest.isAccess()) {
+                response.setContent(List.of());
+                return new ResponseEntity<>(response, HttpStatus.OK);
+            }
         }
         List<Answer> answer=problemMapper.getAnswerByProblem(problemId);
         response.setContent(answer);
@@ -564,7 +568,7 @@ public class ProblemService {
         long start=contest.getStartTime();
         long end=contest.getEndTime();
         long time=System.currentTimeMillis();
-        if(time<=start) {
+        if(time<=start||!contest.isAccess()) {
             return -1;
         }if(time<end)
             return 0;

@@ -13,7 +13,7 @@ import java.util.List;
 public interface ContestMapper {
 
     @Select("        SELECT\n" +
-            "        title, description,startTime,endTime\n" +
+            "        title, description,startTime,endTime,access\n" +
             "        FROM contest\n" +
             "        where id=#{contestId}")
     Contest getOneContest(int contestId);
@@ -22,7 +22,7 @@ public interface ContestMapper {
     int getClassByContest(int contestId);
 
     @Select("        SELECT\n" +
-            "        id,description,title,startTime,endTime\n" +
+            "        id,description,title,startTime,endTime,access\n" +
             "        FROM contest\n" +
             "        where classId=#{groupId} and title like '%${search}%' order by id limit #{itemsPerPage} offset #{offset}")
     List<Contest> getContestInGroup(@Param("groupId")int groupId ,@Param("offset")int offset, @Param("itemsPerPage") int itemsPerPage, @Param("search") String search);
@@ -55,9 +55,9 @@ public interface ContestMapper {
 
     @Insert("       INSERT INTO\n" +
             "         contest\n" +
-            "       (id, classId, startTime, endTime, title ,description, creatorId,accessible)\n" +
+            "       (id, classId, startTime, endTime, title ,description, creatorId,access)\n" +
             "       VALUES\n" +
-            "       (#{id},#{classId},#{startTime},#{endTime},#{title},#{description},#{creatorId},#{accessible} )")
+            "       (#{id},#{classId},#{startTime},#{endTime},#{title},#{description},#{creatorId},#{access} )")
     void insert(Contest contest);
 
     @Update("       UPDATE\n" +
@@ -66,7 +66,7 @@ public interface ContestMapper {
             "       title = #{title}," +
             "       description = #{description}," +
             "       startTime = #{startTime}," +
-            "       endTime = #{endTime},accessible=#{accessible}\n" +
+            "       endTime = #{endTime},access=#{access}\n" +
             "       WHERE \n" +
             "       id = #{id}")
     void update(Contest contest);
@@ -84,6 +84,6 @@ public interface ContestMapper {
     List<Contest> getCloseContest( @Param("nowTime") long nowTime);
 
     @Select("select * from contest where classId in (" +
-            "    select id from class join auth a on class.id = a.classId where a.UserId = userId );")
+            "    select id from class join auth a on class.id = a.classId where a.UserId = userId) and access=1;")
     List<Contest> getAllowedContest( @Param("userId") String userId);
 }

@@ -483,6 +483,14 @@ public class GroupService {
         if (!StpUtil.isLogin()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+        ResponseEntity responseEntity = authService.checkPermission("0-" + groupId);
+        ResponseEntity responseEntity2 = authService.checkPermission("1-" + groupId);
+        if (responseEntity2 != null && responseEntity != null) {
+            ResponseEntity responseEntity1 = authService.checkPermission("1-0");
+            if (responseEntity1 != null&& groupId!=0) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+        }
         Response response=new Response();
         List<Contest>  contests = contestMapper.getContestInGroup(groupId,(page - 1) * itemsPerPage,itemsPerPage,search);
         int total = contestMapper.getContestInGroupNum(groupId);
@@ -498,6 +506,9 @@ public class GroupService {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }else {
             for(Contest c :contests){
+                if(responseEntity==null&&!c.isAccess()){
+                    continue;
+                }
                 ContestListItem item = new ContestListItem();
                 item.contestId = c.getId();
                 item.description =c.getDescription();

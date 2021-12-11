@@ -27,14 +27,14 @@ public class ContestController {
 
     @RequestMapping(value = "/contest/group/{groupId}", method = RequestMethod.POST)
     @ResponseBody
-    public ResponseEntity<?> addContest( @PathVariable int groupId , String title, String description, long startTime, long endTime,boolean accessible) {
-        return contestService.addContest(groupId,title,description,startTime,endTime,accessible);
+    public ResponseEntity<?> addContest( @PathVariable int groupId , String title, String description, long startTime, long endTime,boolean access) {
+        return contestService.addContest(groupId,title,description,startTime,endTime,access);
     }
 
     @RequestMapping(value = "/contest/{contestId}", method = RequestMethod.PUT)
     @ResponseBody
-    public ResponseEntity<?> modifyContest ( @PathVariable int contestId , String title, String description, long startTime, long endTime,boolean accessible ) {
-        return contestService.modifyContest(contestId,title,description,startTime,endTime,accessible);
+    public ResponseEntity<?> modifyContest ( @PathVariable int contestId , String title, String description, long startTime, long endTime,boolean access ) {
+        return contestService.modifyContest(contestId,title,description,startTime,endTime,access);
     }
 
     @RequestMapping(value = "/contest/{contestId}", method = RequestMethod.DELETE)
