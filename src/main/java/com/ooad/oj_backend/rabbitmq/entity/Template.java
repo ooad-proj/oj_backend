@@ -3,8 +3,8 @@ package com.ooad.oj_backend.rabbitmq.entity;
 import java.io.Serializable;
 
 public class Template implements Serializable {
-    String language = "";
-    String code = "";
+    public String language = "";
+    public String code = "";
 
     public String getLanguage() {
         return language;

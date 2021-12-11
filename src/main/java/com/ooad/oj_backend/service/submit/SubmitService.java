@@ -16,6 +16,7 @@ import com.ooad.oj_backend.rabbitmq.entity.Template;
 import com.ooad.oj_backend.service.JudgerService;
 import com.ooad.oj_backend.service.user.AuthService;
 import com.ooad.oj_backend.service.user.UserService;
+import com.ooad.oj_backend.utils.TemplateReplacer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -162,6 +163,9 @@ public class SubmitService {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         List<Template>templates=problemMapper.getTemplate(problemId);
+        for (Template t : templates) {
+            t.setCode(TemplateReplacer.getMiddle(t.getCode(), t.getLanguage()));
+        }
         response.setContent(templates);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
