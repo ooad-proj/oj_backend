@@ -100,16 +100,12 @@ public class RecordService {
         Response response = new Response();
         response.setCode(0);
         HashMap<String,Object>hashMap=new HashMap<>();
-
         Result[] results = judgerService.getTestResult(recordId);
         if(results!=null) {
             hashMap.put("standardResult", results[1]);
             hashMap.put("userResult", results[0]);
             response.setCode(1);
         }
-
-
-
         response.setContent(hashMap);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -117,7 +113,6 @@ public class RecordService {
         if (!StpUtil.isLogin()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-
         Response response = new Response();
         response.setCode(0);
         Paper<com.ooad.oj_backend.mybatis.entity.Result>paper=new Paper<>();

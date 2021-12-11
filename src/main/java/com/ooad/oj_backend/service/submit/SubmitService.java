@@ -51,11 +51,15 @@ public class SubmitService {
             if (responseEntity2 != null && responseEntity != null) {
                 ResponseEntity responseEntity1 = authService.checkPermission("1-0");
                 if (responseEntity1 != null) {
-                    response.setCode(-2);
-                    return new ResponseEntity<>(response, HttpStatus.OK);
+                    return responseEntity1;
                 }
             }
+            Contest contest=problemMapper.getContestNumber(problemId);
+            if(responseEntity==null&&!contest.isAccess()){
+                return responseEntity2;
+            }
         }
+
         if(problemMapper.searchProblem(problemId)==0){
             response.setCode(-1);
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -80,10 +84,12 @@ public class SubmitService {
         if (responseEntity2 != null && responseEntity!=null){
             ResponseEntity responseEntity1 = authService.checkPermission("1-0");
             if (responseEntity1 != null ){
-                response.setCode(-2);
-                return new ResponseEntity<>(response, HttpStatus.OK);
+                return responseEntity1;
             }
-        }
+        } Contest contest=problemMapper.getContestNumber(problemId);
+            if(responseEntity==null&&!contest.isAccess()){
+                return responseEntity2;
+            }
         }
         if(problemMapper.searchProblem(problemId)==0){
             response.setCode(-1);
@@ -116,8 +122,12 @@ public class SubmitService {
                 ResponseEntity responseEntity1 = authService.checkPermission("1-0");
                 if (responseEntity1 != null) {
                     response.setCode(-2);
+                    response.setContent(List.of());
                     return new ResponseEntity<>(response, HttpStatus.OK);
                 }
+            } Contest contest=problemMapper.getContestNumber(problemId);
+            if(responseEntity==null&&!contest.isAccess()){
+                return responseEntity2;
             }
         }
         if(problemMapper.searchProblem(problemId)==0){
@@ -140,9 +150,11 @@ public class SubmitService {
             if (responseEntity2 != null && responseEntity != null) {
                 ResponseEntity responseEntity1 = authService.checkPermission("1-0");
                 if (responseEntity1 != null) {
-                    response.setCode(-2);
-                    return new ResponseEntity<>(response, HttpStatus.OK);
+                   return responseEntity1;
                 }
+            } Contest contest=problemMapper.getContestNumber(problemId);
+            if(responseEntity==null&&!contest.isAccess()){
+                return responseEntity2;
             }
         }
         if(problemMapper.searchProblem(problemId)==0){
