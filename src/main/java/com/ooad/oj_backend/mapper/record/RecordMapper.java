@@ -43,7 +43,7 @@ public interface RecordMapper {
             "        order by submitTime asc")
     List<Long> getAllSubmitNum(long milliSecond);
 
-    @Select("select r.userId,r.resultId,r.problemId,r.submitTime,stateCode,(IF(allowPartial = 0, if(stateCode = 'AC', score, 0), score)) as score from result r join (select temp.resultId,userId,problemId,submitTime,allowPartial,\n" +
+ /*   @Select("select r.userId,r.resultId,r.problemId,r.submitTime,stateCode,(IF(allowPartial = 0, if(stateCode = 'AC', score, 0), score)) as score from result r join (select temp.resultId,userId,problemId,submitTime,allowPartial,\n" +
             "       count(if(correct=1,1,null))/count(*)*totalScore*\n" +
             "       substring_index(substring_index(substr(punishRule,2,LENGTH(punishRule)-2),',',\n" +
             "           if((@pre=problemId and @preUser=userId),(if (@resultId=temp.resultId,@s,@s:=@s+1)),@s:=1)),',',-1) as score,\n" +
@@ -53,8 +53,22 @@ public interface RecordMapper {
             "    temp join checkpoint on temp.resultId=checkpoint.resultId,(select @s:=0,@pre:=null,@preUser:=null,@resultId:=null)q group by userId,problemId,submitTime,temp.resultId order by userId,problemId,submitTime)\n" +
             "    score on score.resultId=r.resultId where r.userId like '%${userId}%' and r.problemId like '%${problemId}%' and stateCode like '%${stateCode}%'" +
             "order by submitTime desc " +
-            "limit #{itemsPerPage} offset #{offset}")
-    List<Result> getResult(@Param("userId") String userId,@Param("problemId") String problemId,@Param("stateCode") String stateCode,@Param("offset")int offset, @Param("itemsPerPage") int itemsPerPage);
+            "limit #{itemsPerPage} offset #{offset}")*/
+ @Select("select r.userId,r.resultId,score.contestId,c.classId,r.problemId,r.submitTime,stateCode,(IF(allowPartial = 0, if(stateCode = 'AC', score, 0), score)) as score from result r join\n" +
+         "    (select temp.resultId,userId,contestId,problemId,submitTime,allowPartial,\n" +
+         "                   count(if(correct=1,1,null))/count(*)*totalScore*\n" +
+         "                   substring_index(substring_index(substr(punishRule,2,LENGTH(punishRule)-2),',',\n" +
+         "                       if((@pre=problemId and @preUser=userId),(if (@resultId=temp.resultId,@s,@s:=@s+1)),@s:=1)),',',-1) as score,\n" +
+         "                   @pre:=problemId,@preUser:=userId,@resultId:=temp.resultId,max(checkpoint.code) as stateCode\n" +
+         "            from(select resultId,punishRule,submitTime,p.problemId,p.contestId,userId,totalScore,allowPartial\n" +
+         "            from result join problem p on result.problemId = p.problemId order by userId,contestId,problemId,submitTime)\n" +
+         "                temp join checkpoint on temp.resultId=checkpoint.resultId,(select @s:=0,@pre:=null,@preUser:=null,@resultId:=null)q group by userId,problemId,submitTime,temp.resultId order by userId,problemId,submitTime)\n" +
+         "                score on score.resultId=r.resultId\n" +
+         "join contest c on c.id=score.contestId\n" +
+         "where r.userId like '%${userId}%' and r.problemId like '%${problemId}%' and stateCode like '%${stateCode}%' and c.id like '%${contestId}%' and c.classId like '%${classId}%'\n" +
+         "            order by submitTime desc  " +
+         "limit #{itemsPerPage} offset #{offset}")
+    List<Result> getResult(@Param("userId") String userId,@Param("problemId") String problemId,@Param("stateCode") String stateCode,@Param("offset")int offset, @Param("itemsPerPage") int itemsPerPage,@Param("contestId")int contestId,@Param("classId")int classId);
 
     @Select("select count(*) from result join (select temp.resultId,userId,problemId,submitTime,allowPartial,\n" +
             "       count(if(correct=1,1,null))/count(*)*totalScore*\n" +

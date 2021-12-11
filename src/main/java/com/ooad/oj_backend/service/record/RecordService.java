@@ -109,14 +109,14 @@ public class RecordService {
         response.setContent(hashMap);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    public ResponseEntity<?> getResult(String userId,String problemId,String stateCode,int page,int itemsPerPage) {
+    public ResponseEntity<?> getResult(String userId,String problemId,String stateCode,int contestId,int groupId,int page,int itemsPerPage) {
         if (!StpUtil.isLogin()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         Response response = new Response();
         response.setCode(0);
         Paper<com.ooad.oj_backend.mybatis.entity.Result>paper=new Paper<>();
-        List<com.ooad.oj_backend.mybatis.entity.Result>results=recordMapper.getResult(userId,problemId,stateCode,(page - 1) * itemsPerPage, itemsPerPage);
+        List<com.ooad.oj_backend.mybatis.entity.Result>results=recordMapper.getResult(userId,problemId,stateCode,(page - 1) * itemsPerPage, itemsPerPage,contestId,groupId);
         String regex="\\d*";
         /*int total=0;
         boolean judge=problemId.matches(regex);
