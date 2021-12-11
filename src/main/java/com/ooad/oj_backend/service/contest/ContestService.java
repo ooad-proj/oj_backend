@@ -62,6 +62,12 @@ public class ContestService {
         User user=userMapper.getOne((String) StpUtil.getLoginId());
         List<UserResult>userResults= recordMapper.getContestResultByName(contestId,user.getName());
         //TODO: get myScore and score
+        for (Problem problem:problems){
+            for(UserResult userResult:userResults) {
+                if(userResult.getShownId().equals(problem.getShownId()))
+                problem.setMyScore(userResult.getScore());
+            }
+        }
         Map<String,Object> map = new HashMap<>();
         map.put("contest",contest);
         map.put("problems",problems);
