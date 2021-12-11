@@ -68,7 +68,7 @@ public interface RecordMapper {
          "where r.userId like '%${userId}%' and r.problemId like '%${problemId}%' and stateCode like '%${stateCode}%' and c.id like '%${contestId}%' and c.classId like '%${classId}%'\n" +
          "            order by submitTime desc  " +
          "limit #{itemsPerPage} offset #{offset}")
-    List<Result> getResult(@Param("userId") String userId,@Param("problemId") String problemId,@Param("stateCode") String stateCode,@Param("offset")int offset, @Param("itemsPerPage") int itemsPerPage,@Param("contestId")int contestId,@Param("classId")int classId);
+    List<Result> getResult(@Param("userId") String userId,@Param("problemId") String problemId,@Param("stateCode") String stateCode,@Param("offset")int offset, @Param("itemsPerPage") int itemsPerPage,@Param("contestId")String contestId,@Param("classId")String classId);
 
     @Select("select count(*) from result join (select temp.resultId,userId,problemId,submitTime,allowPartial,\n" +
             "       count(if(correct=1,1,null))/count(*)*totalScore*\n" +

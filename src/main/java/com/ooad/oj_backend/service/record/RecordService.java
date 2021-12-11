@@ -109,7 +109,7 @@ public class RecordService {
         response.setContent(hashMap);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    public ResponseEntity<?> getResult(String userId,String problemId,String stateCode,int contestId,int groupId,int page,int itemsPerPage) {
+    public ResponseEntity<?> getResult(String userId,String problemId,String stateCode,String contestId,String groupId,int page,int itemsPerPage) {
         if (!StpUtil.isLogin()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
