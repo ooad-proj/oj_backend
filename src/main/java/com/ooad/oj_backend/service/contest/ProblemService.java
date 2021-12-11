@@ -13,6 +13,7 @@ import com.ooad.oj_backend.mybatis.entity.*;
 import com.ooad.oj_backend.redis.RedisUtil;
 import com.ooad.oj_backend.service.user.AuthService;
 import com.ooad.oj_backend.utils.FileToString;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
@@ -423,9 +424,17 @@ public class ProblemService {
         }
     }
     public ResponseEntity<InputStreamResource> downloadTestCase(String testCaseId) {
-        FileToString.stringToFile(StpUtil.getLoginId()+".zip",problemMapper.getTestCase(testCaseId));
         String filePath = StpUtil.getLoginId()+".zip";
-        File f=new File(StpUtil.getLoginId()+".zip");
+        File file1=new File(filePath);
+        try{
+            file1.createNewFile();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        Path path=Paths.get("."+File.pathSeparator+filePath);
+        path=path.toAbsolutePath();
+        FileToString.stringToFile(path.toString(),problemMapper.getTestCase(testCaseId));
+        File f=new File(filePath);
         FileSystemResource file = new FileSystemResource(filePath);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
