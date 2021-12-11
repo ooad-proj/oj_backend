@@ -18,7 +18,7 @@ public interface RecordMapper {
     void addResult(Result result);
 
     @Insert("       INSERT INTO\n" +
-            "         checkpoint (id,total,correct,timeCost,memoryCost,code,name,message,color,resultId)\n" +
+            "         checkpoint (id,total,correct,timeCost,memoryCost/1024,code,name,message,color,resultId)\n" +
             "       VALUE\n" +
             "       (#{r.id},#{r.total},#{r.correct},#{r.timeCost},#{r.memoryCost},#{r.code},#{r.name},#{r.message},#{r.color},#{resultId})")
     void addCheckpoint(@Param("r") com.ooad.oj_backend.rabbitmq.entity.Result result,@Param("resultId")String resultId);
