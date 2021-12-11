@@ -89,7 +89,7 @@ public interface ProblemMapper {
     CreatorAndGroup getCreatorAndGroup(int problemId);
     @Insert("insert into problem (shownId,title,contestId,description,inputFormat,outputFormat,tips,timeLimit,spaceLimit,testCaseId,allowedLanguage,creatorId,totalScore,allowPartial,punishRule)" +
             "value (#{p.shownId},#{p.title},#{contestId},#{p.description},#{p.inputFormat},#{p.outputFormat}" +
-            ",#{p.tips},#{p.timeLimit},#{p.spaceLimit},#{p.testCaseId},#{allowedLanguage},#{creatorId},#{p.totalScore},#{p.allowPartial},#{p.punishRule});")
+            ",#{p.tips},#{p.timeLimit},#{p.spaceLimit}*1024*1024,#{p.testCaseId},#{allowedLanguage},#{creatorId},#{p.totalScore},#{p.allowPartial},#{p.punishRule});")
     @Options(useGeneratedKeys = true, keyProperty = "p.problemId", keyColumn="problemId")
    /* @Insert("insert into problem values (null,#{shownId},#{title},#{contestId},#{description},#{inputFormat},#{outputFormat}" +
             ",#{tips},#{timeLimit},#{spaceLimit},#{testCaseIdId},#{allowedLanguage},#{creatorId});")*/
