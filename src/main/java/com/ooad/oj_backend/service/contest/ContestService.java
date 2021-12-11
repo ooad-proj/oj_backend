@@ -1,6 +1,7 @@
 package com.ooad.oj_backend.service.contest;
 
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.io.resource.*;
 import com.ooad.oj_backend.Response;
 import com.ooad.oj_backend.mapper.contest.ContestMapper;
 import com.ooad.oj_backend.mapper.contest.ProblemMapper;
@@ -10,10 +11,14 @@ import com.ooad.oj_backend.mapper.user.UserMapper;
 import com.ooad.oj_backend.mybatis.entity.*;
 import com.ooad.oj_backend.service.user.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -311,5 +316,15 @@ public class ContestService {
     }
     public ResponseEntity<?> getStudentScore () {
         return null;
+    }
+    public ResponseEntity<InputStreamResource> download() throws IOException {
+        String filePath = "D:/a.csv";
+        FileSystemResource file = new FileSystemResource(filePath);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", file.getFilename()));
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+        return ResponseEntity.ok().headers(headers).contentLength(file.contentLength()).contentType(MediaType.parseMediaType("application/octet-stream")).body(new InputStreamResource(file.getInputStream()));
     }
 }

@@ -2,6 +2,7 @@ package com.ooad.oj_backend.service.contest;
 
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.io.resource.InputStreamResource;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
@@ -14,7 +15,10 @@ import com.ooad.oj_backend.redis.RedisUtil;
 import com.ooad.oj_backend.service.user.AuthService;
 import com.ooad.oj_backend.utils.FileToString;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -418,7 +422,20 @@ public class ProblemService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
+    public ResponseEntity<InputStreamResource> downloadTestCase(String testCaseId) {
+        String filePath = "D:/a.csv";
+        FileSystemResource file = new FileSystemResource(filePath);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Content-Disposition", String.format("attachment; filename=\"%s\"", file.getFilename()));
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+        try {
+            return ResponseEntity.ok().headers(headers).contentLength(file.contentLength()).contentType(MediaType.parseMediaType("application/octet-stream")).body(new InputStreamResource(file.getInputStream()));
+        }catch (IOException e){
+            e.printStackTrace();
+        }return null;
+    }
 
    /* public ResponseEntity<?> addAnswer(int problemId,String language,String code) {
         if(!StpUtil.isLogin()){

@@ -49,6 +49,10 @@ public class ProblemController {
     public ResponseEntity<?> addTestCase(@PathVariable int contestId, MultipartFile file) {
         return problemService.addTestCase(contestId,file);
     }
+    @PostMapping(value = "testCase/{testCaseId}")
+    public ResponseEntity<?> downloadTestCase(@PathVariable("testCaseId")String testCaseId) {
+        return problemService.downloadTestCase(testCaseId);
+    }
     @RequestMapping(value = "standardAnswer/{problemId}",method=RequestMethod.PUT)
     public ResponseEntity<?> updateAnswer(@PathVariable int problemId,@RequestBody AnswerList answer) {
         return problemService.updateAnswer(problemId,answer);
