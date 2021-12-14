@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/api/")
 public class ContestController {
@@ -62,7 +64,7 @@ public class ContestController {
     }
     @RequestMapping(value = "/contest/export/score", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getStudentScore () {
-        return contestService.getStudentScore();
+    public ResponseEntity<?> getStudentScore (int contestId) throws IOException {
+        return contestService.getStudentScore(contestId);
     }
 }
