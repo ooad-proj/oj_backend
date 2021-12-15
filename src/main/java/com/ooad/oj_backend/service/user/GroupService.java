@@ -526,6 +526,9 @@ public class GroupService {
                 User user=userMapper.getOne((String) StpUtil.getLoginId());
                 List<UserResult>nameScore=recordMapper.getNameScoreById(item.contestId,user.getName());
                 List<Problem>problems=problemMapper.getContestProblem(item.contestId);
+                if(nameScore.size()==0){
+                    item.myScore =0;
+                }else
                 item.myScore =nameScore.get(0).getScore();
                 for (Problem problem:problems)
                 item.totalScore +=problem.getTotalScore() ;

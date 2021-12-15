@@ -22,6 +22,7 @@ public class FileToString {
         try {
             os.write(Base64.getDecoder().decode(str));
             os.flush();
+            os.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
