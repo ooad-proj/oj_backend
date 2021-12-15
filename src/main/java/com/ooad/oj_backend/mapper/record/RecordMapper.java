@@ -18,7 +18,7 @@ public interface RecordMapper {
     void addResult(Result result);
 
     @Insert("       INSERT INTO\n" +
-            "         checkpoint (id,total,correct,timeCost,memoryCost,code,name,message,color,resultId)\n" +
+            "         checkpoint (id,total,correct,timeCost,memoryCost/1024/1024,code,name,message,color,resultId)\n" +
             "       VALUE\n" +
             "       (#{r.id},#{r.total},#{r.correct},#{r.timeCost},#{r.memoryCost},#{r.code},#{r.name},#{r.message},#{r.color},#{resultId})")
     void addCheckpoint(@Param("r") com.ooad.oj_backend.rabbitmq.entity.Result result,@Param("resultId")String resultId);
@@ -160,6 +160,43 @@ public interface RecordMapper {
             ")s on s.userId=u.id join contest c on c.id=s.contestId  where contestId=#{contestId} group by shownId,userId,totalScore order by userId,shownId;")
     List<UserResult> getContestResult(@Param("contestId")int contestId);
 
+    @Select("select u.name as userName,shownId,if((max(a)-c.startTime)>0,(max(a)-c.startTime),0) as time,max(b) AS score,totalScore from User u join (\n" +
+            "    select shownId,r.userId,contestId, r.submitTime,score.totalScore, (IF(allowPartial = 0, if(stateCode = 'AC', score, 0), score)) as score,\n" +
+            "            if((@pre1 =r.problemId and @preUser1 =r.userId),@maxScore,@maxScore:=0),\n" +
+            "            if((@pre1 =r.problemId and @preUser1 =r.userId),@maxScore,@minTime:=0),\n" +
+            "           @pre1:=r.problemId,@preUser1:=r.userId,\n" +
+            "           If(IF(allowPartial = 0, if(stateCode = 'AC', score, 0), score)>@maxScore,@minTime:=r.submitTime,@minTime)as a,\n" +
+            "           If(IF(allowPartial = 0, if(stateCode = 'AC', score, 0), score)>@maxScore,@maxScore:=score,@maxScore)as b\n" +
+            "    from result r\n" +
+            "             join (select temp.resultId,\n" +
+            "                          userId,\n" +
+            "                          shownId,\n" +
+            "                          contestId,\n" +
+            "                          problemId,\n" +
+            "                          submitTime,\n" +
+            "                          allowPartial,\n" +
+            "                          totalScore,\n" +
+            "                          count(if(correct = 1, 1, null)) / count(*) * totalScore *\n" +
+            "                          substring_index(substring_index(substr(punishRule, 2, LENGTH(punishRule) - 2), ',',\n" +
+            "                                                          if((@pre = problemId and @preUser = userId),\n" +
+            "                                                             (if(@resultId = temp.resultId, @s, @s := @s + 1)),\n" +
+            "                                                             @s := 1)), ',', -1) as score,\n" +
+            "                          @pre := problemId,\n" +
+            "                          @preUser := userId,\n" +
+            "                          @resultId := temp.resultId,\n" +
+            "                          max(checkpoint.code) as stateCode\n" +
+            "                   from (select resultId,contestId, punishRule, submitTime,shownId, p.problemId, userId, totalScore, allowPartial\n" +
+            "                         from result\n" +
+            "                                  join problem p on result.problemId = p.problemId join contest c2 on p.contestId = c2.id where c2.endTime>result.submitTime\n" +
+            "                         order by userId, problemId, submitTime) temp\n" +
+            "                            join checkpoint on temp.resultId = checkpoint.resultId,\n" +
+            "                        (select @s := 0, @pre := null, @preUser := null, @resultId := null) q\n" +
+            "                   group by userId, problemId, submitTime, temp.resultId\n" +
+            "                   order by userId, problemId, submitTime) score on score.resultId = r.resultId,\n" +
+            "         (select @pre1 := null, @preUser1 := null,@maxScore:=0,@minTime:=0)m\n" +
+            "    order by submitTime\n" +
+            ")s on s.userId=u.id join contest c on c.id=s.contestId  where contestId=#{contestId} and u.name=#{name} group by shownId,userId,totalScore order by userId,shownId;")
+    List<UserResult> getContestResultByName(@Param("contestId")int contestId,@Param("name")String name);
 
     @Select("select name as userName,sum(score) as score from User join\n" +
             "(select u.name as userName,shownId,if((max(a)-c.startTime)>0,(max(a)-c.startTime),0) as time,max(b) AS score,totalScore from User u join (\n" +
@@ -237,6 +274,46 @@ public interface RecordMapper {
             "    order by submitTime\n" +
             ")s on s.userId=u.id join contest c on c.id=s.contestId  where contestId=#{contestId} group by shownId,userId,totalScore order by userId,shownId;")
     List<UserResult> getLatestContestResult(@Param("contestId")int contestId);
+
+
+    @Select("select name as userName,sum(score) as score from User join\n" +
+            "(select u.name as userName,shownId,if((max(a)-c.startTime)>0,(max(a)-c.startTime),0) as time,max(b) AS score,totalScore from User u join (\n" +
+            "    select shownId,r.userId,contestId, r.submitTime,score.totalScore, (IF(allowPartial = 0, if(stateCode = 'AC', score, 0), score)) as score,\n" +
+            "            if((@pre1 =r.problemId and @preUser1 =r.userId),@maxScore,@maxScore:=0),\n" +
+            "            if((@pre1 =r.problemId and @preUser1 =r.userId),@maxScore,@minTime:=0),\n" +
+            "           @pre1:=r.problemId,@preUser1:=r.userId,\n" +
+            "           If(IF(allowPartial = 0, if(stateCode = 'AC', score, 0), score)>@maxScore,@minTime:=r.submitTime,@minTime)as a,\n" +
+            "           If(IF(allowPartial = 0, if(stateCode = 'AC', score, 0), score)>@maxScore,@maxScore:=score,@maxScore)as b\n" +
+            "    from result r\n" +
+            "             join (select temp.resultId,\n" +
+            "                          userId,\n" +
+            "                          shownId,\n" +
+            "                          contestId,\n" +
+            "                          problemId,\n" +
+            "                          submitTime,\n" +
+            "                          allowPartial,\n" +
+            "                          totalScore,\n" +
+            "                          count(if(correct = 1, 1, null)) / count(*) * totalScore *\n" +
+            "                          substring_index(substring_index(substr(punishRule, 2, LENGTH(punishRule) - 2), ',',\n" +
+            "                                                          if((@pre = problemId and @preUser = userId),\n" +
+            "                                                             (if(@resultId = temp.resultId, @s, @s := @s + 1)),\n" +
+            "                                                             @s := 1)), ',', -1) as score,\n" +
+            "                          @pre := problemId,\n" +
+            "                          @preUser := userId,\n" +
+            "                          @resultId := temp.resultId,\n" +
+            "                          max(checkpoint.code) as stateCode\n" +
+            "                   from (select resultId,contestId, punishRule, submitTime,shownId, p.problemId, userId, totalScore, allowPartial\n" +
+            "                         from result\n" +
+            "                                  join problem p on result.problemId = p.problemId join contest c2 on p.contestId = c2.id where c2.endTime>result.submitTime\n" +
+            "                         order by userId, problemId, submitTime) temp\n" +
+            "                            join checkpoint on temp.resultId = checkpoint.resultId,\n" +
+            "                        (select @s := 0, @pre := null, @preUser := null, @resultId := null) q\n" +
+            "                   group by userId, problemId, submitTime, temp.resultId\n" +
+            "                   order by userId, problemId, submitTime) score on score.resultId = r.resultId,\n" +
+            "         (select @pre1 := null, @preUser1 := null,@maxScore:=0,@minTime:=0)m\n" +
+            "    order by submitTime\n" +
+            ")s on s.userId=u.id join contest c on c.id=s.contestId  where contestId=#{contestId} group by shownId,userId,totalScore)s1 on s1.userName=User.name where name=#{name} group by userName order by score desc;")
+    List<UserResult> getNameScoreById(@Param("contestId")int contestId,@Param("name") String name);
 
     @Select("select code from result join User u on result.userId = u.id " +
             "join problem p on p.problemId = result.problemId " +

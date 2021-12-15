@@ -2,6 +2,8 @@ package com.ooad.oj_backend.service.user;
 import cn.dev33.satoken.stp.StpUtil;
 import com.ooad.oj_backend.Response;
 import com.ooad.oj_backend.mapper.contest.ContestMapper;
+import com.ooad.oj_backend.mapper.contest.ProblemMapper;
+import com.ooad.oj_backend.mapper.record.RecordMapper;
 import com.ooad.oj_backend.mapper.user.AuthMapper;
 import com.ooad.oj_backend.mapper.user.GroupMapper;
 import com.ooad.oj_backend.mapper.user.UserMapper;
@@ -37,6 +39,10 @@ public class GroupService {
     private AuthService authService;
     @Autowired
     private ContestMapper contestMapper;
+    @Autowired
+    private RecordMapper recordMapper;
+    @Autowired
+    private ProblemMapper problemMapper;
 
     public ResponseEntity<?> addGroup(String name) {
         ResponseEntity responseEntity = authService.checkPermission("1-0");
@@ -517,9 +523,12 @@ public class GroupService {
                 item.startTime = c.getStartTime();
                 item.title = c.getTitle();
                 //TODO:get my score and total score
-                item.myScore =-1;
-                item.totalScore = -1;
-
+                User user=userMapper.getOne((String) StpUtil.getLoginId());
+                List<UserResult>nameScore=recordMapper.getNameScoreById(item.contestId,user.getName());
+                List<Problem>problems=problemMapper.getContestProblem(item.contestId);
+                item.myScore =nameScore.get(0).getScore();
+                for (Problem problem:problems)
+                item.totalScore +=problem.getTotalScore() ;
                 contestListItems.add(item);
             }
             Paper paper = new Paper();

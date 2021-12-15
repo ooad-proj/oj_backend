@@ -26,6 +26,7 @@ public class Problem implements Serializable {
     private String[] allowedLanguage;
     private String allowedLanguage1;
     private int totalScore;
+    private int myScore;
     private String punishRule="[1]";
     private boolean allowPartial=true;
     private Samples[] samples;

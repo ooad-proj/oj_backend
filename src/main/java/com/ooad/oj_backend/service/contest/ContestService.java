@@ -59,7 +59,15 @@ public class ContestService {
         Response response=new Response();
         Contest contest = contestMapper.getOneContest(contestId);
         List<Problem> problems = problemMapper.getContestProblem(contestId);
+        User user=userMapper.getOne((String) StpUtil.getLoginId());
+        List<UserResult>userResults= recordMapper.getContestResultByName(contestId,user.getName());
         //TODO: get myScore and score
+        for (Problem problem:problems){
+            for(UserResult userResult:userResults) {
+                if(userResult.getShownId().equals(problem.getShownId()))
+                problem.setMyScore(userResult.getScore());
+            }
+        }
         Map<String,Object> map = new HashMap<>();
         map.put("contest",contest);
         map.put("problems",problems);
@@ -346,9 +354,44 @@ public class ContestService {
             e.printStackTrace();
         }return null;
     }
-    public ResponseEntity<?> getStudentScore () {
 
-        String filePath = "";
+    public ResponseEntity<?> getStudentScore (int contestId) throws IOException {
+        List<UserResult> userResults=recordMapper.getContestResult(contestId);
+        HashMap<String, ArrayList<UserResult>> userScore = new HashMap<>();
+        for(int i = 0;i<userResults.size();i++){
+            if(!userScore.containsKey(userResults.get(i).getUserName())){
+                userScore.put(userResults.get(i).getUserName(),new ArrayList<>());
+            }
+            userScore.get(userResults.get(i).getUserName()).add(userResults.get(i));
+        }
+
+
+        String filePath = StpUtil.getLoginId()+".csv";
+        BufferedWriter writeText = new BufferedWriter(new FileWriter(filePath));
+        String headRow ="用户名,";
+        String[] names = userScore.keySet().toArray(new String[0]);
+
+        for(int i =0;i<userScore.keySet().size();i++){
+            writeText.newLine();
+//            double totalScore =0;
+            String row = names[i] +",";
+            userScore.get(names[i]).sort(Comparator.comparing(UserResult::getShownId));
+            if(i==0){
+                for(int j =0 ; j< userScore.get(names[i]).size();j++){
+                    headRow+= userScore.get(names[i]).get(j).getShownId() + ",";
+                }
+                headRow+= "总分";
+                writeText.write(headRow);
+            }
+            for(int j =0  ; j<userScore.get(names[i]).size();j++){
+                row += userScore.get(names[i]).get(j).getScore();
+            }
+            row += userScore.get(names[i]).get(0).getTotalScore();
+            writeText.write(row);
+        }
+        writeText.flush();
+        writeText.close();
+
         FileSystemResource file = new FileSystemResource(filePath);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");

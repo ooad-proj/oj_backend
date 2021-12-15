@@ -23,7 +23,7 @@ public class RecordController {
         return recordService.getStandardTestRecord(recordId);
     }
     @RequestMapping(value = "get/list",method = RequestMethod.GET)
-    public ResponseEntity<?> getResult(String userId,String problemId,String stateCode,int contestId,int groupId,int page,int itemsPerPage) {
+    public ResponseEntity<?> getResult(String userId,String problemId,String stateCode,String contestId,String groupId,int page,int itemsPerPage) {
         return recordService.getResult(userId, problemId, stateCode,contestId,groupId, page, itemsPerPage);
     }
     @RequestMapping(value = "get/ranklist",method = RequestMethod.GET)
