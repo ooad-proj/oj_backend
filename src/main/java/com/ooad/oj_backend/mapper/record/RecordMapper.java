@@ -61,25 +61,20 @@ public interface RecordMapper {
          "                       if((@pre=problemId and @preUser=userId),(if (@resultId=temp.resultId,@s,@s:=@s+1)),@s:=1)),',',-1) as score,\n" +
          "                   @pre:=problemId,@preUser:=userId,@resultId:=temp.resultId,max(checkpoint.code) as stateCode\n" +
          "            from(select resultId,punishRule,submitTime,p.problemId,p.contestId,userId,totalScore,allowPartial\n" +
-         "            from result join problem p on result.problemId = p.problemId order by userId,contestId,problemId,submitTime)\n" +
+         "            from result join problem p on result.problemId = p.problemId where p.problemId like '%${problemId}%' order by userId,contestId,problemId,submitTime )\n" +
          "                temp join checkpoint on temp.resultId=checkpoint.resultId,(select @s:=0,@pre:=null,@preUser:=null,@resultId:=null)q group by userId,problemId,submitTime,temp.resultId order by userId,problemId,submitTime)\n" +
          "                score on score.resultId=r.resultId\n" +
          "join contest c on c.id=score.contestId\n" +
-         "where r.userId like '%${userId}%' and r.problemId like '%${problemId}%' and stateCode like '%${stateCode}%' and c.id like '%${contestId}%' and c.classId like '%${classId}%'\n" +
+         "where r.userId like '%${userId}%' and stateCode like '%${stateCode}%' and c.id like '%${contestId}%' and c.classId like '%${classId}%'\n" +
          "            order by submitTime desc  " +
          "limit #{itemsPerPage} offset #{offset}")
     List<Result> getResult(@Param("userId") String userId,@Param("problemId") String problemId,@Param("stateCode") String stateCode,@Param("offset")int offset, @Param("itemsPerPage") int itemsPerPage,@Param("contestId")String contestId,@Param("classId")String classId);
 
-    @Select("select count(*) from result join (select temp.resultId,userId,problemId,submitTime,allowPartial,\n" +
-            "       count(if(correct=1,1,null))/count(*)*totalScore*\n" +
-            "       substring_index(substring_index(substr(punishRule,2,LENGTH(punishRule)-2),',',\n" +
-            "           if((@pre=problemId and @preUser=userId),(if (@resultId=temp.resultId,@s,@s:=@s+1)),@s:=1)),',',-1) as score,\n" +
-            "       @pre:=problemId,@preUser:=userId,@resultId:=temp.resultId,max(checkpoint.code) as stateCode\n" +
-            "from(select resultId,punishRule,submitTime,p.problemId,userId,totalScore,allowPartial\n" +
-            "from result join problem p on result.problemId = p.problemId order by userId,problemId,submitTime)\n" +
-            "    temp join checkpoint on temp.resultId=checkpoint.resultId,(select @s:=0,@pre:=null,@preUser:=null,@resultId:=null)q group by userId,problemId,submitTime,temp.resultId order by userId,problemId,submitTime)\n" +
-            "    score on score.resultId=result.resultId where result.userId like '%${userId}%' and result.problemId like '%${problemId}%' and stateCode like '%${stateCode}%'")
-    int getResultNum(@Param("userId") String userId,@Param("problemId") String problemId,@Param("stateCode") String stateCode);
+    @Select("select count(*) from (select distinct result.resultId from result join User on User.id=result.userId " +
+            "join problem on problem.problemId=result.problemId join checkpoint cp on cp.resultId=result.resultId" +
+            " join contest c on problem.contestId=c.id "+
+            " where result.userId like '%${userId}%' and result.problemId like '%${problemId}%' and cp.code like '%${stateCode}%' and c.id like '%${contestId}%' and c.classId like '%${classId}%' )temp")
+    int getResultNum(@Param("userId") String userId,@Param("problemId") String problemId,@Param("stateCode") String stateCode,@Param("contestId")String contestId,@Param("classId")String groupId);
 
     /*@Select("select u1.id as userId,name as userName,correctNum,answerNum,correctNum/answerNum as correctRate,(if(@pr=correctNum,@r,@r:=@r+1))as rank,@pr:=correctNum as i from User u1 join (select u.id,sum(correct)as correctNum,sum(answerNum) as answerNum from User u join (select id,name,problemId,if(count(if(stateCode='AC',1,null))>0,1,0)as correct,if((count(*))>0,1,0) as answerNum  from User u join (select temp.resultId,userId,problemId,submitTime,allowPartial,\n" +
             "                   count(if(correct=1,1,null))/count(*)*totalScore*\n" +

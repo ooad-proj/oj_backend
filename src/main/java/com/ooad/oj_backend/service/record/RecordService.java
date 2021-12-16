@@ -118,11 +118,12 @@ public class RecordService {
         response.setCode(0);
         Paper<com.ooad.oj_backend.mybatis.entity.Result>paper=new Paper<>();
         List<com.ooad.oj_backend.mybatis.entity.Result>results=recordMapper.getResult(userId,problemId,stateCode,(page - 1) * itemsPerPage, itemsPerPage,contestId,groupId);
+
         String regex="\\d*";
         /*int total=0;
         boolean judge=problemId.matches(regex);
         if(judge) {*/
-           int total = recordMapper.getResultNum(userId, problemId, stateCode);
+           int total = recordMapper.getResultNum(userId, problemId, stateCode,contestId,groupId);
        // }
         paper.setItemsPerPage(results.size());
         paper.setPage(page);

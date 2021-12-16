@@ -257,8 +257,10 @@ public class ContestService {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
         }
-        List<UserResult>userResults=recordMapper.getContestResult(contestId);
-        List<UserResult>nameScore=recordMapper.getNameScore(contestId);
+        List<UserResult>userResults=List.of();
+        List<UserResult>nameScore=List.of();
+        //List<UserResult>userResults=recordMapper.getContestResult(contestId);
+        //List<UserResult>nameScore=recordMapper.getNameScore(contestId);
         HashMap<String,Object>hashMap=new HashMap<>();
         List<Problem>problems=problemMapper.getContestProblem(contestId);
         List<String>shown=new LinkedList<>();
@@ -271,7 +273,8 @@ public class ContestService {
         }
         HashMap<String,Object []>fast=new HashMap<>();
         for (UserResult userResult:userResults) {
-            fast.put(userResult.getUserName()+"|"+userResult.getShownId(),new Object[]{userResult.getScore(),userResult.getTotalScore(),userResult.getTime()});
+            String user=userResult.getUserName();
+            fast.put(user+"|"+userResult.getShownId(),new Object[]{userResult.getScore(),userResult.getTotalScore(),userResult.getTime()});
         }
         List<HashMap<String,Object>>list=new LinkedList<>();
         for (UserResult name:nameScore) {
