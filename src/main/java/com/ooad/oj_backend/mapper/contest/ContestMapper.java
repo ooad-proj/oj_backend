@@ -13,7 +13,7 @@ import java.util.List;
 public interface ContestMapper {
 
     @Select("        SELECT\n" +
-            "        title, description,startTime,endTime,access\n" +
+            "        title, description,startTime,endTime,access,creatorId\n" +
             "        FROM contest\n" +
             "        where id=#{contestId}")
     Contest getOneContest(int contestId);

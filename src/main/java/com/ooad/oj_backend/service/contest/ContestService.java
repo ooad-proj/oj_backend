@@ -58,6 +58,9 @@ public class ContestService {
         }
         Response response=new Response();
         Contest contest = contestMapper.getOneContest(contestId);
+        User creator=userMapper.getOne(contest.getCreatorId());
+        if(creator!=null)
+        contest.setCreatorName(creator.getName());
         List<Problem> problems = problemMapper.getContestProblem(contestId);
         User user=userMapper.getOne((String) StpUtil.getLoginId());
         List<UserResult>userResults= recordMapper.getContestResultByName(contestId,user.getName());
@@ -325,6 +328,12 @@ public class ContestService {
 
     }
     public ResponseEntity<?> getAcceptedCode (int contestId) {
+        ResponseEntity responseEntity1 = authService.checkPermission("1-0");
+        int classId=contestMapper.getClassByContest(contestId);
+        ResponseEntity responseEntity2 = authService.checkPermission("1-" + classId);
+        if (responseEntity1!=null&&responseEntity2!=null){
+            return responseEntity2;
+        }
         List<UserResult>userResults=recordMapper.getLatestContestResult(contestId);
         File file1 = new File(StpUtil.getLoginId()+".zip");
         try {
@@ -333,11 +342,12 @@ public class ContestService {
         FileOutputStream fOutputStream = new FileOutputStream(file1);
         ZipOutputStream zoutput = new ZipOutputStream(fOutputStream);
         for (UserResult userResult:userResults){
-                ZipEntry zEntry = new ZipEntry(userResult.getUserName() + "-" + userResult.getShownId()+".txt");
+                ZipEntry zEntry = new ZipEntry(userResult.getUserId() + "-" + userResult.getShownId()+".txt");
                 zoutput.putNextEntry(zEntry);
                 zoutput.write(recordMapper.getCode(contestId,userResult.getUserName(),userResult.getShownId(),userResult.getTime()).getBytes());
-                zoutput.close();
+               // zoutput.close();
         }
+            zoutput.close();
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -359,16 +369,16 @@ public class ContestService {
         List<UserResult> userResults=recordMapper.getContestResult(contestId);
         HashMap<String, ArrayList<UserResult>> userScore = new HashMap<>();
         for(int i = 0;i<userResults.size();i++){
-            if(!userScore.containsKey(userResults.get(i).getUserName())){
-                userScore.put(userResults.get(i).getUserName(),new ArrayList<>());
+            if(!userScore.containsKey(userResults.get(i).getUserId())){
+                userScore.put(userResults.get(i).getUserId(),new ArrayList<>());
             }
-            userScore.get(userResults.get(i).getUserName()).add(userResults.get(i));
+            userScore.get(userResults.get(i).getUserId()).add(userResults.get(i));
         }
 
 
         String filePath = StpUtil.getLoginId()+".csv";
         BufferedWriter writeText = new BufferedWriter(new FileWriter(filePath));
-        String headRow ="用户名,";
+        String headRow ="id,";
         String[] names = userScore.keySet().toArray(new String[0]);
 
         for(int i =0;i<userScore.keySet().size();i++){
@@ -380,13 +390,15 @@ public class ContestService {
                 for(int j =0 ; j< userScore.get(names[i]).size();j++){
                     headRow+= userScore.get(names[i]).get(j).getShownId() + ",";
                 }
-                headRow+= "总分";
+                headRow+= "totalScore\n";
                 writeText.write(headRow);
             }
+            int total=0;
             for(int j =0  ; j<userScore.get(names[i]).size();j++){
                 row += userScore.get(names[i]).get(j).getScore();
+                total+=userScore.get(names[i]).get(j).getScore();
             }
-            row += userScore.get(names[i]).get(0).getTotalScore();
+            row =row+ ","+total;
             writeText.write(row);
         }
         writeText.flush();

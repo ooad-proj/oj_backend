@@ -30,16 +30,16 @@ public interface RecordMapper {
             "where resultId = #{submitId}")
     Result getResultAndCode(String submitId);
     @Select("        SELECT\n" +
-            "        submitTime/1000\n" +
+            "        submitTime\n" +
             "        FROM result\n" +
-            "        where userId=#{userId} and submitTime/1000>#{milliSecond}" +
+            "        where userId=#{userId} and submitTime>#{milliSecond}" +
             "        order by submitTime asc")
     List<Long> getSubmitNum(@Param("userId") String userId,@Param("milliSecond")long milliSecond);
 
     @Select("        SELECT\n" +
-            "        submitTime/1000\n" +
+            "        submitTime\n" +
             "        FROM result\n" +
-            "        where submitTime/1000>#{milliSecond}" +
+            "        where submitTime>#{milliSecond}" +
             "        order by submitTime asc")
     List<Long> getAllSubmitNum(long milliSecond);
 
@@ -54,7 +54,7 @@ public interface RecordMapper {
             "    score on score.resultId=r.resultId where r.userId like '%${userId}%' and r.problemId like '%${problemId}%' and stateCode like '%${stateCode}%'" +
             "order by submitTime desc " +
             "limit #{itemsPerPage} offset #{offset}")*/
- @Select("select r.userId,r.resultId,score.contestId,c.classId,r.problemId,r.submitTime,stateCode,(IF(allowPartial = 0, if(stateCode = 'AC', score, 0), score)) as score from result r join\n" +
+ @Select("select r.userId,r.resultId,score.contestId,c.classId as groupId,r.problemId,r.submitTime,stateCode,(IF(allowPartial = 0, if(stateCode = 'AC', score, 0), score)) as score from result r join\n" +
          "    (select temp.resultId,userId,contestId,problemId,submitTime,allowPartial,\n" +
          "                   count(if(correct=1,1,null))/count(*)*totalScore*\n" +
          "                   substring_index(substring_index(substr(punishRule,2,LENGTH(punishRule)-2),',',\n" +
@@ -119,10 +119,10 @@ public interface RecordMapper {
             "            from(select resultId,punishRule,submitTime,userId,totalScore,allowPartial\n" +
             "            from result join problem p on result.problemId = p.problemId order by userId,submitTime)\n" +
             "                temp join checkpoint on temp.resultId=checkpoint.resultId,(select @s:=0,@pre:=null,@preUser:=null,@resultId:=null)q group by userId,submitTime,temp.resultId order by userId,submitTime)\n" +
-            "                score on score.userId=u.id group by id)up on up.id=u.id group by id)u2 on u1.id=u2.id ,(select @r:=0,@pr:=null)q where u2.id=#{userId} order by correctNum desc")
+            "                score on score.userId=u.id group by id)up on up.id=u.id group by id)u2 on u1.id=u2.id ,(select @r:=0,@pr:=null)q where u2.id=#{userId}")
     List<Rank>getUserRank(@Param("userId")String userId);
 
-    @Select("select u.name as userName,shownId,if((max(a)-c.startTime)>0,(max(a)-c.startTime),0) as time,max(b) AS score,totalScore from User u join (\n" +
+    @Select("select u.id as userId,u.name as userName,shownId,if((max(a)-c.startTime)>0,(max(a)-c.startTime),0) as time,max(b) AS score,totalScore from User u join (\n" +
             "    select shownId,r.userId,contestId, r.submitTime,score.totalScore, (IF(allowPartial = 0, if(stateCode = 'AC', score, 0), score)) as score,\n" +
             "            if((@pre1 =r.problemId and @preUser1 =r.userId),@maxScore,@maxScore:=0),\n" +
             "            if((@pre1 =r.problemId and @preUser1 =r.userId),@maxScore,@minTime:=0),\n" +
@@ -237,7 +237,7 @@ public interface RecordMapper {
             ")s on s.userId=u.id join contest c on c.id=s.contestId  where contestId=#{contestId} group by shownId,userId,totalScore)s1 on s1.userName=User.name group by userName order by score desc;")
     List<UserResult> getNameScore(@Param("contestId")int contestId);
 
-    @Select("select u.name as userName,shownId,if((max(a)-c.startTime)>0,(max(a)-c.startTime),0) as time,max(b) AS score,totalScore from User u join (\n" +
+    @Select("select u.id as userId,u.name as userName,shownId,if((max(a)-c.startTime)>0,(max(a)-c.startTime),0) as time,max(b) AS score,totalScore from User u join (\n" +
             "    select shownId,r.userId,contestId, r.submitTime,score.totalScore, (IF(allowPartial = 0, if(stateCode = 'AC', score, 0), score)) as score,\n" +
             "            if((@pre1 =r.problemId and @preUser1 =r.userId),@maxScore,@maxScore:=0),\n" +
             "            if((@pre1 =r.problemId and @preUser1 =r.userId),@maxScore,@minTime:=0),\n" +

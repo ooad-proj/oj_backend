@@ -57,14 +57,14 @@ public class ContestController {
         return contestService.getContestRank(contestId);
     }
 
-    @RequestMapping(value = "/contest/{contestId}/accepted", method = RequestMethod.GET)
+    @RequestMapping(value = "/contest/{contestId}/export/accepted", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getAcceptedCode (@PathVariable int contestId) {
         return contestService.getAcceptedCode(contestId);
     }
-    @RequestMapping(value = "/contest/export/score", method = RequestMethod.GET)
+    @RequestMapping(value = "/contest/{contestId}/export/score", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getStudentScore (int contestId) throws IOException {
+    public ResponseEntity<?> getStudentScore (@PathVariable int contestId) throws IOException {
         return contestService.getStudentScore(contestId);
     }
 }

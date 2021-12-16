@@ -525,6 +525,7 @@ public class ProblemService {
         if (responseEntity==null ){
             Contest contest=problemMapper.getContestNumber(problemId);
             if(!problem1.isPublish()||!contest.isAccess()) {
+                response.setCode(-2);
                 response.setContent(List.of());
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }

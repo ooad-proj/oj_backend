@@ -15,7 +15,8 @@ public class Result {
     String userId;
     int problemId;
     double score;
-
+    int groupId;
+    int contestId;
     boolean allowPartial=false;
     String code;
     String stateCode;
