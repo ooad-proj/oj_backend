@@ -271,9 +271,6 @@ public class ForumService {
     }
 
     public ResponseEntity<?> getAnnouncement(int groupId,int length) {
-        if(!StpUtil.isLogin()){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
         Response response=new Response();
         List<Announcement> announcements = forumMapper.getAnnouncement(groupId,length);
         for(int i =0;i<announcements.size();i++){

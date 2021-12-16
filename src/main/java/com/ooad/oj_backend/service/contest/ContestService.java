@@ -221,9 +221,6 @@ public class ContestService {
     }
 
     public ResponseEntity<?> getCloseContest(int amount) {
-        if(!StpUtil.isLogin()){
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
         String userId = (String) StpUtil.getLoginId();
         Response response = new Response();
         long nowTime = System.currentTimeMillis();

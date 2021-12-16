@@ -133,9 +133,6 @@ public class RecordService {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
     public ResponseEntity<?> getRank(int page,int itemsPerPage) {
-        if (!StpUtil.isLogin()) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
         Response response = new Response();
         response.setCode(0);
         Paper<Rank>paper=new Paper<>();
