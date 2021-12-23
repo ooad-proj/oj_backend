@@ -122,7 +122,7 @@ public class RecordService {
         /*int total=0;
         boolean judge=problemId.matches(regex);
         if(judge) {*/
-           int total = recordMapper.getResultNum(userId, problemId, stateCode);
+           int total = recordMapper.getResultNum(userId,problemId,stateCode,contestId,groupId);
        // }
         paper.setItemsPerPage(results.size());
         paper.setPage(page);
