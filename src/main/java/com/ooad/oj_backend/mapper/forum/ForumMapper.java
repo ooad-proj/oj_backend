@@ -80,7 +80,7 @@ public interface ForumMapper {
     @Select("SELECT commentId,floorId,userId,u.name as userName ,comment,modifyTime FROM comment join User u on comment.userId = u.id " +
 
             "        where postId =#{postId} "+
-            "        order by id limit #{itemsPerPage} offset #{offset}" )
+            "        order by floorId limit #{itemsPerPage} offset #{offset}" )
     List<CommentByPage> getCommentByPage(@Param("postId") int postId, @Param("offset")int offset, @Param("itemsPerPage") int itemsPerPage );
 
     @Select("SELECT count(*) FROM comment join User u on comment.userId = u.id " +

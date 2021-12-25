@@ -150,12 +150,16 @@ public class RecordService {
 
     //TODO
     public void addResult(com.ooad.oj_backend.mybatis.entity.Result result, List<Result> checkPoints) {
+        System.out.println(result.getResultId());
+        try{
         recordMapper.addResult(result);
         for(Result result1:checkPoints){
             recordMapper.addCheckpoint(result1,result.getResultId());
         }
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
     }
-
     public List<Result> getResultFromSql(String submitId) {
         return recordMapper.getCheckpoint(submitId);
     }

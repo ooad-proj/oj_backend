@@ -67,7 +67,7 @@ public class SubmitService {
         }
         Problem problem=problemMapper.getDetailedProblem(problemId);
         List<Template>submitTemplates=problemMapper.getTemplate(problemId);
-        JudgeDetail detail=new JudgeDetail(language,code,(int)problem.getTimeLimit(),(int)problem.getSpaceLimit(),submitTemplates);
+        JudgeDetail detail=new JudgeDetail(language,code,(int)problem.getTimeLimit(),(int)problem.getSpaceLimit()*1024,submitTemplates);
         String UUID=judgerService.judge(problem.getTestCase(),detail,problemId);
         HashMap<String,Object>hashMap=new HashMap<>();
         hashMap.put("submitId",UUID);
@@ -103,8 +103,8 @@ public class SubmitService {
         List<Answer> answers=problemMapper.getStandardAnswerByProblem(problemId);
         Problem problem=problemMapper.getDetailedProblem(problemId);
         List<Template>submitTemplates=problemMapper.getTemplate(problemId);
-        JudgeDetail userJudgeDetail=new JudgeDetail(language,code,(int)problem.getTimeLimit(),(int)problem.getSpaceLimit(),submitTemplates);
-        JudgeDetail answerJudgeDetail=new JudgeDetail(answers.get(0).getLanguage(),answers.get(0).getCode(),(int)problem.getTimeLimit(),(int)problem.getSpaceLimit(),submitTemplates);
+        JudgeDetail userJudgeDetail=new JudgeDetail(language,code,(int)problem.getTimeLimit(),(int)problem.getSpaceLimit()*1024,submitTemplates);
+        JudgeDetail answerJudgeDetail=new JudgeDetail(answers.get(0).getLanguage(),answers.get(0).getCode(),(int)problem.getTimeLimit(),(int)problem.getSpaceLimit()*1024,submitTemplates);
         String UUID=judgerService.testTestCase(testcase,userJudgeDetail,answerJudgeDetail);
         HashMap<String,Object>hashMap=new HashMap<>();
         hashMap.put("submitId",UUID);

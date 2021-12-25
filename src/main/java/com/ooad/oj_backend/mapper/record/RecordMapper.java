@@ -20,7 +20,7 @@ public interface RecordMapper {
     @Insert("       INSERT INTO\n" +
             "         checkpoint (id,total,correct,timeCost,memoryCost,code,name,message,color,resultId)\n" +
             "       VALUE\n" +
-            "       (#{r.id},#{r.total},#{r.correct},#{r.timeCost},#{r.memoryCost}/1024/1024,#{r.code},#{r.name},#{r.message},#{r.color},#{resultId})")
+            "       (#{r.id},#{r.total},#{r.correct},#{r.timeCost},#{r.memoryCost},#{r.code},#{r.name},#{r.message},#{r.color},#{resultId})")
     void addCheckpoint(@Param("r") com.ooad.oj_backend.rabbitmq.entity.Result result,@Param("resultId")String resultId);
 
     @Select("select * from checkpoint " +
@@ -87,7 +87,7 @@ public interface RecordMapper {
             "                score on score.userId=u.id group by problemId,id)up on up.id=u.id group by id)u2 on u1.id=u2.id ,(select @r:=0,@pr:=null)q order by correctNum desc " +
             "limit #{itemsPerPage} offset #{offset};")
     List<Rank>getRank(@Param("offset")int offset, @Param("itemsPerPage") int itemsPerPage);*/
-    @Select("select u1.id as userId,name as userName,correctNum,answerNum,correctNum/answerNum as correctRate,@pr:=correctNum,rank()over(order by correctNum desc)\n" +
+    @Select("select u1.id as userId,name as userName,correctNum,answerNum,correctNum/answerNum as correctRate,@pr:=correctNum,rank()over(order by correctNum desc)as ranking\n" +
             "from User u1 join\n" +
             "(select u.id,sum(correct)as correctNum,sum(answerNum) as answerNum from User u join (select id,name,count(if(stateCode='AC',1,null))as correct,count(*) as answerNum\n" +
             "from User u join (select temp.resultId,userId,submitTime,allowPartial,\n" +
@@ -109,7 +109,7 @@ public interface RecordMapper {
             "                            temp join checkpoint on temp.resultId=checkpoint.resultId,(select @s:=0,@pre:=null,@preUser:=null,@resultId:=null)q group by userId,submitTime,temp.resultId order by userId,submitTime)\n" +
             "                            score on score.userId=u.id group by id)up on up.id=u.id group by id)u2 on u1.id=u2.id,(select @r:=0,@pr:=0)q ")
     int getRankNum();
-    @Select("select u1.id as userId,name as userName,correctNum,answerNum,correctNum/answerNum as correctRate,rank()over(order by correctNum desc),@pr:=correctNum from User u1 join (select u.id,sum(correct)as correctNum,sum(answerNum) as answerNum from User u join (select id,name,count(if(stateCode='AC',1,null))as correct,count(*) as answerNum  from User u join (select temp.resultId,userId,submitTime,allowPartial,\n" +
+    @Select("select u1.id as userId,name as userName,correctNum,answerNum,correctNum/answerNum as correctRate,rank()over(order by correctNum desc)as ranking,@pr:=correctNum from User u1 join (select u.id,sum(correct)as correctNum,sum(answerNum) as answerNum from User u join (select id,name,count(if(stateCode='AC',1,null))as correct,count(*) as answerNum  from User u join (select temp.resultId,userId,submitTime,allowPartial,\n" +
             "                   @preUser:=userId,@resultId:=temp.resultId,max(checkpoint.code) as stateCode\n" +
             "            from(select resultId,punishRule,submitTime,userId,totalScore,allowPartial\n" +
             "            from result join problem p on result.problemId = p.problemId order by userId,submitTime)\n" +
@@ -190,10 +190,10 @@ public interface RecordMapper {
             "                   order by userId, problemId, submitTime) score on score.resultId = r.resultId,\n" +
             "         (select @pre1 := null, @preUser1 := null,@maxScore:=0,@minTime:=0)m\n" +
             "    order by submitTime\n" +
-            ")s on s.userId=u.id join contest c on c.id=s.contestId  where contestId=#{contestId} and u.name=#{name} group by shownId,userId,totalScore order by userId,shownId;")
+            ")s on s.userId=u.id join contest c on c.id=s.contestId  where contestId=#{contestId} and u.id=#{name} group by shownId,userId,totalScore order by userId,shownId;")
     List<UserResult> getContestResultByName(@Param("contestId")int contestId,@Param("name")String name);
 
-    @Select("select name as userName,sum(score) as score from User join\n" +
+    @Select("select User.id as userId,name as userName,sum(score) as score from User join\n" +
             "(select u.name as userName,shownId,if((max(a)-c.startTime)>0,(max(a)-c.startTime),0) as time,max(b) AS score,totalScore from User u join (\n" +
             "    select shownId,r.userId,contestId, r.submitTime,score.totalScore, (IF(allowPartial = 0, if(stateCode = 'AC', score, 0), score)) as score,\n" +
             "            if((@pre1 =r.problemId and @preUser1 =r.userId),@maxScore,@maxScore:=0),\n" +
@@ -229,7 +229,7 @@ public interface RecordMapper {
             "                   order by userId, problemId, submitTime) score on score.resultId = r.resultId,\n" +
             "         (select @pre1 := null, @preUser1 := null,@maxScore:=0,@minTime:=0)m\n" +
             "    order by submitTime\n" +
-            ")s on s.userId=u.id join contest c on c.id=s.contestId  where contestId=#{contestId} group by shownId,userId,totalScore)s1 on s1.userName=User.name group by userName order by score desc;")
+            ")s on s.userId=u.id join contest c on c.id=s.contestId  where contestId=#{contestId} group by shownId,userId,totalScore)s1 on s1.userName=User.name group by User.id,userName order by score desc;")
     List<UserResult> getNameScore(@Param("contestId")int contestId);
 
     @Select("select u.id as userId,u.name as userName,shownId,if((max(a)-c.startTime)>0,(max(a)-c.startTime),0) as time,max(b) AS score,totalScore from User u join (\n" +

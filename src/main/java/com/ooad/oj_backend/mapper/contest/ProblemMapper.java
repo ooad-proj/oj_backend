@@ -89,7 +89,7 @@ public interface ProblemMapper {
     CreatorAndGroup getCreatorAndGroup(int problemId);
     @Insert("insert into problem (shownId,title,contestId,description,inputFormat,outputFormat,tips,timeLimit,spaceLimit,testCaseId,allowedLanguage,creatorId,totalScore,allowPartial,punishRule)" +
             "value (#{p.shownId},#{p.title},#{contestId},#{p.description},#{p.inputFormat},#{p.outputFormat}" +
-            ",#{p.tips},#{p.timeLimit},#{p.spaceLimit}*1024,#{p.testCaseId},#{allowedLanguage},#{creatorId},#{p.totalScore},#{p.allowPartial},#{p.punishRule});")
+            ",#{p.tips},#{p.timeLimit},#{p.spaceLimit},#{p.testCaseId},#{allowedLanguage},#{creatorId},#{p.totalScore},#{p.allowPartial},#{p.punishRule});")
     @Options(useGeneratedKeys = true, keyProperty = "p.problemId", keyColumn="problemId")
    /* @Insert("insert into problem values (null,#{shownId},#{title},#{contestId},#{description},#{inputFormat},#{outputFormat}" +
             ",#{tips},#{timeLimit},#{spaceLimit},#{testCaseIdId},#{allowedLanguage},#{creatorId});")*/
@@ -105,7 +105,7 @@ public interface ProblemMapper {
     void addSample(@Param("problemId")int problemId,@Param("input")String input, @Param("output")String output);
 
     @Update("update problem set shownId=#{p.shownId},title=#{p.title},description=#{p.description},inputFormat=#{p.inputFormat}," +
-            "outputFormat=#{p.outputFormat},tips=#{p.tips},timeLimit=#{p.timeLimit},spaceLimit=#{p.spaceLimit}*1024," +
+            "outputFormat=#{p.outputFormat},tips=#{p.tips},timeLimit=#{p.timeLimit},spaceLimit=#{p.spaceLimit}," +
             "testCaseId=#{p.testCaseId},allowedLanguage=#{allowedLanguage},totalScore=#{p.totalScore}," +
             "            allowPartial=#{p.allowPartial},punishRule=#{p.punishRule}\n" +
             "where problemId=#{problemId};")

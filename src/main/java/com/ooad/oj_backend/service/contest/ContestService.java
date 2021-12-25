@@ -63,14 +63,14 @@ public class ContestService {
         contest.setCreatorName(creator.getName());
         List<Problem> problems = problemMapper.getContestProblem(contestId);
         User user=userMapper.getOne((String) StpUtil.getLoginId());
-        List<UserResult>userResults= recordMapper.getContestResultByName(contestId,user.getName());
+        List<UserResult>userResults= recordMapper.getContestResultByName(contestId,user.getId());
         //TODO: get myScore and score
-        /*for (Problem problem:problems){
+        for (Problem problem:problems){
             for(UserResult userResult:userResults) {
                 if(userResult.getShownId().equals(problem.getShownId()))
                 problem.setMyScore(userResult.getScore());
             }
-        }*/
+        }
         Map<String,Object> map = new HashMap<>();
         map.put("contest",contest);
         map.put("problems",problems);
@@ -221,8 +221,14 @@ public class ContestService {
     }
 
     public ResponseEntity<?> getCloseContest(int amount) {
-        String userId = (String) StpUtil.getLoginId();
         Response response = new Response();
+        String userId;
+        if(StpUtil.isLogin()) {
+            userId = (String) StpUtil.getLoginId();
+        }else {
+            response.setCode(-1);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
         long nowTime = System.currentTimeMillis();
         List<Contest> contests = contestMapper.getCloseContest(nowTime);
         List<Contest> sortedContest = contests.stream().sorted(Comparator.comparing( Contest::getEndTime)).limit(amount).collect(Collectors.toList());
@@ -232,7 +238,7 @@ public class ContestService {
             Content tem = new Content();
             tem.contestId = contests.get(i).getId();
             tem.title = contests.get(i).getTitle();
-            tem.timeLeft =nowTime- contests.get(i).getEndTime();
+            tem.timeLeft =contests.get(i).getEndTime()-nowTime;
             tem.allowed = allAllowedContest.contains(contests.get(i));
             contents.add(tem);
         }
@@ -271,7 +277,7 @@ public class ContestService {
         }
         HashMap<String,Object []>fast=new HashMap<>();
         for (UserResult userResult:userResults) {
-            fast.put(userResult.getUserName()+"|"+userResult.getShownId(),new Object[]{userResult.getScore(),userResult.getTotalScore(),userResult.getTime()});
+            fast.put(userResult.getUserId()+"|"+userResult.getShownId(),new Object[]{userResult.getScore(),userResult.getTotalScore(),userResult.getTime()});
         }
         List<HashMap<String,Object>>list=new LinkedList<>();
         for (UserResult name:nameScore) {
@@ -282,14 +288,14 @@ public class ContestService {
             HashMap<String, Object> hashMap3 = new HashMap<>();
             for(Problem problem:problems) {
                 HashMap<String, Object> hashMap2 = new HashMap<>();
-                if (!fast.containsKey(name.getUserName() + "|" + problem.getShownId())) {
+                if (!fast.containsKey(name.getUserId() + "|" + problem.getShownId())) {
                     hashMap2.put("time", 0);
                     hashMap2.put("score", 0);
                     hashMap2.put("color", "RED");
                     hashMap1.put(problem.getShownId(), hashMap2);
                     continue;
                 } else {
-                    Object[] arr = fast.get(name.getUserName() + "|" + problem.getShownId());
+                    Object[] arr = fast.get(name.getUserId() + "|" + problem.getShownId());
 
                     int a = (Integer) arr[0];
                     int b = (Integer) arr[1];

@@ -255,11 +255,24 @@ public class ForumService {
         int totalAmount = forumMapper.getCommentByPageTotalAmount(postId);
         int totalPage = (totalAmount/ itemsPerPage) + (((totalAmount % itemsPerPage) == 0) ? 0 : 1);
 
+
+
+
         for(int i =0 ; i<commentByPage.size();i++){
-            if(StpUtil.getLoginId().toString().equals(commentByPage.get(i).getUserId())){
-                commentByPage.get(i).setDeleteable(true);
+
+            commentByPage.get(i).setDeleteable(true);
+            int groupId = forumMapper.getGroupId(postId);
+            ResponseEntity responseEntity = authService.checkPermission("1-0");
+            if(responseEntity!=null){
+                ResponseEntity responseEntity1 = authService.checkPermission("1-"+groupId);
+                if(responseEntity1!=null){
+                    if(StpUtil.getLoginId().toString().equals(commentByPage.get(i).getUserId())){
+                        commentByPage.get(i).setDeleteable(false);
+                    }
+                }
             }
         }
+
         HashMap<String,Object>hashMap=new HashMap<>();
         hashMap.put("list",commentByPage);
         hashMap.put("totalPage",totalPage);
