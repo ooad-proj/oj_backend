@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -50,7 +51,12 @@ public class RecordService {
         } else {
             results = getResultFromSql(recordId);
             if (results == null || results.size() == 0) results = judgerService.getResultFromRedis(recordId);
-        }
+        }results.sort(new Comparator<Result>() {
+            @Override
+            public int compare(Result result, Result t1) {
+                return 0;
+            }
+        });
         com.ooad.oj_backend.mybatis.entity.Result result=recordMapper.getResultAndCode(recordId);
         if(result!=null&&result.getProblemId()!=0){
             int classId=problemMapper.getGroupId(result.getProblemId());

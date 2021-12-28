@@ -13,5 +13,4 @@ public class Rank implements Serializable {
     private int correctNum;
     private int answerNum;
     private double correctRate;
-    private int i;
 }

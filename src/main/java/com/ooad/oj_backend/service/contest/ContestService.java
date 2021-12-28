@@ -63,7 +63,7 @@ public class ContestService {
         contest.setCreatorName(creator.getName());
         List<Problem> problems = problemMapper.getContestProblem(contestId);
         User user=userMapper.getOne((String) StpUtil.getLoginId());
-        List<UserResult>userResults= recordMapper.getContestResultByName(contestId,user.getName());
+        List<UserResult>userResults= recordMapper.getContestResultByName(contestId,user.getId());
         //TODO: get myScore and score
         /*for (Problem problem:problems){
             for(UserResult userResult:userResults) {
@@ -271,7 +271,7 @@ public class ContestService {
         }
         HashMap<String,Object []>fast=new HashMap<>();
         for (UserResult userResult:userResults) {
-            fast.put(userResult.getUserName()+"|"+userResult.getShownId(),new Object[]{userResult.getScore(),userResult.getTotalScore(),userResult.getTime()});
+            fast.put(userResult.getUserId()+"|"+userResult.getShownId(),new Object[]{userResult.getScore(),userResult.getTotalScore(),userResult.getTime()});
         }
         List<HashMap<String,Object>>list=new LinkedList<>();
         for (UserResult name:nameScore) {
@@ -282,14 +282,14 @@ public class ContestService {
             HashMap<String, Object> hashMap3 = new HashMap<>();
             for(Problem problem:problems) {
                 HashMap<String, Object> hashMap2 = new HashMap<>();
-                if (!fast.containsKey(name.getUserName() + "|" + problem.getShownId())) {
+                if (!fast.containsKey(name.getUserId() + "|" + problem.getShownId())) {
                     hashMap2.put("time", 0);
                     hashMap2.put("score", 0);
                     hashMap2.put("color", "RED");
                     hashMap1.put(problem.getShownId(), hashMap2);
                     continue;
                 } else {
-                    Object[] arr = fast.get(name.getUserName() + "|" + problem.getShownId());
+                    Object[] arr = fast.get(name.getUserId() + "|" + problem.getShownId());
 
                     int a = (Integer) arr[0];
                     int b = (Integer) arr[1];
