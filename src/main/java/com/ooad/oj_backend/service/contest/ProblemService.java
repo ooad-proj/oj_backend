@@ -530,8 +530,12 @@ public class ProblemService {
                 return new ResponseEntity<>(response, HttpStatus.OK);
             }
         }
+        HashMap<String,Object>hashmap=new HashMap<>();
         List<Answer> answer=problemMapper.getAnswerByProblem(problemId);
-        response.setContent(answer);
+        hashmap.put("isPublish",problem1.isPublish());
+        hashmap.put("answer",answer);
+        response.setContent(hashmap);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     /*public ResponseEntity<?> deleteAnswer(int answerId) {

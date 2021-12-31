@@ -188,7 +188,9 @@ public class SubmitService {
             List<Long> submitTimes = recordMapper.getAllSubmitNum(milliSecond);
             for(int i =0;i<submitTimes.size();i++){
                 int index = (int) ( (submitTimes.get(i)-milliSecond)/(86400000) );
-                data[index]++;
+                if(index<30){
+                    data[index]++;
+                }
             }
         }else {
 //            if(!StpUtil.getLoginId().equals(userId) ){
@@ -199,7 +201,9 @@ public class SubmitService {
             List<Long> submitTimes = recordMapper.getSubmitNum(userId,milliSecond);
             for(int i =0;i<submitTimes.size();i++){
                 int index = (int) ( (submitTimes.get(i)-milliSecond)/(86400000) );
-                data[index]++;
+                if(index<30){
+                    data[index]++;
+                }
             }
         }
         HashMap<String,Object> hashMap = new HashMap<>();

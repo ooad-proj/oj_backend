@@ -117,7 +117,7 @@ public class RecordService {
         Response response = new Response();
         response.setCode(0);
         Paper<com.ooad.oj_backend.mybatis.entity.Result>paper=new Paper<>();
-        stateCode=stateCode.toLowerCase();
+//        stateCode=stateCode.toLowerCase();
         List<com.ooad.oj_backend.mybatis.entity.Result>results=recordMapper.getResult(userId,problemId,stateCode,(page - 1) * itemsPerPage, itemsPerPage,contestId,groupId);
         /*int total=0;
         boolean judge=problemId.matches(regex);

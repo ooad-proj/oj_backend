@@ -71,7 +71,7 @@ public interface ProblemMapper {
             "        problemId,shownId,title,totalScore\n" +
             "        FROM problem where contestId =#{contestId} order by shownId ")
     List<Problem> getContestProblem(int contestId);
-    @Select("select shownId,title,description,inputFormat,outputFormat,tips,timeLimit,spaceLimit,allowedLanguage as allowedLanguage1,testCaseId,testCase,totalScore,punishRule,allowPartial from problem " +
+    @Select("select shownId,title,description,inputFormat,outputFormat,tips,timeLimit,spaceLimit,allowedLanguage as allowedLanguage1,testCaseId,testCase,totalScore,punishRule,allowPartial,isPublish from problem " +
             "where problem.problemId=#{problemId};")
     Problem getDetailedProblem(int problemId);
 

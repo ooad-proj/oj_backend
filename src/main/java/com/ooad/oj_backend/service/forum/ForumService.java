@@ -266,7 +266,7 @@ public class ForumService {
             if(responseEntity!=null){
                 ResponseEntity responseEntity1 = authService.checkPermission("1-"+groupId);
                 if(responseEntity1!=null){
-                    if(StpUtil.getLoginId().toString().equals(commentByPage.get(i).getUserId())){
+                    if(!StpUtil.getLoginId().toString().equals(commentByPage.get(i).getUserId())){
                         commentByPage.get(i).setDeleteable(false);
                     }
                 }

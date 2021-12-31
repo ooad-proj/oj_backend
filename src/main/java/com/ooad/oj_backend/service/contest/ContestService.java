@@ -68,7 +68,9 @@ public class ContestService {
         for (Problem problem:problems){
             for(UserResult userResult:userResults) {
                 if(userResult.getShownId().equals(problem.getShownId()))
-                problem.setMyScore(userResult.getScore());
+                    if(userResult.getScore()>problem.getMyScore()) {
+                        problem.setMyScore(userResult.getScore());
+                    }
             }
         }
         Map<String,Object> map = new HashMap<>();
@@ -282,7 +284,9 @@ public class ContestService {
         List<HashMap<String,Object>>list=new LinkedList<>();
         for (UserResult name:nameScore) {
             String Totalcolor = "GREEN";
+            boolean flag=true;
             long Totaltime = 0;
+            int Totalscore=0;
             HashMap<String, Object> hashMap1 = new HashMap<>();
             hashMap1.put("userName",name.getUserName());
             HashMap<String, Object> hashMap3 = new HashMap<>();
@@ -293,10 +297,9 @@ public class ContestService {
                     hashMap2.put("score", 0);
                     hashMap2.put("color", "RED");
                     hashMap1.put(problem.getShownId(), hashMap2);
-                    continue;
+                    Totalcolor="ORANGE";
                 } else {
                     Object[] arr = fast.get(name.getUserId() + "|" + problem.getShownId());
-
                     int a = (Integer) arr[0];
                     int b = (Integer) arr[1];
                     String color;
@@ -309,6 +312,7 @@ public class ContestService {
                         Totalcolor= "ORANGE";
                         color = "ORANGE";
                     }
+                    Totalscore+=(int)arr[0];
                     Totaltime+=(long)arr[2];
                     hashMap2.put("time", arr[2]);
                     hashMap2.put("score", arr[0]);
@@ -316,7 +320,7 @@ public class ContestService {
                     hashMap1.put(problem.getShownId(), hashMap2);
                 }
             }
-            if(Totaltime==0){
+            if(Totalscore==0){
                 Totalcolor = "RED";
             }
             hashMap3.put("time", Totaltime);
@@ -371,14 +375,19 @@ public class ContestService {
     public ResponseEntity<?> getStudentScore (int contestId) throws IOException {
         List<UserResult> userResults=recordMapper.getContestResult(contestId);
         HashMap<String, ArrayList<UserResult>> userScore = new HashMap<>();
-        for(int i = 0;i<userResults.size();i++){
-            if(!userScore.containsKey(userResults.get(i).getUserId())){
-                userScore.put(userResults.get(i).getUserId(),new ArrayList<>());
+        for (UserResult userResult : userResults) {
+            if (!userScore.containsKey(userResult.getUserId())) {
+                userScore.put(userResult.getUserId(), new ArrayList<>());
             }
-            userScore.get(userResults.get(i).getUserId()).add(userResults.get(i));
+            userScore.get(userResult.getUserId()).add(userResult);
         }
-
-
+        ArrayList<String> problems = new ArrayList<>();
+        for (UserResult userResult : userResults) {
+            if (!problems.contains(userResult.getShownId())) {
+                problems.add(userResult.getShownId());
+            }
+        }
+        problems.sort(Comparator.comparing(p ->p));
         String filePath = StpUtil.getLoginId()+".csv";
         BufferedWriter writeText = new BufferedWriter(new FileWriter(filePath));
         String headRow ="id,";
@@ -386,20 +395,29 @@ public class ContestService {
 
         for(int i =0;i<userScore.keySet().size();i++){
             writeText.newLine();
-//            double totalScore =0;
-            String row = names[i] +",";
+            int total =0;
+            String row = names[i];
             userScore.get(names[i]).sort(Comparator.comparing(UserResult::getShownId));
             if(i==0){
-                for(int j =0 ; j< userScore.get(names[i]).size();j++){
-                    headRow+= userScore.get(names[i]).get(j).getShownId() + ",";
+                for (String problem : problems) {
+                    headRow += problem + ",";
                 }
                 headRow+= "totalScore\n";
                 writeText.write(headRow);
             }
-            int total=0;
+            ArrayList<String> recordedProblem = new ArrayList<>();
+            for(int j =0; j<userScore.get(names[i]).size();j++){
+                recordedProblem.add(userScore.get(names[i]).get(j).getShownId());
+            }
+
             for(int j =0  ; j<userScore.get(names[i]).size();j++){
-                row += userScore.get(names[i]).get(j).getScore();
-                total+=userScore.get(names[i]).get(j).getScore();
+                if(!recordedProblem.contains(userScore.get(names[i]).get(j).getShownId())){
+                    row =row+","+ 0;
+                }else {
+                    row =row+","+ userScore.get(names[i]).get(j).getScore();
+                    total+=userScore.get(names[i]).get(j).getScore();
+                }
+
             }
             row =row+ ","+total;
             writeText.write(row);
@@ -419,5 +437,4 @@ public class ContestService {
             e.printStackTrace();
         }return null;
     }
-
 }
